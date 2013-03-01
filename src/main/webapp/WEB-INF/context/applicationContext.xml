@@ -22,6 +22,8 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
+	<import resource="portlet/sympa-portlet.xml"/>
+
 	<!-- property configurer -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:main.properties"/>
@@ -199,23 +201,23 @@
 	 	<property name="prefix" value="validation."/>
 	 </bean>
 
-	 <!--  controllers -->
+	<!--  controllers -->
 
-	  <!--  userAgentInspector -->
+	<!--  userAgentInspector -->
 
-	  <bean id="userAgentInspector" class="org.esupportail.sympa.portlet.services.UserAgentInspector">
-	    <property name="userAgentMobile">
-		    <!-- Regexes of mobile device user agents -->
-		    <list>
-		        <value>.*iPhone.*</value>
-		        <value>.*Android.*</value>
-		        <value>.*Safari.*Pre.*</value>
-		        <value>.*Nokia.*AppleWebKit.*</value>
-		    </list>
-	    </property>
-	  </bean>
+	<bean id="userAgentInspector" class="org.esupportail.sympa.portlet.services.UserAgentInspector">
+		<property name="userAgentMobile">
+			<!-- Regexes of mobile device user agents -->
+			<list>
+				<value>.*iPhone.*</value>
+				<value>.*Android.*</value>
+				<value>.*Safari.*Pre.*</value>
+				<value>.*Nokia.*AppleWebKit.*</value>
+			</list>
+		</property>
+	</bean>
 
-	 <bean id="homeController" class="org.esupportail.sympa.portlet.web.controllers.HomeController">
+ 	<bean id="homeController" class="org.esupportail.sympa.portlet.web.controllers.HomeController">
 	 	<property name="viewName" value="home"/>
 	 	<property name="domainService" ref="domainService"/>
 	 	<property name="requireSession" value="true"/>
@@ -223,6 +225,48 @@
 	 	<property name="renderWhenMinimized" value="false"/>
 	 	<property name="commandName" value="searchForm"/>
 		<property name="userAgentInspector" ref="userAgentInspector"/>
-	 </bean>
+		<property name="userAttributeMapping" ref="userAttributeMapping" />
+		<!-- If no availableListFinder configured, the app works without the admin creation tab. -->
+		<property name="availableListFinder">
+			<null />
+			<!-- 
+			<ref bean="escoAvailableListFinder" />
+			 -->
+		</property>
+	</bean>
 
+	<!-- Bean responsible for fetching the existing lists in sympa -->
+	<bean id="myExistingListsFinder" class="org.esupportail.sympa.domain.services.SympaExistingListFinder">
+		<property name="domainService" ref="domainService" />
+	</bean>
+
+	<!-- Component that filters the lists based on the pattern in the model (based on grouped regexp) -->
+	<bean id="mylistsFromGroupsPatternMatcher" class="org.esco.sympa.portlet.availablelistsfinder.listsfromgroupspatternmatcher.ListsFromGroupsPatternMatcherBasicImpl" />
+
+	<!-- Finds the available lists to create (which are not already included in the exisisting lists). -->
+	
+	<bean id="escoAvailableListFinder" class="org.esco.sympa.portlet.availablelistsfinder.AvailableListsFinderBasicImpl">
+		<!-- 
+		 |	This value is replaced by the email domain fetched from the current establishment via the class LdapEstablishment.
+		 |	Therefore, the value normally should not have any noticable effect on the application  
+		 +-->
+		<property name="listDomain">
+			<value>list.netocentre.fr</value>
+		</property>
+		
+		<!-- Bean responsible for fetching the list of groups -->
+		<property name="etabGroupsFinder">
+			<ref bean="additionalGroupsFinder" />
+		</property>
+		
+		<!-- Bean responsible for fetching the list of existing groups -->
+		<property name="etabExistingListsFinder">
+			<ref local="myExistingListsFinder" />
+		</property>
+		
+		<!-- Component that filters the groups based on the pattern in the model -->
+		<property name="listsFromGroupsPatternMatcher">
+			<ref local="mylistsFromGroupsPatternMatcher" />
+		</property>
+	</bean>
 </beans>

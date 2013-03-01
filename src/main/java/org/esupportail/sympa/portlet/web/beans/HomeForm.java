@@ -23,6 +23,13 @@ public class HomeForm implements Serializable {
 	private boolean isOwner;
 	private boolean isEditor;
 	private boolean isSubscriber;
+	
+	//Which tab should be selected after the form is submitted 
+	private String tabIndex;
+	
+	//If true, cache should be cleared
+	private boolean invalidateCache;
+	
 	/**
 	 * @return the isOwner
 	 */
@@ -59,5 +66,29 @@ public class HomeForm implements Serializable {
 	public void setSubscriber(boolean isSubscriber) {
 		this.isSubscriber = isSubscriber;
 	}
-	
+	/**
+	 * @return the tabIndex
+	 */
+	public String getTabIndex() {
+		return tabIndex;
+	}
+	/**
+	 * @param tabIndex the tabIndex to set
+	 */
+	public void setTabIndex(String tabIndex) {
+		this.tabIndex = tabIndex;
+	}
+	/**
+	 * @return the invalidateCache
+	 */
+	public boolean isInvalidateCache() {
+		return invalidateCache;
+	}
+	/**
+	 * @param invalidateCache the invalidateCache to set
+	 */
+	public void setInvalidateCache(boolean invalidateCache) {
+		this.invalidateCache = invalidateCache;
+	}
+
 }

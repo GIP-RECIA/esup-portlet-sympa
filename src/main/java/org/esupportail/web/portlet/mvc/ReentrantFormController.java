@@ -33,6 +33,7 @@ public class ReentrantFormController extends AbstractCommandController {
 	private String viewName;
 	
 	protected UserAgentInspector userAgentInspector;
+	private final String ESUPSYMPA_ADMIN_VIEW = "esupsympaAdminView";
 	private final String ESUPSYMPA_WIDE_VIEW = "esupsympaWideView";
 	private final String ESUPSYMPA_NARROW_VIEW = "esupsympaNarrowView";
 	private final String ESUPSYMPA_MOBILE_VIEW = "esupsympaMobileView";
@@ -55,6 +56,8 @@ public class ReentrantFormController extends AbstractCommandController {
 			model.putAll(referenceData);
 		}
 
+		boolean isListAdmin = (Boolean) model.get("isListAdmin") ;	
+		
 		// Merge control attributes into model, if any
 		/*.
 		if (controlModel != null) {
@@ -67,11 +70,15 @@ public class ReentrantFormController extends AbstractCommandController {
 	    	
 			return new ModelAndView(ESUPSYMPA_MOBILE_VIEW, model);
 	    } else {
-	    	WindowState state = request.getWindowState();
-			if (WindowState.MAXIMIZED.equals(state)) {
-				return new ModelAndView(ESUPSYMPA_WIDE_VIEW, model);
+			if (isListAdmin) {
+				return new ModelAndView(ESUPSYMPA_ADMIN_VIEW, model);
 			} else {
-				return new ModelAndView(ESUPSYMPA_NARROW_VIEW, model);
+				WindowState state = request.getWindowState();
+				if (WindowState.MAXIMIZED.equals(state)) {
+					return new ModelAndView(ESUPSYMPA_WIDE_VIEW, model);
+				} else {
+					return new ModelAndView(ESUPSYMPA_NARROW_VIEW, model);
+				}
 			}
 	    }		
 	}

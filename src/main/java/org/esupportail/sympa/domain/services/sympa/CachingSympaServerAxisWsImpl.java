@@ -38,7 +38,6 @@ public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 		this.cache = cacheManager.getCache(cacheName);
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<UserSympaListWithUrl> getWhich() {

@@ -113,6 +113,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 				
 				item.setListUrl(generateListUrl(item.getHomepage()));
 				item.setListAdminUrl(generateListAdminUrl(item.getAddress()));
+				item.setListArchivesUrl(generateListArchivesUrl(item.getAddress()));
 				result.add(item);
 			}
 		}

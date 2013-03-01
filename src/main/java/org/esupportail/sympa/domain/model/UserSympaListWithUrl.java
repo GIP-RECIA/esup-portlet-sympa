@@ -20,6 +20,20 @@ public class UserSympaListWithUrl extends UserSympaList {
 
 	private String listUrl;
 	private String listAdminUrl;
+	private String listArchivesUrl;
+	
+	/**
+	 * @return the listArchivesUrl
+	 */
+	public String getListArchivesUrl() {
+		return listArchivesUrl;
+	}
+	/**
+	 * @param listArchivesUrl the listArchivesUrl to set
+	 */
+	public void setListArchivesUrl(String listArchivesUrl) {
+		this.listArchivesUrl = listArchivesUrl;
+	}
 	/**
 	 * @return the listUrl
 	 */

@@ -9,7 +9,7 @@
  * Licensed under the GPL License, (please see the LICENCE file)
  */
 
-package org.esupportail.sympa.domain.services.sympa;
+package org.esco.sympa.domain.services.sympa;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -18,11 +18,15 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.sympa.domain.model.Domain;
+import org.esco.sympa.domain.model.UAI;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.sympa.ICredentialRetriever;
+import org.esupportail.sympa.domain.services.sympa.IUserIdentityRetriever;
 
 
-public abstract class AbstractSympaServer {
+public abstract class AbstractEscoSympaServer {
 	protected Log logger = LogFactory.getLog(this.getClass());
 	/**
 	 * name of the sympa server
@@ -133,7 +137,9 @@ public abstract class AbstractSympaServer {
 		this.newListUrl = newListUrl;
 	}
 
-	public abstract List<UserSympaListWithUrl> getWhich();
+	public abstract List<UserSympaListWithUrl> getWhich(final UAI uai, final Domain domain);
+
+	public abstract List<UserSympaListWithUrl> getLists(final UAI uai, final Domain domain);
 
 	public CreateListInfo getCreateListInfo() {
 		// no new list url; no createListInfo
@@ -215,7 +221,27 @@ public abstract class AbstractSympaServer {
 		String strTmp = tmpConnectUrl.replaceFirst("%s", tmpUrl);
 		return strTmp;
 	}
-	protected String generateListAdminUrl(final String listAddress) {
+
+	/**
+	 * Helper function to generate connection urls.
+	 * %l is replaced with the list name (listAddress argument)
+	 * %UAI with the establishment id (uai argument)
+	 * %DOMAIN with the email address domain associated with the establishment (domain argument)
+	 * 
+	 * @param listAddress
+	 * @param domain The email domain associated with the establishment.  Potentially used to create the url to connect to the sympa server
+	 * @param uai The establishment id.
+	 * @param baseURL the sympa url that may contain variables.
+	 * @return the final url that will
+	 */
+	private String generateEscoSympaURL(final String listAddress, final UAI uai, final Domain domain, String baseURL) {
+		if (baseURL == null) {
+			this.logger.error("Base url is null!");
+			return null;
+		} else {
+			this.logger.debug("Base url is " + baseURL);
+		}
+
 		String strListName = listAddress;
 		if ( (listAddress != null) && (listAddress.length() > 0) ) {
 			int atIdx = listAddress.indexOf("@");
@@ -223,20 +249,22 @@ public abstract class AbstractSympaServer {
 				strListName = listAddress.substring(0, atIdx);
 			}
 		}
-		String tmpUrl = this.getAdminUrl();
-		return this.generateConnectUrl(tmpUrl.replaceFirst("%l", strListName));
+		if (uai != null) {
+			//UAIs must be lower case in urls
+			baseURL = UAI.replaceUai(baseURL, uai.toString());
+		}
+		if (domain != null) {
+			baseURL = Domain.replaceDomain(baseURL, domain.toString());
+		}
+		return this.generateConnectUrl(baseURL.replaceFirst("%l", strListName));
 	}
 
-	protected String generateListArchivesUrl(final String listAddress) {
-		String strListName = listAddress;
-		if ( (listAddress != null) && (listAddress.length() > 0) ) {
-			int atIdx = listAddress.indexOf("@");
-			if ( atIdx > 0) {
-				strListName = listAddress.substring(0, atIdx);
-			}
-		}
-		String tmpUrl = this.getArchivesUrl();
-		return this.generateConnectUrl(tmpUrl.replaceFirst("%l", strListName));
+	protected String generateListAdminUrl(final String listAddress, final UAI uai, final Domain domain) {
+		return this.generateEscoSympaURL(listAddress, uai, domain, this.getAdminUrl());
+	}
+
+	protected String generateListArchivesUrl(final String listAddress, final UAI uai, final Domain domain) {
+		return this.generateEscoSympaURL(listAddress, uai, domain, this.getArchivesUrl());
 	}
 	/**
 	 * @return the credentialRetriever

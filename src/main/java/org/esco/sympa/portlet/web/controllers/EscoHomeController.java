@@ -9,21 +9,26 @@
  * Licensed under the GPL License, (please see the LICENCE file)
  */
 
-package org.esupportail.sympa.portlet.web.controllers;
+package org.esco.sympa.portlet.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.sympa.domain.model.Domain;
+import org.esco.sympa.domain.model.EscoUserAttributeMapping;
 import org.esco.sympa.domain.model.LdapEstablishment;
+import org.esco.sympa.domain.model.UAI;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
+import org.esco.sympa.domain.services.IEscoDomainService;
 import org.esco.sympa.portlet.commondata.IMailingList;
 import org.esco.sympa.portlet.commondata.IMailingListModel;
 import org.esupportail.sympa.domain.listFinder.IAvailableListsFinder;
@@ -31,34 +36,34 @@ import org.esupportail.sympa.domain.listFinder.IDaoService;
 import org.esupportail.sympa.domain.listFinder.model.Model;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.LdapPerson;
-import org.esupportail.sympa.domain.model.UserAttributeMapping;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
-import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
 import org.esupportail.sympa.domain.services.SympaListCriterion;
 import org.esupportail.sympa.portlet.web.beans.HomeForm;
+import org.esupportail.sympa.portlet.web.controllers.HomeController;
 import org.esupportail.sympa.servlet.JsCreateListTableRow;
 import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.beans.BeansException;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
 
-public class HomeController extends ReentrantFormController {
+public class EscoHomeController extends ReentrantFormController {
 
 	/** Logger. */
-	private static final Log LOG = LogFactory.getLog(HomeController.class);
+	private static final Log LOG = LogFactory.getLog(EscoHomeController.class);
 
 	/** Session key of the placeholder values map. */
 	public static final String PLACEHOLDER_VALUES_MAP_SESSION_KEY =
 			"UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
 
-	private IDomainService domainService;
+	private IEscoDomainService domainService;
 
 	/** User attributes mapping. */
-	private UserAttributeMapping userAttributeMapping;
+	private EscoUserAttributeMapping userAttributeMapping;
 
-	/** Available list finder. */
-	private IAvailableListsFinder availableListFinder;
+	//Used in order to get the current establishment to filter the lists
+	private LdapEstablishment ldapEstablishment;
 
 	@Override
 	public Object newCommand(final PortletRequest request) throws Exception {
@@ -82,7 +87,16 @@ public class HomeController extends ReentrantFormController {
 			final Errors errors) throws Exception {
 		HomeForm form = (HomeForm)command;
 
+		if (form.isInvalidateCache()) {
+			EscoHomeController.LOG.info("Clearing cache");
+			this.domainService.invalidateCache();
+			form.setInvalidateCache(false);
+		}
+
 		Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+
+		// Add user informations in portal attributes map.
+		userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);
 
 		// Build the placeholder values and put it in session.
 		Map<String, String> placeholderValuesMap = this.getUserAttributeMapping()
@@ -90,21 +104,12 @@ public class HomeController extends ReentrantFormController {
 		request.getPortletSession().setAttribute(HomeController.PLACEHOLDER_VALUES_MAP_SESSION_KEY,
 				placeholderValuesMap, javax.portlet.PortletSession.APPLICATION_SCOPE);
 
-
-
-		List<UserSympaListWithUrl> sympaList = this.domainService.getWhich(this.formToCriterion(form),false);
-		List<CreateListInfo> createList = this.domainService.getCreateListInfo();
-		String homeUrl = this.domainService.getHomeUrl();
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("homeUrl",homeUrl);
-		map.put("sympaList", sympaList);
-		map.put("createList", createList);
-
 
 		//Fetch multi-valued attributes
 		Map<String, List<Object>> mvUserInfo = (Map<String, List<Object>>)
 				request.getAttribute("org.jasig.portlet.USER_INFO_MULTIVALUED");
-		HomeController.LOG.debug("Multi variable map is null? " + ((mvUserInfo != null) ? " false " : " true"));
+		EscoHomeController.LOG.debug("Multi variable map is null? " + ((mvUserInfo != null) ? " false " : " true"));
 
 		//Fetch bean in order to have the ldap attribute config and to query for isMemberOf
 		try {
@@ -116,15 +121,31 @@ public class HomeController extends ReentrantFormController {
 			map.put("uai", uai);
 			map.put("mail", mail);
 
+			//Filter the user lists to make sure we only display lists that are in the current establishment.  This
+			//is done by comparing the domain of the list address (after the @).
+			//As domains are 1 to 1 with establishments
+			//this can be used to tell what lists belong to which establishment.
+			String domain = this.ldapEstablishment.getMailingListDomain(uai);
+			List<UserSympaListWithUrl> sympaList = this.domainService.getWhich(new UAI(
+					uai), new Domain(domain), this.formToCriterion(form), false);
+
+			List<CreateListInfo> createList = this.domainService.getCreateListInfo();
+			map.put("sympaList", sympaList);
+			map.put("createList", createList);
+
 			List<String> emailProfileList = this.fetchEmailProfileList(mvUserInfo, ldapPerson, uid);
 			List<String> isMemberOfList = this.fetchIsMemberOf(mvUserInfo, ldapPerson, uid);
 
-			this.fetchIsAdmin(map, isMemberOfList, ldapPerson.getAdminRegex());
+			this.fetchIsAdmin(map, isMemberOfList, ldapPerson.getAdminRegex(), uai);
 
 			this.fetchEmailUtility(map, emailProfileList);
 		} catch (BeansException e) {
 			// No ldapPerson bean declared
 		}
+
+		String homeUrl = this.domainService.getHomeUrl();
+		map.put("homeUrl",homeUrl);
+
 
 		if (Boolean.TRUE.equals(map.get("isListAdmin"))) {
 			this.fetchCreateListTableData(map, userInfo);
@@ -140,25 +161,25 @@ public class HomeController extends ReentrantFormController {
 		if ((mvUserInfo != null) && mvUserInfo.containsKey(ldapPerson.getMemberAttribute())) {
 			isMemberOfList = new ArrayList<String>();
 			List<Object> listObjects = mvUserInfo.get(ldapPerson.getMemberAttribute());
-			HomeController.LOG.debug("Reading member attribute for ldap person [" + ldapPerson.getMemberAttribute() + " from multivalue map");
+			EscoHomeController.LOG.debug("Reading member attribute for ldap person [" + ldapPerson.getMemberAttribute() + " from multivalue map");
 			if (listObjects != null) {
 				for(Object o : listObjects) {
 					isMemberOfList.add(o == null ? "" : o.toString());
-					HomeController.LOG.debug("Reading isMemberOf group from MV map : " + isMemberOfList.get(isMemberOfList.size() -1));
+					EscoHomeController.LOG.debug("Reading isMemberOf group from MV map : " + isMemberOfList.get(isMemberOfList.size() -1));
 				}
 			}
 
 		} else {
-			HomeController.LOG.debug("MV map not found or does not contain isMemberOf.");
+			EscoHomeController.LOG.debug("MV map not found or does not contain isMemberOf.");
 
 			//Backup plan, use direct ldap queries
 			LdapPerson.Person person = ldapPerson.getPerson(uid);
 
 			if (person != null) {
-				HomeController.LOG.debug("Ldap person found");
+				EscoHomeController.LOG.debug("Ldap person found");
 				isMemberOfList = person.getMemberOf();
 			} else {
-				HomeController.LOG.error("Ldap person NOT found");
+				EscoHomeController.LOG.error("Ldap person NOT found");
 			}
 		}
 
@@ -172,7 +193,7 @@ public class HomeController extends ReentrantFormController {
 
 
 			emailProfileList = new ArrayList<String>();
-			HomeController.LOG.debug("Reading email profiles for ldap person using attribute [" + ldapPerson.getWebmailProfileAttribute() + "]");
+			EscoHomeController.LOG.debug("Reading email profiles for ldap person using attribute [" + ldapPerson.getWebmailProfileAttribute() + "]");
 			List<Object> listObjects = mvUserInfo.get(ldapPerson.getWebmailProfileAttribute());
 			if (listObjects != null) {
 				for(Object o : listObjects) {
@@ -180,16 +201,16 @@ public class HomeController extends ReentrantFormController {
 				}
 			}
 		} else {
-			HomeController.LOG.debug("MV map not found or does not contain isMemberOf.");
+			EscoHomeController.LOG.debug("MV map not found or does not contain isMemberOf.");
 
 			//Backup plan, use direct ldap queries
 			LdapPerson.Person person = ldapPerson.getPerson(uid);
 
 			if (person != null) {
-				HomeController.LOG.debug("Ldap person found");
+				EscoHomeController.LOG.debug("Ldap person found");
 				emailProfileList = person.getProfile();
 			} else {
-				HomeController.LOG.error("Ldap person NOT found");
+				EscoHomeController.LOG.error("Ldap person NOT found");
 			}
 		}
 
@@ -201,63 +222,63 @@ public class HomeController extends ReentrantFormController {
 	 * @param establishementId
 	 */
 	private void fetchCreateListTableData(final Map<String,Object> map, final Map<String,String> userInfo) {
-		if (this.availableListFinder != null) {
-			LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
-			String establishementId = userInfo.get(ldapPerson.getUaiAttribute());
+		LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
+		String establishementId = userInfo.get(ldapPerson.getUaiAttribute());
 
-			HomeController.LOG.debug("Entering loadCreateListTable.  UAI: [" + establishementId + "]");
+		EscoHomeController.LOG.debug("Entering loadCreateListTable.  UAI: [" + establishementId + "]");
+		IAvailableListsFinder availableListFinder = this.getApplicationContext().getBean(IAvailableListsFinder.class);
 
-			//Find the establishements email address domain
-			LdapEstablishment ldapEstablishment = (LdapEstablishment) this.getApplicationContext().getBean("ldapEstablishment");
+		//Find the establishements email address domain
+		LdapEstablishment ldapEstablishment = (LdapEstablishment) this.getApplicationContext().getBean("ldapEstablishment");
 
-			String domain = ldapEstablishment.getMailingListDomain(establishementId);
-			HomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
+		String domain = ldapEstablishment.getMailingListDomain(establishementId);
+		EscoHomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
 
-			this.availableListFinder.setListDomain(domain);
+		availableListFinder.setListDomain(domain);
 
-			//Fetch the models from the ESCO-SympaRemote database
-			IDaoService daoService = (IDaoService) this.getApplicationContext().getBean("daoService");
+		//Fetch the models from the ESCO-SympaRemote database
+		IDaoService daoService = (IDaoService) this.getApplicationContext().getBean("daoService");
 
 
-			List<Model> listModels = daoService.getAllModels();
+		List<Model> listModels = daoService.getAllModels();
 
-			HomeController.LOG.debug("Fetched models from SympaRemote db.  Count: " + listModels.size());
+		EscoHomeController.LOG.debug("Fetched models from SympaRemote db.  Count: " + listModels.size());
 
-			List<IMailingListModel> listMailingListModels = daoService.getMailingListModels(listModels, userInfo);
+		List<IMailingListModel> listMailingListModels = daoService.getMailingListModels(listModels, userInfo);
 
-			//Get the mailing lists that we can create
-			Collection<IMailingList> listLists =
-					this.availableListFinder.getAvailableAndNonExistingListsForEtab(userInfo, listMailingListModels);
+		//Get the mailing lists that we can create
+		Collection<IMailingList> listLists =
+				availableListFinder.getAvailableAndNonExistingListsForEtab(userInfo, listMailingListModels);
 
-			List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
+		List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
 
-			//Convert domain objects to UI
-			if (listLists != null) {
-				for(IMailingList mailList : listLists) {
-					JsCreateListTableRow row = new JsCreateListTableRow();
-					row.setName(mailList.getName().toLowerCase() + "@" + domain);
-					row.setSubject(mailList.getDescription());
-					row.setModelId(mailList.getModel().getId());
-					row.setModelParam(mailList.getModelParameter());
-					HomeController.LOG.debug("Loading creatable list " + row.toString());
-					tableData.add(row);
-				}
+		//Convert domain objects to UI
+		if (listLists != null) {
+			for(IMailingList mailList : listLists) {
+				JsCreateListTableRow row = new JsCreateListTableRow();
+				row.setName(mailList.getName().toLowerCase() + "@" + domain);
+				row.setSubject(mailList.getDescription());
+				row.setModelId(mailList.getModel().getId());
+				row.setModelParam(mailList.getModelParameter());
+				EscoHomeController.LOG.debug("Loading creatable list " + row.toString());
+				tableData.add(row);
 			}
-
-			map.put("tableData", tableData);
 		}
+
+
+
+		map.put("tableData", tableData);
 	}
 
-	private void fetchIsAdmin(final Map<String,Object> map, final List<String> isMemberOfList, final String adminRegex) {
+	private void fetchIsAdmin(final Map<String,Object> map, final List<String> isMemberOfList, String adminRegex, final String uai) {
+		// /////////////////////////////////////////////////////////
 		// Determine if user is an admin or not
 
 		// Initialize to false
 		map.put("isListAdmin", false);
 
-		if (this.availableListFinder != null) {
-			// If no available list finder configured
-			// No one can be administrator
-			return;
+		if (StringUtils.hasText(uai)) {
+			adminRegex = adminRegex.replaceAll(Pattern.quote("%UAI"), uai);
 		}
 
 		if (isMemberOfList != null) {
@@ -268,7 +289,7 @@ public class HomeController extends ReentrantFormController {
 				}
 			}
 		} else {
-			HomeController.LOG.warn("isMemberOfList is NULL!");
+			EscoHomeController.LOG.warn("isMemberOfList is NULL!");
 		}
 
 	}
@@ -313,34 +334,41 @@ public class HomeController extends ReentrantFormController {
 		}
 		return crits;
 	}
+
 	/**
 	 * @return the domainService
 	 */
-	public IDomainService getDomainService() {
+	public IEscoDomainService getDomainService() {
 		return this.domainService;
 	}
 
 	/**
 	 * @param domainService the domainService to set
 	 */
-	public void setDomainService(final IDomainService domainService) {
+	public void setDomainService(final IEscoDomainService domainService) {
 		this.domainService = domainService;
 	}
 
-	public UserAttributeMapping getUserAttributeMapping() {
+	public EscoUserAttributeMapping getUserAttributeMapping() {
 		return this.userAttributeMapping;
 	}
 
-	public void setUserAttributeMapping(final UserAttributeMapping userAttributeMapping) {
+	public void setUserAttributeMapping(final EscoUserAttributeMapping userAttributeMapping) {
 		this.userAttributeMapping = userAttributeMapping;
 	}
 
-	public IAvailableListsFinder getAvailableListFinder() {
-		return this.availableListFinder;
+	/**
+	 * @return the ldapEstablishment
+	 */
+	public LdapEstablishment getLdapEstablishment() {
+		return this.ldapEstablishment;
 	}
 
-	public void setAvailableListFinder(final IAvailableListsFinder availableListFinder) {
-		this.availableListFinder = availableListFinder;
+	/**
+	 * @param ldapEstablishment the ldapEstablishment to set
+	 */
+	public void setLdapEstablishment(final LdapEstablishment ldapEstablishment) {
+		this.ldapEstablishment = ldapEstablishment;
 	}
 
 }
