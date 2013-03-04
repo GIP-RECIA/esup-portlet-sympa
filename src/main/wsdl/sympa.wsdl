@@ -217,7 +217,7 @@
 </message>
 
 <message name="listsResponse">
-	<part name="listInfo" type="xsd:string"/>	
+	<part name="listInfo" type="tns:ArrayOfString"/>	
 </message>
 
 <message name="complexListsRequest">
