@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.listFinder;
+package org.esupportail.sympa.domain.listfinder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,5 +28,5 @@ public interface IAvailableListsFinder {
 	 * @param modeles les modeles de listes connus
 	 * @return une collection de mailing lists
 	 */
-	public Collection<IMailingList> getAvailableAndNonExistingListsForEtab(Map<String,String> userInfo, Collection<IMailingListModel> modeles);
+	public Collection<IMailingList> getAvailableAndNonExistingLists(Map<String,String> userInfo, Collection<IMailingListModel> modeles);
 }

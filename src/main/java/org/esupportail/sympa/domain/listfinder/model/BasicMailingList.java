@@ -1,10 +1,10 @@
 /**
  * 
  */
-package org.esupportail.sympa.domain.listFinder.model;
+package org.esupportail.sympa.domain.listfinder.model;
 
-import org.esupportail.sympa.domain.listFinder.IMailingList;
-import org.esupportail.sympa.domain.listFinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.IMailingList;
+import org.esupportail.sympa.domain.listfinder.IMailingListModel;
 import org.springframework.util.StringUtils;
 
 /**
@@ -41,6 +41,11 @@ public class BasicMailingList implements IMailingList, Comparable<BasicMailingLi
 		listName = this.stripLdapSpecialChars(listName);
 		this.name = this.stripEmailSpecialChars(listName);
 		this.description = this.replaceModelParamToken(this.model.getDescription());
+	}
+
+	@Override
+	public String toString() {
+		return "BasicMailingList [name=" + this.name + ", description=" + this.description + "]";
 	}
 
 	/**

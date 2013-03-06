@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.listFinder;
+package org.esupportail.sympa.domain.listfinder;
 
 
 /**

@@ -32,75 +32,65 @@ import org.sympa.client.ws.axis.v544.SympaSOAP;
 import org.sympa.client.ws.axis.v544.SympaSOAPLocator;
 
 public class SympaServerAxisWsImpl extends AbstractSympaServer {
-	
+
 	private int timeout = 5000;
-	
+
 	private String endPointUrl;
-	
+
 	// must be session scope so the bean of type SympaServerAxisWsImpl is session scope
-	private SympaPort_PortType port = null; 
-	
+	private SympaPort_PortType port = null;
+
 	@Override
 	public List<UserSympaListWithUrl> getWhich() {
 		// first of all; get a fresh new port if needed
-		if(port!=null) {
+		if(this.port!=null) {
 			try {
-				String checkCookie = port.checkCookie();
-				if(checkCookie == null || "nobody".equals(checkCookie))
-					port = null;
+				String checkCookie = this.port.checkCookie();
+				if((checkCookie == null) || "nobody".equals(checkCookie)) {
+					this.port = null;
+				}
 			} catch (RemoteException e) {
-				logger.debug("port is no more usable, we reinitate it",e);
-				port = null;
+				this.logger.debug("port is no more usable, we reinitate it",e);
+				this.port = null;
 			}
 		}
-		if(port == null) {
+		if(this.port == null) {
 			try {
-				port = getPort();
+				this.port = this.getPort();
 			} catch (MalformedURLException e) {
-				logger.error("unable to get a new SympaPort_PortType",e);
+				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
 			} catch (ServiceException e) {
-				logger.error("unable to get a new SympaPort_PortType",e);
+				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
 			} catch (RemoteException e) {
-				logger.error("unable to get a new SympaPort_PortType",e);
+				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
 			}
 		}
-		if (port == null ) {
-			logger.error("unable to get a new SympaPort_PortType");
+		if (this.port == null ) {
+			this.logger.error("unable to get a new SympaPort_PortType");
 			return null;
 		}
 		// do the which
 		//ListType[] whichList = null;
 		String[] whichList = null;
 		try {
-			/* BUG 
-			 *    """org.xml.sax.SAXException:  No deserializer for {http://www.w3.org/2001/XMLSchema}anyType""" 
+			/* BUG
+			 *    """org.xml.sax.SAXException:  No deserializer for {http://www.w3.org/2001/XMLSchema}anyType"""
 			 * with Axis
-			 * so we use port.which() ... 
+			 * so we use port.which() ...
 			whichList = SympaPort_PortType.complexWhich();
-			*/
-			whichList = port.which();
+			 */
+			whichList = this.port.which();
 		} catch (RemoteException e) {
-			logger.error("complexWhich() failed !",e);
+			this.logger.error("complexWhich() failed !",e);
 			return null;
 		}
 		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
 		if ( whichList != null ) {
-			for ( int idx = 0; idx < whichList.length; idx++ ) {
-				/*
-				ListType l = whichList[idx];
-				UserSympaListWithUrl item = new UserSympaListWithUrl();
-				item.setEditor(l.getIsEditor());
-				item.setOwner(l.getIsOwner());
-				item.setSubscriber(l.getIsSubscriber());
-				item.setAddress(l.getListAddress());
-				item.setHomepage(l.getHomepage());
-				item.setSubject(l.getSubject());
-				*/
-				String l = whichList[idx];
-				Map<String, String> listeInfos = this.stringToMap(l);
+			for (String l : whichList) {
+				Map<String, String> listeInfos = SympaServerAxisWsImpl.stringToMap(l);
 				UserSympaListWithUrl item = new UserSympaListWithUrl();
 				item.setEditor(listeInfos.get("isEditor").equals("1"));
 				item.setOwner(listeInfos.get("isOwner").equals("1"));
@@ -109,49 +99,111 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 				item.setHomepage(listeInfos.get("homepage"));
 				item.setSubject(listeInfos.get("subject"));
 				//  append various urls
-				
-				
-				item.setListUrl(generateListUrl(item.getHomepage()));
-				item.setListAdminUrl(generateListAdminUrl(item.getAddress()));
-				item.setListArchivesUrl(generateListArchivesUrl(item.getAddress()));
+
+
+				item.setListUrl(this.generateListUrl(item.getHomepage()));
+				item.setListAdminUrl(this.generateListAdminUrl(item.getAddress()));
+				item.setListArchivesUrl(this.generateListArchivesUrl(item.getAddress()));
 				result.add(item);
 			}
 		}
 		return result;
 	}
-	
+
+	/** {@inheritDoc} */
+	@Override
+	public List<UserSympaListWithUrl> getLists() {
+		// first of all; get a fresh new port if needed
+		if(this.port!=null) {
+			try {
+				String checkCookie = this.port.checkCookie();
+				if((checkCookie == null) || "nobody".equals(checkCookie)) {
+					this.port = null;
+				}
+			} catch (RemoteException e) {
+				this.logger.debug("port is no more usable, we reinitate it",e);
+				this.port = null;
+			}
+		}
+		if(this.port == null) {
+			try {
+				this.port = this.getPort();
+			} catch (MalformedURLException e) {
+				this.logger.error("unable to get a new SympaPort_PortType",e);
+				return null;
+			} catch (ServiceException e) {
+				this.logger.error("unable to get a new SympaPort_PortType",e);
+				return null;
+			} catch (RemoteException e) {
+				this.logger.error("unable to get a new SympaPort_PortType",e);
+				return null;
+			}
+		}
+		if (this.port == null ) {
+			this.logger.error("unable to get a new SympaPort_PortType");
+			return null;
+		}
+		// do the which
+		//ListType[] whichList = null;
+		String[] lists = null;
+		try {
+			/* BUG
+			 *    """org.xml.sax.SAXException:  No deserializer for {http://www.w3.org/2001/XMLSchema}anyType"""
+			 * with Axis
+			 * so we use port.which() ...
+			whichList = SympaPort_PortType.complexWhich();
+			 */
+			lists = this.port.lists("", "");
+		} catch (RemoteException e) {
+			this.logger.error("lists() failed !",e);
+			return null;
+		}
+		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+		if ( lists != null ) {
+			for (String l : lists) {
+				Map<String, String> listeInfos = SympaServerAxisWsImpl.stringToMap(l);
+				UserSympaListWithUrl item = new UserSympaListWithUrl();
+				item.setAddress(listeInfos.get("listAddress"));
+				item.setHomepage(listeInfos.get("homepage"));
+				item.setSubject(listeInfos.get("subject"));
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
 	private SympaPort_PortType getPort() throws MalformedURLException, ServiceException, RemoteException {
 		SympaSOAP locator = new SympaSOAPLocator();
 		((SympaSOAPLocator)locator).setMaintainSession(true); // mandatory for cookie after login
-		SympaPort_PortType port = locator.getSympaPort(new URL(getEndPointUrl()));
+		SympaPort_PortType port = locator.getSympaPort(new URL(this.getEndPointUrl()));
 		// set a timeout on port (10 seconds)
-		((org.apache.axis.client.Stub)port).setTimeout(getTimeout());
+		((org.apache.axis.client.Stub)port).setTimeout(this.getTimeout());
 		// now authenticate
-		TYPE credsType = getCredentialRetriever().getType();
-		SympaCredential creds = getCredentialRetriever().getCredentialForService(endPointUrl);
+		TYPE credsType = this.getCredentialRetriever().getType();
+		SympaCredential creds = this.getCredentialRetriever().getCredentialForService(this.endPointUrl);
 		if ( creds == null ) {
-			logger.error("unable to retrieve credential for service "+endPointUrl);
+			this.logger.error("unable to retrieve credential for service "+this.endPointUrl);
 			return null;
 		}
 		switch ( credsType ) {
 		case cas:
 			String tmp = port.casLogin(creds.getPassword());
 			((SOAPStub)port)._setProperty(HTTPConstants.HEADER_COOKIE,
-				    "sympa_session=" + tmp);
-			if ( logger.isDebugEnabled() ) {
-				logger.debug("CAS authentication ok : "+tmp);
+					"sympa_session=" + tmp);
+			if ( this.logger.isDebugEnabled() ) {
+				this.logger.debug("CAS authentication ok : "+tmp);
 			}
 			break;
 		case password:
 			String tmp2 = port.login(creds.getId(), creds.getPassword());
 			((SOAPStub)port)._setProperty(HTTPConstants.HEADER_COOKIE,
-				    "sympa_session=" + tmp2);
-			if ( logger.isDebugEnabled() ) {
-				logger.debug("PASSWORD authentication ok : "+tmp2);
+					"sympa_session=" + tmp2);
+			if ( this.logger.isDebugEnabled() ) {
+				this.logger.debug("PASSWORD authentication ok : "+tmp2);
 			}
 			break;
 		case trusted:
-			logger.info("TODO; must use authenticateAndRun ....");
+			this.logger.info("TODO; must use authenticateAndRun ....");
 			break;
 		}
 		return port;
@@ -161,13 +213,13 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	 * @return the timeout
 	 */
 	public int getTimeout() {
-		return timeout;
+		return this.timeout;
 	}
 
 	/**
 	 * @param timeout the timeout to set
 	 */
-	public void setTimeout(int timeout) {
+	public void setTimeout(final int timeout) {
 		this.timeout = timeout;
 	}
 
@@ -175,33 +227,33 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	 * @return the endPointUrl
 	 */
 	public String getEndPointUrl() {
-		return endPointUrl;
+		return this.endPointUrl;
 	}
 
 	/**
 	 * @param endPointUrl the endPointUrl to set
 	 */
-	public void setEndPointUrl(String endPointUrl) {
+	public void setEndPointUrl(final String endPointUrl) {
 		this.endPointUrl = endPointUrl;
 	}
-	
-	
-	
-	protected static Map<String, String> stringToMap(String input) {  
-		Map<String, String> map = new HashMap<String, String>();  
 
-		String[] nameValuePairs = input.split(";");  
-		for (String nameValuePair : nameValuePairs) {  
-			String[] nameValue = nameValuePair.split("=");  
-			try {  
-				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(  
-						nameValue[1], "UTF-8") : "");  
-			} catch (UnsupportedEncodingException e) {  
-				throw new RuntimeException("This method requires UTF-8 encoding support", e);  
-			}  
-		}  
 
-		return map;  
-	}  
-	
+
+	protected static Map<String, String> stringToMap(final String input) {
+		Map<String, String> map = new HashMap<String, String>();
+
+		String[] nameValuePairs = input.split(";");
+		for (String nameValuePair : nameValuePairs) {
+			String[] nameValue = nameValuePair.split("=");
+			try {
+				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(
+						nameValue[1], "UTF-8") : "");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException("This method requires UTF-8 encoding support", e);
+			}
+		}
+
+		return map;
+	}
+
 }

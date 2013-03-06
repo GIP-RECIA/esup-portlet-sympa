@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.listFinder;
+package org.esupportail.sympa.domain.listfinder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,11 +13,12 @@ import java.util.Map;
 public interface IExistingListsFinder {
 
 	/**
-	 * Retourne une collection contenant les noms des groupes de l'etablissement.
+	 * Retourne une collection contenant les noms des listes existantes.
+	 * Le nom de la liste est situé à gauche du @.
+	 * Pour une liste "liste1@recia.fr" le nom de la liste est "liste1".
 	 * 
 	 * @param userInfo les informations utilisateur
-	 * @param domain Le domaine de liste de base (exemple : list.example.com)
 	 * @return collection contenant les noms des listes existantes au niveau de sympa pour l'etablissement
 	 */
-	Collection<String> findExistingLists(Map<String,String> userInfo, String domain);
+	Collection<String> findExistingLists(Map<String,String> userInfo);
 }

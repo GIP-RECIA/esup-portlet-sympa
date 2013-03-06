@@ -99,17 +99,26 @@
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-all</artifactId>
+		<version>1.8.5</version>
+		<scope>test</scope>
+	</dependency>   
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
       <version>2.9.1</version>
     </dependency>
     
+    <!-- 
     <dependency>
 		<groupId>org.esco.sympa.portlet</groupId>
 		<artifactId>esco-sympa-portlet-availablelistfinder</artifactId>
 		<version>2.2.6</version>
 	</dependency>
+	-->
+	 
     <dependency>
 		<groupId>org.springframework.ldap</groupId>
 		<artifactId>spring-ldap-core</artifactId>
@@ -222,7 +231,37 @@
 	  </includes>
 	</configuration>
       </plugin>
+      
     </plugins>
+    <pluginManagement>
+		<plugins>
+		<!-- MBD: ignore M2E error -->
+			<plugin>
+			 <groupId>org.eclipse.m2e</groupId>
+			 <artifactId>lifecycle-mapping</artifactId>
+			 <version>1.0.0</version>
+			 <configuration>
+			   <lifecycleMappingMetadata>
+			     <pluginExecutions>
+			       <pluginExecution>
+			         <pluginExecutionFilter>
+			           <groupId>org.codehaus.mojo</groupId>
+			           <artifactId>axistools-maven-plugin</artifactId>
+			           <versionRange>[1.0.0,)</versionRange>
+			           <goals>
+			             <goal>wsdl2java</goal>
+			           </goals>
+			         </pluginExecutionFilter>
+			         <action>
+			           <ignore />
+			         </action>
+			       </pluginExecution>
+			     </pluginExecutions>
+			   </lifecycleMappingMetadata>
+			 </configuration>
+			</plugin>
+      	</plugins>
+	</pluginManagement>
   </build>
   
 </project>

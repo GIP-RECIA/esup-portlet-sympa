@@ -50,14 +50,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.esco.sympa.portlet.availablelistsfinder.groupsfinder.IEtabGroupsFinder;
+import org.esco.sympa.domain.groupfinder.IEtabGroupsFinder;
 import org.esupportail.commons.services.smtp.SimpleSmtpServiceImpl;
 import org.esupportail.commons.services.smtp.SmtpService;
-import org.esupportail.sympa.domain.listFinder.IDaoService;
-import org.esupportail.sympa.domain.model.hibernate.Model;
-import org.esupportail.sympa.domain.model.hibernate.ModelRequest;
-import org.esupportail.sympa.domain.model.hibernate.ModelSubscribers;
-import org.esupportail.sympa.domain.model.hibernate.PreparedRequest;
+import org.esupportail.sympa.domain.listfinder.IDaoService;
+import org.esupportail.sympa.domain.listfinder.model.Model;
+import org.esupportail.sympa.domain.listfinder.model.ModelRequest;
+import org.esupportail.sympa.domain.listfinder.model.ModelSubscribers;
+import org.esupportail.sympa.domain.listfinder.model.PreparedRequest;
 import org.esupportail.sympa.portlet.web.controllers.HomeController;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +88,6 @@ public class ServletAjaxController implements InitializingBean {
 	private Properties properties;
 
 	private String createListURLBase;
-
-
 
 	protected Locale locale;
 
@@ -411,8 +409,6 @@ public class ServletAjaxController implements InitializingBean {
 		return this.createListURLBase;
 	}
 
-
-
 	/**
 	 * @param createListURLBase the createListURLBase to set
 	 */
@@ -420,4 +416,5 @@ public class ServletAjaxController implements InitializingBean {
 	public void setCreateListURLBase(final String createListURLBase) {
 		this.createListURLBase = createListURLBase;
 	}
+
 }

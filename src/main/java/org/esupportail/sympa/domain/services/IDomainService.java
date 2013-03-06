@@ -28,6 +28,7 @@ public abstract interface IDomainService {
 	};
 	public List<UserSympaListWithUrl> getWhich();
 	public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion>criterion,boolean mathAll);
+	public List<UserSympaListWithUrl> getLists();
 	public List<CreateListInfo> getCreateListInfo();
 	public Map<String, AbstractSympaServer> getServerList();
 	public String getHomeUrl();

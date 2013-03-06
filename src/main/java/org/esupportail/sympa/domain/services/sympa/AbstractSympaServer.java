@@ -135,6 +135,8 @@ public abstract class AbstractSympaServer {
 
 	public abstract List<UserSympaListWithUrl> getWhich();
 
+	public abstract List<UserSympaListWithUrl> getLists();
+
 	public CreateListInfo getCreateListInfo() {
 		// no new list url; no createListInfo
 		if ( this.getNewListUrl() == null ) {

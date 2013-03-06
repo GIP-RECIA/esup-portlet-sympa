@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.listFinder.model;
+package org.esupportail.sympa.domain.listfinder.model;
 
 import java.io.Serializable;
 import java.math.BigInteger;

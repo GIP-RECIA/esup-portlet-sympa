@@ -1,14 +1,13 @@
-package org.esupportail.sympa.domain.listFinder;
+package org.esupportail.sympa.domain.listfinder;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-import org.esco.sympa.portlet.commondata.IMailingListModel;
-import org.esupportail.sympa.domain.listFinder.model.Model;
-import org.esupportail.sympa.domain.listFinder.model.ModelRequest;
-import org.esupportail.sympa.domain.listFinder.model.ModelSubscribers;
-import org.esupportail.sympa.domain.listFinder.model.PreparedRequest;
+import org.esupportail.sympa.domain.listfinder.model.Model;
+import org.esupportail.sympa.domain.listfinder.model.ModelRequest;
+import org.esupportail.sympa.domain.listfinder.model.ModelSubscribers;
+import org.esupportail.sympa.domain.listfinder.model.PreparedRequest;
 
 public interface IDaoService {
 

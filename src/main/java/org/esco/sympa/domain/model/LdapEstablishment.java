@@ -8,6 +8,9 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 import org.apache.log4j.Logger;
+import org.esco.sympa.util.LdapUtils;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.util.StringUtils;
 
 public class LdapEstablishment {

@@ -29,11 +29,11 @@ import org.esco.sympa.domain.model.UAI;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
 import org.esco.sympa.domain.services.IEscoDomainService;
-import org.esco.sympa.portlet.commondata.IMailingList;
-import org.esco.sympa.portlet.commondata.IMailingListModel;
-import org.esupportail.sympa.domain.listFinder.IAvailableListsFinder;
-import org.esupportail.sympa.domain.listFinder.IDaoService;
-import org.esupportail.sympa.domain.listFinder.model.Model;
+import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
+import org.esupportail.sympa.domain.listfinder.IDaoService;
+import org.esupportail.sympa.domain.listfinder.IMailingList;
+import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
@@ -44,11 +44,13 @@ import org.esupportail.sympa.portlet.web.controllers.HomeController;
 import org.esupportail.sympa.servlet.JsCreateListTableRow;
 import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
 
-public class EscoHomeController extends ReentrantFormController {
+public class EscoHomeController extends ReentrantFormController implements InitializingBean {
 
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(EscoHomeController.class);
@@ -64,6 +66,16 @@ public class EscoHomeController extends ReentrantFormController {
 
 	//Used in order to get the current establishment to filter the lists
 	private LdapEstablishment ldapEstablishment;
+
+	private LdapPerson ldapPerson;
+
+	/** {@inheritDoc} */
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.domainService, "No IEscoDomainService injected !");
+		Assert.notNull(this.userAttributeMapping, "No EscoUserAttributeMapping injected !");
+		Assert.notNull(this.ldapPerson, "No LdapPerson injected !");
+		Assert.notNull(this.ldapEstablishment, "No LdapEstablishment injected !");
+	}
 
 	@Override
 	public Object newCommand(final PortletRequest request) throws Exception {
@@ -234,8 +246,6 @@ public class EscoHomeController extends ReentrantFormController {
 		String domain = ldapEstablishment.getMailingListDomain(establishementId);
 		EscoHomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
 
-		availableListFinder.setListDomain(domain);
-
 		//Fetch the models from the ESCO-SympaRemote database
 		IDaoService daoService = (IDaoService) this.getApplicationContext().getBean("daoService");
 
@@ -248,7 +258,7 @@ public class EscoHomeController extends ReentrantFormController {
 
 		//Get the mailing lists that we can create
 		Collection<IMailingList> listLists =
-				availableListFinder.getAvailableAndNonExistingListsForEtab(userInfo, listMailingListModels);
+				availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
 
 		List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
 

@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.listFinder.services;
+package org.esupportail.sympa.domain.listfinder.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,15 +7,20 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.sympa.domain.model.Domain;
-import org.esco.sympa.domain.model.UAI;
-import org.esupportail.sympa.domain.listFinder.IExistingListsFinder;
+import org.esupportail.sympa.domain.listfinder.IExistingListsFinder;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
 import org.esupportail.sympa.domain.services.IDomainService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+/**
+ * Existing list finder implementation responsible for querying Sympa to find
+ * the list already existing.
+ * 
+ * @author GIP RECIA 2013 - Maxime BOSSARD.
+ *
+ */
 public class SympaExistingListFinder implements IExistingListsFinder, InitializingBean {
 
 	private Log log = LogFactory.getLog(SympaExistingListFinder.class);
@@ -26,13 +31,9 @@ public class SympaExistingListFinder implements IExistingListsFinder, Initializi
 
 	/** {@inheritDoc} */
 	public Collection<String> findExistingLists(final Map<String, String> userInfo) {
+		this.log.debug("Finding existing lists...");
 
-		//Fetch bean in order to have the ldap attribute config and to query for isMemberOf
-		LdapPerson ldapPerson = (LdapPerson) this.applicationContext.getBean("ldapPerson");
-		String rne = userInfo.get(ldapPerson.getUidAttribute());
-		this.log.debug("Finding existing lists with UID [" + rne + "] and domain [" + domain + "]");
-
-		List<UserSympaListWithUrl> lists = this.domainService.getLists(new UAI(rne), new Domain(domain));
+		List<UserSympaListWithUrl> lists = this.domainService.getLists();
 
 		this.log.debug("Total lists returned : " + lists.size());
 
@@ -44,14 +45,17 @@ public class SympaExistingListFinder implements IExistingListsFinder, Initializi
 				this.log.warn("Unexpected address, @ not found : " + list.getAddress());
 				continue;
 			}
-			String domainPart = address[1];
-			String addressPart = address[0];
-			if (domainPart.equals(domain)) {
-				this.log.debug("Domain [" + domainPart + "] matches, adding existing list " + addressPart);
-				existingLists.add(addressPart.toLowerCase());
-			} else {
-				this.log.debug("Domain [" + domainPart + "] does not match current domain [" + domain + "], not adding existing list " + addressPart);
+
+			final String namePart = address[0];
+			@SuppressWarnings("unused")
+			final String domainPart = address[1];
+
+			if (this.log.isDebugEnabled()) {
+				this.log.debug(String.format(
+						"Adding existing list %1$s ...", namePart));
 			}
+			existingLists.add(namePart.toLowerCase());
+
 		}
 		return existingLists;
 
@@ -63,17 +67,18 @@ public class SympaExistingListFinder implements IExistingListsFinder, Initializi
 	}
 
 	/**
-	 * @return the domainService
-	 */
-	public IDomainService getDomainService() {
-		return this.domainService;
-	}
-
-	/**
 	 * @param domainService the domainService to set
 	 */
 	public void setDomainService(final IDomainService domainService) {
 		this.domainService = domainService;
+	}
+
+	/**
+	 * 
+	 * @param ldapPerson the LDAP person
+	 */
+	public void setLdapPerson(final LdapPerson ldapPerson) {
+		this.ldapPerson = ldapPerson;
 	}
 
 }

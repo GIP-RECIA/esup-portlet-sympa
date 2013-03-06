@@ -1,9 +1,9 @@
 /**
  * 
  */
-package org.esupportail.sympa.domain.listFinder.model;
+package org.esupportail.sympa.domain.listfinder.model;
 
-import org.esupportail.sympa.domain.listFinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.IMailingListModel;
 
 /**
  * @author GIP RECIA 2013 - Maxime BOSSARD.

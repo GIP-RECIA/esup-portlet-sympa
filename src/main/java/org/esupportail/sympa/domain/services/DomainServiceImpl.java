@@ -31,48 +31,66 @@ import org.springframework.beans.DirectFieldAccessor;
 public class DomainServiceImpl implements IDomainService {
 	private Map <String,AbstractSympaServer> serverList;
 	private static Log logger = LogFactory.getLog(DomainServiceImpl.class);
-	
+
 	public List<UserSympaListWithUrl> getWhich() {
 		// watchout; user centric ...
-		Collection<AbstractSympaServer> srvList = getServerList().values();
+		Collection<AbstractSympaServer> srvList = this.getServerList().values();
 		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
 		for ( AbstractSympaServer s : srvList ) {
 			List<UserSympaListWithUrl> srvResult = s.getWhich();
-			if ( srvResult != null && srvResult.size() > 0 ) {
+			if ( (srvResult != null) && (srvResult.size() > 0) ) {
 				result.addAll(srvResult);
 			}
 		}
 		// default sort on list address
-		sortResults(result);
+		this.sortResults(result);
 		return result;
 	}
 
-	public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion> criterions, boolean matchAll) {
-		List<UserSympaListWithUrl> sympaList = getWhich();
-		if ( criterions == null || criterions.size() <= 0 ) return sympaList;
+	public List<UserSympaListWithUrl> getWhich(final List<SympaListCriterion> criterions, final boolean matchAll) {
+		List<UserSympaListWithUrl> sympaList = this.getWhich();
+		if ( (criterions == null) || (criterions.size() <= 0) ) {
+			return sympaList;
+		}
 		List<UserSympaListWithUrl> filteredList = new ArrayList<UserSympaListWithUrl>();
 		for ( UserSympaListWithUrl item : sympaList ) {
-			if ( matchCriterions(item, criterions, matchAll) ) {
+			if ( this.matchCriterions(item, criterions, matchAll) ) {
 				filteredList.add(item);
 			}
 		}
 		return filteredList;
 	}
-	
+
+	public List<UserSympaListWithUrl> getLists() {
+		Collection<AbstractSympaServer> srvList = this.getServerList().values();
+		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+		for ( AbstractSympaServer s : srvList ) {
+			List<UserSympaListWithUrl> srvResult = s.getLists();
+			if ( (srvResult != null) && (srvResult.size() > 0) ) {
+				result.addAll(srvResult);
+			}
+		}
+		// default sort on list address
+		this.sortResults(result);
+		return result;
+	}
 
 	public List<CreateListInfo> getCreateListInfo() {
-		Collection<AbstractSympaServer> srvList = getServerList().values();
+		Collection<AbstractSympaServer> srvList = this.getServerList().values();
 		List<CreateListInfo> result = new ArrayList<CreateListInfo>();
 		for ( AbstractSympaServer s : srvList ) {
 			CreateListInfo infos = s.getCreateListInfo();
-			if ( infos != null )
+			if ( infos != null ) {
 				result.add(infos);
+			}
 		}
 		return result;
 	}
 
-	private boolean matchCriterions(UserSympaList item, List<SympaListCriterion> crits,boolean matchAll) {
-		if ( item == null || crits == null || crits.size() <= 0 ) return false;
+	private boolean matchCriterions(final UserSympaList item, final List<SympaListCriterion> crits,final boolean matchAll) {
+		if ( (item == null) || (crits == null) || (crits.size() <= 0) ) {
+			return false;
+		}
 		DirectFieldAccessor accessor = new DirectFieldAccessor(item);
 		int results = 0;
 		for ( SympaListCriterion c : crits ) {
@@ -80,16 +98,20 @@ public class DomainServiceImpl implements IDomainService {
 				if ( accessor.isReadableProperty(c.getFieldName().name()) ) {
 					Object o = accessor.getPropertyValue(c.getFieldName().name());
 					if ( o == null ) {
-						// case compare to null object 
-						if ( c.getCompareTo() == null ) results++;
+						// case compare to null object
+						if ( c.getCompareTo() == null ) {
+							results++;
+						}
 					} else {
-						if ( o.equals(c.getCompareTo()) ) results++;
+						if ( o.equals(c.getCompareTo()) ) {
+							results++;
+						}
 					}
 				} else {
-					logger.debug("");
+					DomainServiceImpl.logger.debug("");
 				}
 			} catch ( Exception e) {
-				logger.error("exception raised while introspecting object ",e);
+				DomainServiceImpl.logger.error("exception raised while introspecting object ",e);
 			}
 		}
 		if ( matchAll ) {
@@ -100,10 +122,10 @@ public class DomainServiceImpl implements IDomainService {
 	}
 	//protected boolean have
 	// sorting
-	private void sortResults(List<UserSympaListWithUrl> toSort) {
+	private void sortResults(final List<UserSympaListWithUrl> toSort) {
 		Collections.sort(toSort, new UserSympaListComparator());
 	}
-	
+
 	class UserSympaListComparator implements Comparator<UserSympaList> {
 		boolean sortOrder; // true mean ascending
 		SympaListFields sortOn;
@@ -111,43 +133,47 @@ public class DomainServiceImpl implements IDomainService {
 			this.sortOrder = true;
 			this.sortOn = SympaListFields.address;
 		}
-		public UserSympaListComparator(SympaListFields field,boolean order) {
+		public UserSympaListComparator(final SympaListFields field,final boolean order) {
 			this.sortOrder = order;
 			this.sortOn = field;
 		}
 
-		public int compare(UserSympaList o1, UserSympaList o2) {
+		public int compare(final UserSympaList o1, final UserSympaList o2) {
 			int result = 0;
-			switch (sortOn) {
+			switch (this.sortOn) {
 			case address :
-				result = compareString(o1.getAddress(), o2.getAddress());
+				result = this.compareString(o1.getAddress(), o2.getAddress());
 				break;
 			case owner :
-				result = compareBoolean(o1.isOwner(), o2.isOwner());
+				result = this.compareBoolean(o1.isOwner(), o2.isOwner());
 				break;
 			case editor:
-				result = compareBoolean(o1.isEditor(), o2.isEditor());
+				result = this.compareBoolean(o1.isEditor(), o2.isEditor());
 				break;
 			case subscriber:
-				result = compareBoolean(o1.isSubscriber(), o2.isSubscriber());
+				result = this.compareBoolean(o1.isSubscriber(), o2.isSubscriber());
 				break;
 			}
 			return result;
 		}
-		private int compareBoolean(boolean b1, boolean b2) {
+		private int compareBoolean(final boolean b1, final boolean b2) {
 			int result = 0;
-			if ( (b1 && b2) || (!b1 && !b2) ) return 0;
-			if ( sortOrder ) {
+			if ( (b1 && b2) || (!b1 && !b2) ) {
+				return 0;
+			}
+			if ( this.sortOrder ) {
 				result = ( b1 ) ? 1 : -1;
 			} else {
-				result = ( b1 ) ? -1 : 1; 
+				result = ( b1 ) ? -1 : 1;
 			}
 			return result;
 		}
-		private int compareString(String s1, String s2) {
-			if ( s1 == null || s2 == null ) return 0;
+		private int compareString(final String s1, final String s2) {
+			if ( (s1 == null) || (s2 == null) ) {
+				return 0;
+			}
 			int result = 0;
-			if ( sortOrder ) {
+			if ( this.sortOrder ) {
 				result = s1.compareTo(s2);
 			} else {
 				result = s2.compareTo(s1);
@@ -160,10 +186,10 @@ public class DomainServiceImpl implements IDomainService {
 	 */
 	public Map<String, AbstractSympaServer> getServerList() {
 		Map<String, AbstractSympaServer> serverListToUse = new HashMap<String, AbstractSympaServer>();
-		for(String serverKey: serverList.keySet()) {
-			if(serverList.get(serverKey).shouldBeUsed()) {
-				logger.debug("Add this server to the list for the current user : " + serverKey);		
-				serverListToUse.put(serverKey, serverList.get(serverKey));
+		for(String serverKey: this.serverList.keySet()) {
+			if(this.serverList.get(serverKey).shouldBeUsed()) {
+				DomainServiceImpl.logger.debug("Add this server to the list for the current user : " + serverKey);
+				serverListToUse.put(serverKey, this.serverList.get(serverKey));
 			}
 		}
 		return serverListToUse;
@@ -171,9 +197,9 @@ public class DomainServiceImpl implements IDomainService {
 
 	public String getHomeUrl() {
 		String homeUrl="#";
-		for(String serverKey: serverList.keySet()) {
-			if(serverList.get(serverKey).shouldBeUsed()) {
-				homeUrl=serverList.get(serverKey).getHomeUrl();			
+		for(String serverKey: this.serverList.keySet()) {
+			if(this.serverList.get(serverKey).shouldBeUsed()) {
+				homeUrl=this.serverList.get(serverKey).getHomeUrl();
 			}
 		}
 		return homeUrl;
@@ -182,10 +208,10 @@ public class DomainServiceImpl implements IDomainService {
 	/**
 	 * @param serverList the serverList to set
 	 */
-	public void setServerList(Map<String, AbstractSympaServer> serverList) {
+	public void setServerList(final Map<String, AbstractSympaServer> serverList) {
 		this.serverList = serverList;
 	}
 
-	
+
 
 }

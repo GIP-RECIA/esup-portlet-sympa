@@ -1,8 +1,7 @@
-package org.esupportail.sympa.domain.listFinder;
+package org.esupportail.sympa.domain.listfinder;
 
 /**
- *
- * Interface d'un objet MailingList, afin d'autoriser differentes implementations
+ * Interface d'un objet MailingList, afin d'autoriser differentes implementations.
  *
  * @author GIP Recia
  *

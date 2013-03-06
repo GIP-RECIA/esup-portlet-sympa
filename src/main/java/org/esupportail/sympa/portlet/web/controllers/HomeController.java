@@ -24,11 +24,11 @@ import org.apache.commons.logging.LogFactory;
 import org.esco.sympa.domain.model.LdapEstablishment;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
-import org.esco.sympa.portlet.commondata.IMailingList;
-import org.esco.sympa.portlet.commondata.IMailingListModel;
-import org.esupportail.sympa.domain.listFinder.IAvailableListsFinder;
-import org.esupportail.sympa.domain.listFinder.IDaoService;
-import org.esupportail.sympa.domain.listFinder.model.Model;
+import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
+import org.esupportail.sympa.domain.listfinder.IDaoService;
+import org.esupportail.sympa.domain.listfinder.IMailingList;
+import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserAttributeMapping;
@@ -213,8 +213,6 @@ public class HomeController extends ReentrantFormController {
 			String domain = ldapEstablishment.getMailingListDomain(establishementId);
 			HomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
 
-			this.availableListFinder.setListDomain(domain);
-
 			//Fetch the models from the ESCO-SympaRemote database
 			IDaoService daoService = (IDaoService) this.getApplicationContext().getBean("daoService");
 
@@ -227,7 +225,7 @@ public class HomeController extends ReentrantFormController {
 
 			//Get the mailing lists that we can create
 			Collection<IMailingList> listLists =
-					this.availableListFinder.getAvailableAndNonExistingListsForEtab(userInfo, listMailingListModels);
+					this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
 
 			List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
 
