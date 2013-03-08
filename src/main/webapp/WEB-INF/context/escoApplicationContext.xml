@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr Copyright (C) 2010 
+	Esup Portail http://www.esup-portail.org @Author (C) 2010 Olivier Franco 
+	<Olivier.Franco@insa-lyon.fr> @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr> 
+	@Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr> @Contributor 
+	(C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr> Licensed under the 
+	GPL License, (please see the LICENCE file) -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<import resource="portlet/esco-sympa-portlet.xml" />
+
+	<!-- Import the rest of the beans from their respective xml file locations -->
+	<import resource="escoLdapContext.xml" />
+	<import resource="escoDatabaseContext.xml" />
+	<import resource="escoEmailContext.xml" />
+
+	<!-- property configurer -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>
+					file:/home/max/git/esup-portlet-sympa/esco-config.properties
+				</value>
+				<value>classpath:esco-main.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- ehcache -->
+	<bean id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+		<property name="shared" value="false" />
+	</bean>
+
+	<!-- CAS PART -->
+	<!-- ticket validation filter -->
+	<bean id="ticketValidationFilter"
+		class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
+		<property name="redirectAfterValidation" value="false" />
+		<property name="serverName" value="${portal.server.base.url}" />
+		<property name="proxyReceptorUrl" value="/proxy/receptor" />
+		<property name="ticketValidator" ref="ticketValidator" />
+		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+	</bean>
+	<!-- CAS proxy ticket validator -->
+	<bean id="ticketValidator"
+		class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
+		<property name="proxyCallbackUrl"
+			value="${portal.server.base.url}/${portlet.context}/proxy/receptor" />
+		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+		<property name="acceptAnyProxy" value="true" />
+		<constructor-arg index="0" value="${cas.base.server.url}" />
+	</bean>
+	<!-- CAS Proxy service bean -->
+	<bean id="casTicketService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl">
+		<property name="serviceUrl" value="${portal.service.url}" />
+		<property name="ticketValidator" ref="ticketValidator" />
+	</bean>
+	<bean id="proxyGrantingTicketStorage"
+		class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
+	<!-- or ehcache impl with class org.jasig.cas.client.proxy. EhcacheBackedProxyGrantingTicketStorageImpl 
+		cache name is : org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache -->
+
+	<!-- user session scoped info bean -->
+	<bean id="userPreferencesBean" class="org.esupportail.sympa.domain.model.UserPreferences"
+		scope="session">
+		<!-- this next element effects the proxying of the surrounding bean -->
+		<aop:scoped-proxy />
+	</bean>
+
+	<!-- list of available roles -->
+	<util:set id="availableRoles">
+		<value>ALL_EMPLOYEE</value>
+		<value>MEMBERS</value>
+	</util:set>
+
+	<!-- service -->
+	
+	<!-- It is important that this class be a singleton as multiple 
+		controllers should have the same instance of this class -->
+	<bean id="domainService" class="org.esco.sympa.domain.services.EscoDomainServiceImpl"
+		scope="singleton">
+
+		<property name="serverList">
+			<map>
+				<entry key="server.default">
+					<bean
+						class="org.esco.sympa.domain.services.sympa.EscoSpringCachingSympaServerAxisWsImpl"
+						scope="globalSession">
+						<aop:scoped-proxy />
+
+						<!-- 
+						 | Url to access the admin page of a list. 
+						 | %l is replaced with the list name. 
+						 + -->
+						<property name="adminUrl" value="${sympa.server.default.url}/admin/%l" />
+						<!-- 
+						 | Url to access the archives page of a list. 
+						 | %l is replaced with the list name 
+						 + -->
+						<property name="archivesUrl" value="${sympa.server.default.url}/arc/%l" />
+						
+						<!-- 
+						 | ConnectUrl, if present, is used to authenticate before proceding to the sympa page. 
+						 | %s is replaced with the sympa url 
+						 + -->
+						<!-- <property name="connectUrl" 
+							value="${cas.base.server.url}/login?service=%s%3Fchecked_cas=0" /> -->
+							
+						<property name="name" value="${sympa.server.name}" />
+						<property name="newListUrl" value="${sympa.server.default.url}/net/create_list_request" />
+						<property name="homeUrl" value="${sympa.server.default.url}/net" />
+						<property name="endPointUrl" value="${sympa.server.default.endpointUrl}" />
+						<property name="timeout" value="5000" />
+						<property name="credentialRetriever" ref="${credentialRetriever}" />
+						<property name="indentityRetriever" ref="userIdentityRetrieverImpl" />
+						<property name="cacheManager" ref="cacheManager" />
+						<property name="newListForRoles">
+							<set>
+								<value>${group.newListForRoles}</value>
+							</set>
+						</property>
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+
+	<!-- helpers -->
+	<bean id="casCredentialRetrieverImpl"
+		class="org.esupportail.sympa.domain.services.sympa.CASCredentialRetrieverImpl">
+		<property name="casPtGeneratorService">
+			<bean class="org.esupportail.sympa.domain.services.cas.CASPtGeneratorImpl">
+				<property name="casAssertionRetriever">
+					<bean
+						class="org.esupportail.sympa.domain.services.cas.CASAssertionRetrieverImpl">
+						<property name="userPreferences" ref="userPreferencesBean" />
+					</bean>
+				</property>
+				<property name="casProxyTicketService" ref="casTicketService" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="userIdentityRetrieverImpl"
+		class="org.esupportail.sympa.domain.services.sympa.UserIdentityRetrieverImpl">
+		<property name="userPreferences" ref="userPreferencesBean" />
+	</bean>
+
+	<bean id="simplePasswordCredentialRetrieverImpl"
+		class="org.esupportail.sympa.domain.services.sympa.SimplePasswordCredentialRetrieverImpl">
+		<property name="username" value="${sympasoap.username}" />
+		<property name="password" value="${sympasoap.password}" />
+	</bean>
+
+
+	<!-- view resolver -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	<!-- exception resolver -->
+	<bean id="defaultExceptionHandler"
+		class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver">
+		<property name="order" value="10" />
+		<property name="defaultErrorView" value="error" />
+		<property name="warnLogCategory" value="org.esupportail.sympa" />
+	</bean>
+	<!-- localisation -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="useCodeAsDefaultMessage" value="true" />
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- various interceptors -->
+	<bean id="sessionInitInterceptor"
+		class="org.esupportail.sympa.portlet.web.interceptors.SessionInitInterceptor">
+		<property name="userInfoMailAttr" value="mail" />
+		<property name="userPreferences" ref="userPreferencesBean" />
+		<property name="availableRoles" ref="availableRoles" />
+	</bean>
+	<bean id="casProxyInitInterceptor"
+		class="org.esupportail.sympa.portlet.web.interceptors.CasProxyInitializationService">
+		<property name="proxyTicketService" ref="casTicketService" />
+		<property name="userPreferences" ref="userPreferencesBean" />
+	</bean>
+	<!-- portlet mode handler view/edit/help -->
+	<bean id="portletModeHandlerMapping"
+		class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+		<property name="order" value="10" />
+		<property name="interceptors">
+			<list>
+				<ref bean="sessionInitInterceptor" />
+				<ref bean="casProxyInitInterceptor" />
+			</list>
+		</property>
+		<property name="portletModeMap">
+			<map>
+				<entry key="view" value-ref="homeController" />
+			</map>
+		</property>
+	</bean>
+	<bean id="portletParameterMapping"
+		class="org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping">
+		<property name="order" value="20" />
+		<property name="interceptors">
+			<list>
+				<ref bean="sessionInitInterceptor" />
+				<ref bean="casProxyInitInterceptor" />
+				<!-- parameter mapping interceptor : map action to controller -->
+				<bean
+					class="org.springframework.web.portlet.handler.ParameterMappingInterceptor" />
+			</list>
+		</property>
+		<!-- action to controller mapping -->
+		<property name="portletModeParameterMap">
+			<map>
+				<entry key="view">
+					<map>
+						<entry key="home" value-ref="homeController" />
+					</map>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	<!-- default message code resolver for validation -->
+	<bean id="defaultMessageCodeResolver"
+		class="org.springframework.validation.DefaultMessageCodesResolver">
+		<property name="prefix" value="validation." />
+	</bean>
+
+	<!-- controllers -->
+
+	<!-- userAgentInspector -->
+
+	<bean id="userAgentInspector"
+		class="org.esupportail.sympa.portlet.services.UserAgentInspector">
+		<property name="userAgentMobile">
+			<!-- Regexes of mobile device user agents -->
+			<list>
+				<value>.*iPhone.*</value>
+				<value>.*Android.*</value>
+				<value>.*Safari.*Pre.*</value>
+				<value>.*Nokia.*AppleWebKit.*</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="homeController"
+		class="org.esco.sympa.portlet.web.controllers.EscoHomeController">
+		<property name="viewName" value="home" />
+		<property name="domainService" ref="domainService" />
+		<property name="requireSession" value="true" />
+		<property name="commandClass"
+			value="org.esupportail.sympa.portlet.web.beans.HomeForm" />
+		<property name="renderWhenMinimized" value="false" />
+		<property name="commandName" value="searchForm" />
+		<property name="userAgentInspector" ref="userAgentInspector" />
+		<property name="userAttributeMapping" ref="userAttributeMapping" />
+
+		<property name="daoService" ref="hibernateDaoService" />
+		<property name="ldapEstablishment" ref="ldapEstablishment" />
+		<property name="ldapPerson" ref="ldapPerson" />
+
+		<!-- If no availableListFinder configured, the app works without the admin 
+			creation tab. -->
+		<property name="availableListFinder">
+			<ref bean="escoAvailableListFinder" />
+		</property>
+	</bean>
+
+	<!-- Bean responsible for fetching the existing lists in sympa -->
+	<bean id="myExistingListsFinder"
+		class="org.esco.sympa.domain.listfinder.services.EscoSympaExistingListFinder">
+		<property name="escoDomainService" ref="domainService" />
+		<property name="ldapPerson" ref="ldapPerson" />
+		<property name="ldapEstablishment" ref="ldapEstablishment" />
+	</bean>
+
+	<!-- Component that filters the lists based on the pattern in the model 
+		(based on grouped regexp) -->
+	<bean id="mylistsFromGroupsPatternMatcher"
+		class="org.esco.sympa.domain.listfinder.services.ListsFromGroupsPatternMatcherBasicImpl" />
+
+	<!-- Finds the available lists to create (which are not already included 
+		in the exisisting lists). -->
+
+	<bean id="escoAvailableListFinder"
+		class="org.esco.sympa.domain.listfinder.services.AvailableListsFinderBasicImpl">
+		<!-- | This value is replaced by the email domain fetched from the current 
+			establishment via the class LdapEstablishment. | Therefore, the value normally 
+			should not have any noticable effect on the application + -->
+		<property name="listDomain">
+			<value>list.netocentre.fr</value>
+		</property>
+
+		<!-- Bean responsible for fetching the list of groups -->
+		<property name="etabGroupsFinder">
+			<ref bean="additionalGroupsFinder" />
+		</property>
+
+		<!-- Bean responsible for fetching the list of existing groups -->
+		<property name="existingListsFinder">
+			<ref local="myExistingListsFinder" />
+		</property>
+
+		<!-- Component that filters the groups based on the pattern in the model -->
+		<property name="listsFromGroupsPatternMatcher">
+			<ref local="mylistsFromGroupsPatternMatcher" />
+		</property>
+	</bean>
+</beans>

@@ -15,6 +15,8 @@ import org.springframework.ldap.core.LdapTemplate;
 
 public class LdapPerson {
 
+	private Logger log = Logger.getLogger(LdapPerson.class);
+
 	private LdapTemplate ldapTemplate;
 
 	private String uidAttribute;
@@ -22,14 +24,11 @@ public class LdapPerson {
 	private String mailAttribute;
 	private String memberAttribute;
 	private String uaiAttribute;
-	private String domainNameAttribute;
 
 	private String personSearchString;
 	private String personSearchFilter;
 
 	private String adminRegex;
-
-	private Logger log = Logger.getLogger(LdapPerson.class);
 
 	/**
 	 * @return the mailAttribute
@@ -71,14 +70,6 @@ public class LdapPerson {
 	 */
 	public void setUaiAttribute(final String uaiAttribute) {
 		this.uaiAttribute = StringUtils.trim(uaiAttribute);
-	}
-
-	public String getDomainNameAttribute() {
-		return this.domainNameAttribute;
-	}
-
-	public void setDomainNameAttribute(final String domainNameAttribute) {
-		this.domainNameAttribute = domainNameAttribute;
 	}
 
 	public String getPersonSearchString() {

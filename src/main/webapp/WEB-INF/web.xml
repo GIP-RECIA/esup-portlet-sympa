@@ -38,7 +38,7 @@
 	<!-- Fichier de configuration Spring pour l'application web -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/context/applicationContext.xml</param-value>
+		<param-value>/WEB-INF/context/escoApplicationContext.xml</param-value>
 	</context-param>
 	<!-- Validation filter delegates to spring configuration in WEB-INF/context/applicationContext.jsp -->
     <filter>

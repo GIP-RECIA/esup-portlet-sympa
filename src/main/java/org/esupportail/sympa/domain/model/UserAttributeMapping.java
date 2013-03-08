@@ -30,9 +30,6 @@ public class UserAttributeMapping {
 	/** Mapping configured by Spring. */
 	private Map <String, String> mapping;
 
-	/** Ldap person searcher. */
-	private LdapPerson ldapPerson;
-
 	/**
 	 * Get the user attribute attached to the placeholder provided.
 	 * 
@@ -98,19 +95,6 @@ public class UserAttributeMapping {
 	 */
 	public void setMapping(final Map<String, String> theMapping) {
 		this.mapping = theMapping;
-	}
-
-	/**
-	 * LdapPerson setter.
-	 * 
-	 * @param ldapPerson the ldapPerson
-	 */
-	public void setLdapPerson(final LdapPerson ldapPerson) {
-		this.ldapPerson = ldapPerson;
-	}
-
-	public LdapPerson getLdapPerson() {
-		return this.ldapPerson;
 	}
 
 }

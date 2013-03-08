@@ -69,12 +69,18 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 
 	private LdapPerson ldapPerson;
 
+	private IAvailableListsFinder availableListFinder;
+
+	private IDaoService daoService;
+
 	/** {@inheritDoc} */
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(this.domainService, "No IEscoDomainService injected !");
 		Assert.notNull(this.userAttributeMapping, "No EscoUserAttributeMapping injected !");
 		Assert.notNull(this.ldapPerson, "No LdapPerson injected !");
 		Assert.notNull(this.ldapEstablishment, "No LdapEstablishment injected !");
+		Assert.notNull(this.availableListFinder, "No IAvailableListsFinder injected !");
+		Assert.notNull(this.daoService, "No IDaoService injected !");
 	}
 
 	@Override
@@ -125,11 +131,9 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 
 		//Fetch bean in order to have the ldap attribute config and to query for isMemberOf
 		try {
-			LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
-
-			final String uid = userInfo.get(ldapPerson.getUidAttribute());
-			final String mail = userInfo.get(ldapPerson.getMailAttribute());
-			final String uai = userInfo.get(ldapPerson.getUaiAttribute());
+			final String uid = userInfo.get(this.ldapPerson.getUidAttribute());
+			final String mail = userInfo.get(this.ldapPerson.getMailAttribute());
+			final String uai = userInfo.get(this.ldapPerson.getUaiAttribute());
 			map.put("uai", uai);
 			map.put("mail", mail);
 
@@ -145,10 +149,10 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			map.put("sympaList", sympaList);
 			map.put("createList", createList);
 
-			List<String> emailProfileList = this.fetchEmailProfileList(mvUserInfo, ldapPerson, uid);
-			List<String> isMemberOfList = this.fetchIsMemberOf(mvUserInfo, ldapPerson, uid);
+			List<String> emailProfileList = this.fetchEmailProfileList(mvUserInfo, this.ldapPerson, uid);
+			List<String> isMemberOfList = this.fetchIsMemberOf(mvUserInfo, this.ldapPerson, uid);
 
-			this.fetchIsAdmin(map, isMemberOfList, ldapPerson.getAdminRegex(), uai);
+			this.fetchIsAdmin(map, isMemberOfList, this.ldapPerson.getAdminRegex(), uai);
 
 			this.fetchEmailUtility(map, emailProfileList);
 		} catch (BeansException e) {
@@ -234,31 +238,24 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	 * @param establishementId
 	 */
 	private void fetchCreateListTableData(final Map<String,Object> map, final Map<String,String> userInfo) {
-		LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
-		String establishementId = userInfo.get(ldapPerson.getUaiAttribute());
+		String establishementId = userInfo.get(this.ldapPerson.getUaiAttribute());
 
 		EscoHomeController.LOG.debug("Entering loadCreateListTable.  UAI: [" + establishementId + "]");
-		IAvailableListsFinder availableListFinder = this.getApplicationContext().getBean(IAvailableListsFinder.class);
 
 		//Find the establishements email address domain
-		LdapEstablishment ldapEstablishment = (LdapEstablishment) this.getApplicationContext().getBean("ldapEstablishment");
-
-		String domain = ldapEstablishment.getMailingListDomain(establishementId);
+		String domain = this.ldapEstablishment.getMailingListDomain(establishementId);
 		EscoHomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
 
 		//Fetch the models from the ESCO-SympaRemote database
-		IDaoService daoService = (IDaoService) this.getApplicationContext().getBean("daoService");
-
-
-		List<Model> listModels = daoService.getAllModels();
+		List<Model> listModels = this.daoService.getAllModels();
 
 		EscoHomeController.LOG.debug("Fetched models from SympaRemote db.  Count: " + listModels.size());
 
-		List<IMailingListModel> listMailingListModels = daoService.getMailingListModels(listModels, userInfo);
+		List<IMailingListModel> listMailingListModels = this.daoService.getMailingListModels(listModels, userInfo);
 
 		//Get the mailing lists that we can create
 		Collection<IMailingList> listLists =
-				availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
+				this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
 
 		List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
 
@@ -379,6 +376,30 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	 */
 	public void setLdapEstablishment(final LdapEstablishment ldapEstablishment) {
 		this.ldapEstablishment = ldapEstablishment;
+	}
+
+	public LdapPerson getLdapPerson() {
+		return this.ldapPerson;
+	}
+
+	public void setLdapPerson(final LdapPerson ldapPerson) {
+		this.ldapPerson = ldapPerson;
+	}
+
+	public IAvailableListsFinder getAvailableListFinder() {
+		return this.availableListFinder;
+	}
+
+	public void setAvailableListFinder(final IAvailableListsFinder availableListFinder) {
+		this.availableListFinder = availableListFinder;
+	}
+
+	public IDaoService getDaoService() {
+		return this.daoService;
+	}
+
+	public void setDaoService(final IDaoService daoService) {
+		this.daoService = daoService;
 	}
 
 }

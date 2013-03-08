@@ -6,7 +6,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esupportail.commons.utils.Assert;
+import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserAttributeMapping;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 /**
@@ -18,13 +21,21 @@ import org.springframework.util.StringUtils;
  * @author GIP - RECIA Maxime BOSSARD 2012
  *
  */
-public class EscoUserAttributeMapping extends UserAttributeMapping {
+public class EscoUserAttributeMapping extends UserAttributeMapping implements InitializingBean {
 
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(EscoUserAttributeMapping.class);
 
 	/** Ldap establishment searcher. */
 	private LdapEstablishment ldapEstablishment;
+
+	/** Ldap Person searcher. */
+	private LdapPerson ldapPerson;
+
+	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.ldapEstablishment, "No LdapEstablishment injected !");
+		Assert.notNull(this.ldapPerson, "No LdapPerson injected !");
+	}
 
 	/**
 	 * Add informations in user info map.
@@ -68,6 +79,18 @@ public class EscoUserAttributeMapping extends UserAttributeMapping {
 	 */
 	public void setLdapEstablishment(final LdapEstablishment ldapEstablishment) {
 		this.ldapEstablishment = ldapEstablishment;
+	}
+
+	public LdapEstablishment getLdapEstablishment() {
+		return this.ldapEstablishment;
+	}
+
+	public LdapPerson getLdapPerson() {
+		return this.ldapPerson;
+	}
+
+	public void setLdapPerson(final LdapPerson ldapPerson) {
+		this.ldapPerson = ldapPerson;
 	}
 
 }

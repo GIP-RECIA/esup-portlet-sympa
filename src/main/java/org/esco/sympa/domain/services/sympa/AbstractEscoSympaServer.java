@@ -74,6 +74,7 @@ public abstract class AbstractEscoSympaServer {
 	 * @param name the name to set
 	 */
 	public void setName(final String name) {
+
 		this.name = name;
 	}
 	/**

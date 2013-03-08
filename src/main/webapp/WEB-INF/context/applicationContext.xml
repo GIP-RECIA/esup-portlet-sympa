@@ -245,7 +245,7 @@
 
 	<!-- Finds the available lists to create (which are not already included in the exisisting lists). -->
 	
-	<bean id="escoAvailableListFinder" class="org.esco.sympa.portlet.availablelistsfinder.AvailableListsFinderBasicImpl">
+	<bean id="escoAvailableListFinder" class="org.esco.sympa.domain.listfinder.services.AvailableListsFinderBasicImpl">
 		<!-- 
 		 |	This value is replaced by the email domain fetched from the current establishment via the class LdapEstablishment.
 		 |	Therefore, the value normally should not have any noticable effect on the application  

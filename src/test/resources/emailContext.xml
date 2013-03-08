@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr Copyright (C) 2010 
+	Esup Portail http://www.esup-portail.org @Author (C) 2010 Olivier Franco 
+	<Olivier.Franco@insa-lyon.fr> @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr> 
+	@Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr> @Contributor 
+	(C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr> Licensed under the 
+	GPL License, (please see the LICENCE file) -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<!-- service It is important that this class be a singleton as multiple 
+		controllers should have the same instance of this class -->
+	<bean id="domainService" class="org.esupportail.sympa.domain.services.DomainServiceImpl"
+		scope="singleton">
+
+		<property name="serverList">
+			<map>
+				<entry key="esup-portlet-sympa">
+					<bean
+						class="org.esupportail.sympa.domain.services.sympa.SpringCachingSympaServerAxisWsImpl"
+						scope="globalSession">
+						<aop:scoped-proxy />
+						
+						<!-- Url to access the admin page of a list. %l is replaced with the 
+							list name -->
+						<property name="adminUrl" value="${liste.url}/admin/%l" />
+						<!-- Url to access the archives page of a list. %l is replaced with 
+							the list name -->
+						<property name="archivesUrl" value="${liste.url}/arc/%l" />
+						<!-- connectUrl, if present, is used to authenticate before proceding 
+							to the sympa page. %s is replaced with the sympa url -->
+						<!-- <property name="connectUrl" value="${cas.base.server.url}/login?service=%s%3Fchecked_cas=0" 
+							/> -->
+						<property name="name" value="esup-portlet-sympa" />
+
+						<property name="homeUrl" value="${liste.url}/net" />
+						<property name="endPointUrl" value="${liste.soap.url}" />
+						<property name="timeout" value="5000" />
+						<property name="credentialRetriever" ref="${credentialRetriever}" />
+						<property name="indentityRetriever" ref="userIdentityRetrieverImpl" />
+						<property name="cacheManager" ref="cacheManager" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- Email configuration -->
+
+	<!-- SMTP server for simple email (simple form + smtp) -->
+	<bean id="smtpService"
+		class="org.esupportail.commons.services.smtp.SimpleSmtpServiceImpl"
+		lazy-init="true" scope="globalSession">
+		<aop:scoped-proxy />
+		<property name="servers">
+			<list>
+				<ref bean="smtpServer1" />
+			</list>
+		</property>
+		<property name="fromAddress" ref="smtpFromAddress" />
+		<property name="interceptAll" value="false" />
+		<property name="charset" value="UTF-8" />
+	</bean>
+	<!-- Defines the SMTP server to use in order to send mail with the simple 
+		email form -->
+	<bean id="smtpServer1" class="org.esupportail.commons.services.smtp.SmtpServer">
+		<property name="host" value="frmp0155.frml.bull.fr" />
+		<property name="port" value="25" />
+		<property name="user" value="" />
+		<property name="password" value="" />
+	</bean>
+	<!-- A default from address. Is replaced by the users email address defined 
+		in their mail ldap attribute. Therefor, not so important to define these 
+		values -->
+	<bean id="smtpFromAddress" class="javax.mail.internet.InternetAddress">
+		<property name="address" value="webmaster@domain.org" />
+		<property name="personal" value="WebMaster" />
+	</bean>
+	<!-- Defines the available outgoing email configurations. A configuration 
+		has a list of matching profiles. If there is a match with the users email 
+		profile defined in ldap, then that email client is used. If no email profile 
+		is matched, then the simple smtp form is used. -->
+	<bean id="emailConfig" class="org.esco.sympa.domain.model.email.EmailConfiguration">
+		<property name="utils">
+			<list>
+				<ref bean="acadEmailUtil" />
+				<ref bean="entEmailUtil" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="acadEmailUtil"
+		class="org.esco.sympa.domain.model.email.EmailUtilityRegexpMatch">
+		<property name="type" value="HORDE" />
+		<property name="patterns">
+			<list>
+				<value>.+@ac-orleans-tours.fr</value>
+				<value>.+@demo-orleans-tours.fr</value>
+			</list>
+		</property>
+		<property name="url"
+			value="http://frmp0155.frml.bull.fr/horde/imp/compose.php?mailbox=INBOX" />
+	</bean>
+
+	<bean id="entEmailUtil"
+		class="org.esco.sympa.domain.model.email.EmailUtilityRegexpMatch">
+		<property name="type" value="HORDE" />
+		<property name="patterns">
+			<list>
+				<value>.+@netocentre.fr</value>
+			</list>
+		</property>
+		<property name="url"
+			value="http://frmp0155.frml.bull.fr/horde/imp/compose.php?mailbox=INBOX" />
+	</bean>
+
+
+
+	<!-- Bean responsible for fetching the list of existing groups -->
+	<bean id="myExistingListsFinder"
+		class="org.esupportail.sympa.domain.listfinder.services.SympaExistingListFinder">
+		<property name="domainService" ref="domainService" />
+	</bean>
+
+	<!-- Component that filters the groups based on the pattern in the model -->
+	<bean id="mylistsFromGroupsPatternMatcher"
+		class="org.esco.sympa.domain.listfinder.services.ListsFromGroupsPatternMatcherBasicImpl" />
+
+	<!-- Finds the availabli lists to create not included the lists already 
+		created / existing. -->
+	<bean id="availableListFinder"
+		class="org.esco.sympa.domain.listfinder.services.AvailableListsFinderBasicImpl">
+		<!-- This value is replaced by the email domain fetched from the current 
+			establishments ldap entry. The value servers as a default. -->
+		<property name="listDomain">
+			<value>list.netocentre.fr</value>
+		</property>
+		<!-- Bean responsible for fetching the list of groups -->
+		<property name="etabGroupsFinder">
+			<ref bean="myEtabGroupsFinder" />
+		</property>
+		<!-- Bean responsible for fetching the list of existing groups -->
+		<property name="etabExistingListsFinder">
+			<ref local="myExistingListsFinder" />
+		</property>
+		<!-- Component that filters the groups based on the pattern in the model -->
+		<property name="listsFromGroupsPatternMatcher">
+			<ref local="mylistsFromGroupsPatternMatcher" />
+		</property>
+	</bean>
+
+</beans>
