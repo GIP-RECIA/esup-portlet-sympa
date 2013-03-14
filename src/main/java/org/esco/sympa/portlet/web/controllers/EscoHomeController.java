@@ -29,6 +29,7 @@ import org.esco.sympa.domain.model.UAI;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
 import org.esco.sympa.domain.services.IEscoDomainService;
+import org.esco.sympa.util.UserInfoHelper;
 import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
@@ -111,7 +112,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			form.setInvalidateCache(false);
 		}
 
-		Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+		Map<String, String> userInfo = UserInfoHelper.getUserInfo(request);
 
 		// Add user informations in portal attributes map.
 		userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);

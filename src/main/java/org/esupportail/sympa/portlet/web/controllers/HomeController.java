@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.esco.sympa.domain.model.LdapEstablishment;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
+import org.esco.sympa.util.UserInfoHelper;
 import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
@@ -82,7 +83,7 @@ public class HomeController extends ReentrantFormController {
 			final Errors errors) throws Exception {
 		HomeForm form = (HomeForm)command;
 
-		Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
+		Map<String, String> userInfo = UserInfoHelper.getUserInfo(request);
 
 		// Build the placeholder values and put it in session.
 		Map<String, String> placeholderValuesMap = this.getUserAttributeMapping()

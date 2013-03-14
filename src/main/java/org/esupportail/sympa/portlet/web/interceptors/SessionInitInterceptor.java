@@ -19,6 +19,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletSession;
 
+import org.esco.sympa.util.UserInfoHelper;
 import org.esupportail.sympa.domain.model.UserPreferences;
 import org.springframework.web.portlet.handler.HandlerInterceptorAdapter;
 
@@ -27,75 +28,75 @@ public class SessionInitInterceptor extends HandlerInterceptorAdapter {
 	private UserPreferences userPreferences;
 	private String userInfoMailAttr;
 	private Set<String> availableRoles;
-	
+
 	/* (non-Javadoc)
 	 * @see org.springframework.web.portlet.handler.HandlerInterceptorAdapter#preHandle(javax.portlet.PortletRequest, javax.portlet.PortletResponse, java.lang.Object)
 	 */
 	@Override
-	protected boolean preHandle(PortletRequest request,
-			PortletResponse response, Object handler) throws Exception {
+	protected boolean preHandle(final PortletRequest request,
+			final PortletResponse response, final Object handler) throws Exception {
 		// ensure we have a portlet session
 		@SuppressWarnings("unused")
 		PortletSession session = request.getPortletSession(true);
 		// retrieve userid
-		if ( userPreferences.getUserId() == null ) {
+		if ( this.userPreferences.getUserId() == null ) {
 			// new bean
-			userPreferences.setUserId(request.getRemoteUser());
-			@SuppressWarnings("unchecked")
-			Map<String,String> userinfo = (Map<String,String>)request.getAttribute(PortletRequest.USER_INFO);
-			String mail = userinfo.get(getUserInfoMailAttr());
-			if ( mail != null ) 
+			this.userPreferences.setUserId(request.getRemoteUser());
+			Set<String> userRoles = new HashSet<String>();
+			Map<String,String> userinfo = UserInfoHelper.getUserInfo(request);
+			String mail = userinfo.get(this.getUserInfoMailAttr());
+			if ( mail != null ) {
 				mail = mail.trim();
+			}
 			if ( mail.length() > 0 ) {
-				userPreferences.setMail(mail);
+				this.userPreferences.setMail(mail);
 			}
 			// retrieve roles
-			Set<String> userRoles = new HashSet<String>();
-			for ( String r : availableRoles ) {
+			for ( String r : this.availableRoles ) {
 				if ( request.isUserInRole(r) ) {
 					userRoles.add(r);
 				}
 			}
-			userPreferences.setUserRoles(userRoles);
+			this.userPreferences.setUserRoles(userRoles);
 		}
-		
+
 		return true;
 	}
 	/**
 	 * @return the userPreferences
 	 */
 	public UserPreferences getUserPreferences() {
-		return userPreferences;
+		return this.userPreferences;
 	}
 	/**
 	 * @param userPreferences the userPreferences to set
 	 */
-	public void setUserPreferences(UserPreferences userPreferences) {
+	public void setUserPreferences(final UserPreferences userPreferences) {
 		this.userPreferences = userPreferences;
 	}
 	/**
 	 * @return the userInfoMailAttr
 	 */
 	public String getUserInfoMailAttr() {
-		return userInfoMailAttr;
+		return this.userInfoMailAttr;
 	}
 	/**
 	 * @param userInfoMailAttr the userInfoMailAttr to set
 	 */
-	public void setUserInfoMailAttr(String userInfoMailAttr) {
+	public void setUserInfoMailAttr(final String userInfoMailAttr) {
 		this.userInfoMailAttr = userInfoMailAttr;
 	}
 	/**
 	 * @return the availableRoles
 	 */
 	public Set<String> getAvailableRoles() {
-		return availableRoles;
+		return this.availableRoles;
 	}
 	/**
 	 * @param availableRoles the availableRoles to set
 	 */
-	public void setAvailableRoles(Set<String> availableRoles) {
+	public void setAvailableRoles(final Set<String> availableRoles) {
 		this.availableRoles = availableRoles;
 	}
-	
+
 }

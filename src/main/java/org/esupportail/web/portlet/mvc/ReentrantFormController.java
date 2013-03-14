@@ -21,43 +21,43 @@ import org.springframework.web.portlet.mvc.AbstractCommandController;
 
 /**
  * @author ofranco
- * Override referenceData 
+ * Override referenceData
  * Override initBinderFor Custom data binding
- * Override handleAction 
- * Override 
+ * Override handleAction
+ * Override
  */
 public class ReentrantFormController extends AbstractCommandController {
-	
+
 	private Log logger = LogFactory.getLog(ReentrantFormController.class);
-	
+
 	private String viewName;
-	
+
 	protected UserAgentInspector userAgentInspector;
-	private final String ESUPSYMPA_ADMIN_VIEW = "esupsympaAdminView";
+
 	private final String ESUPSYMPA_WIDE_VIEW = "esupsympaWideView";
 	private final String ESUPSYMPA_NARROW_VIEW = "esupsympaNarrowView";
 	private final String ESUPSYMPA_MOBILE_VIEW = "esupsympaMobileView";
+
 	/* (non-Javadoc)
 	 * @see org.springframework.web.portlet.mvc.AbstractCommandController#handleRender(javax.portlet.RenderRequest, javax.portlet.RenderResponse, java.lang.Object, org.springframework.validation.BindException)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	
-	protected ModelAndView handleRender(RenderRequest request,
-			RenderResponse response, Object command, BindException errors)
-			throws Exception {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected ModelAndView handleRender(final RenderRequest request,
+			final RenderResponse response, final Object command, final BindException errors)
+					throws Exception {
 		// Fetch errors model as starting point, containing form object under
 		// "commandName", and corresponding Errors instance under internal key.
 		Map model = errors.getModel();
-		
+
 		// Merge reference data into model, if any.
-		Map referenceData = referenceData(request, errors.getTarget(), errors);
+		Map referenceData = this.referenceData(request, errors.getTarget(), errors);
 		if (referenceData != null) {
 			model.putAll(referenceData);
 		}
 
-		boolean isListAdmin = (Boolean) model.get("isListAdmin") ;	
-		
+		boolean isListAdmin = (Boolean) model.get("isListAdmin") ;
+
 		// Merge control attributes into model, if any
 		/*.
 		if (controlModel != null) {
@@ -65,56 +65,57 @@ public class ReentrantFormController extends AbstractCommandController {
 		}*/
 		// Trigger rendering of the specified view, using the final model.
 		//return new ModelAndView(getViewName(), model);
-		
-	    if(userAgentInspector.isMobile(request)) {
-	    	
-			return new ModelAndView(ESUPSYMPA_MOBILE_VIEW, model);
-	    } else {
-			if (isListAdmin) {
-				return new ModelAndView(ESUPSYMPA_ADMIN_VIEW, model);
+
+		if(this.userAgentInspector.isMobile(request)) {
+			return new ModelAndView(this.ESUPSYMPA_MOBILE_VIEW, model);
+		} else {
+			WindowState state = request.getWindowState();
+			if (WindowState.MAXIMIZED.equals(state)) {
+				return new ModelAndView(this.ESUPSYMPA_WIDE_VIEW, model);
 			} else {
-				WindowState state = request.getWindowState();
-				if (WindowState.MAXIMIZED.equals(state)) {
-					return new ModelAndView(ESUPSYMPA_WIDE_VIEW, model);
-				} else {
-					return new ModelAndView(ESUPSYMPA_NARROW_VIEW, model);
-				}
+				return new ModelAndView(this.ESUPSYMPA_NARROW_VIEW, model);
 			}
-	    }		
+		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	public Map referenceData(PortletRequest request, Object command, Errors errors) throws Exception {
+
+	@SuppressWarnings("rawtypes")
+	public Map referenceData(final PortletRequest request, final Object command, final Errors errors) throws Exception {
 		return null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.springframework.web.portlet.mvc.BaseCommandController#getCommand(javax.portlet.PortletRequest)
 	 * will be called ONCE in AbstractCommandController
 	 */
 	@Override
-	protected Object getCommand(PortletRequest request) throws Exception {
+	protected Object getCommand(final PortletRequest request) throws Exception {
 		// maybe call super.getCommand for intanciating commanClass !
 		//super.getCommand(request);
-		if ( logger.isDebugEnabled() )
-			logger.debug("entering getCommand ");
+		if ( this.logger.isDebugEnabled() ) {
+			this.logger.debug("entering getCommand ");
+		}
 		PortletSession session = request.getPortletSession(false);
 		if (session == null) {
 			throw new PortletSessionRequiredException("Could not obtain portlet session");
 		}
-		Object command = session.getAttribute(getRenderCommandSessionAttributeName());
+		Object command = session.getAttribute(this.getRenderCommandSessionAttributeName());
 		if (command != null) {
-			if ( logger.isDebugEnabled() ) logger.debug("having command from session ...");
-			return alterCommand(command,request);
+			if ( this.logger.isDebugEnabled() ) {
+				this.logger.debug("having command from session ...");
+			}
+			return this.alterCommand(command,request);
 		}
-		if ( logger.isDebugEnabled() ) logger.debug("generating new command ...");
-		return newCommand(request);
+		if ( this.logger.isDebugEnabled() ) {
+			this.logger.debug("generating new command ...");
+		}
+		return this.newCommand(request);
 	}
-	
-	public Object alterCommand(Object command, PortletRequest request) throws Exception {
+
+	public Object alterCommand(final Object command, final PortletRequest request) throws Exception {
 		return command;
 	}
-	
-	public Object newCommand(PortletRequest request) throws Exception {
+
+	public Object newCommand(final PortletRequest request) throws Exception {
 		return super.createCommand();
 	}
 	/* (non-Javadoc)
@@ -139,8 +140,8 @@ public class ReentrantFormController extends AbstractCommandController {
 	protected String getRenderCommandSessionAttributeName() {
 		String attr = this.getClass().getName();
 		attr += ".command";
-		if ( logger.isDebugEnabled() ) {
-			logger.debug("render Command session attribute name = "+attr);
+		if ( this.logger.isDebugEnabled() ) {
+			this.logger.debug("render Command session attribute name = "+attr);
 		}
 		return attr;
 	}
@@ -151,8 +152,8 @@ public class ReentrantFormController extends AbstractCommandController {
 	protected String getRenderErrorsSessionAttributeName() {
 		String attr = this.getClass().getName();
 		attr += ".errors";
-		if ( logger.isDebugEnabled() ) {
-			logger.debug("render Error session attribute name = "+attr);
+		if ( this.logger.isDebugEnabled() ) {
+			this.logger.debug("render Error session attribute name = "+attr);
 		}
 		return attr;
 	}
@@ -160,27 +161,27 @@ public class ReentrantFormController extends AbstractCommandController {
 	 * @return the viewName
 	 */
 	public String getViewName() {
-		return viewName;
+		return this.viewName;
 	}
 	/**
 	 * @param viewName the viewName to set
 	 */
-	public String setViewName(String viewName) {
+	public String setViewName(final String viewName) {
 		return this.viewName = viewName;
 	}
 
 	@Override
-	protected void handleAction(ActionRequest request, ActionResponse response,
-			Object command, BindException bindException) throws Exception {
-		handleActionRequest(request,response,command,bindException);
+	protected void handleAction(final ActionRequest request, final ActionResponse response,
+			final Object command, final BindException bindException) throws Exception {
+		this.handleActionRequest(request,response,command,bindException);
 	}
-	
-	public void handleActionRequest(ActionRequest request, ActionResponse response,
-			Object command, BindException bindException) throws Exception {
-		
+
+	public void handleActionRequest(final ActionRequest request, final ActionResponse response,
+			final Object command, final BindException bindException) throws Exception {
+
 	}
-	
-	public void setUserAgentInspector(UserAgentInspector userAgentInspector) {
+
+	public void setUserAgentInspector(final UserAgentInspector userAgentInspector) {
 		this.userAgentInspector = userAgentInspector;
 	}
 }

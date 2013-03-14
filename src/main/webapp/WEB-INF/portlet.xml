@@ -22,7 +22,7 @@
     <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
     <init-param>
       <name>contextConfigLocation</name>
-      <value>/WEB-INF/context/portlet/sympa-portlet.xml</value>
+      <value>/WEB-INF/context/portlet/esco-sympa-portlet.xml</value>
     </init-param>
     <init-param>
     	<name>defaultHtmlEscape</name>

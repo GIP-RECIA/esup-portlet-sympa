@@ -30,7 +30,7 @@ public class EscoSympaExistingListFinder implements IExistingListsFinder, Initia
 	/** {@inheritDoc} */
 	public Collection<String> findExistingLists(final Map<String, String> userInfo) {
 		final String uai = userInfo.get(this.ldapPerson.getUaiAttribute());
-		final String domainName = userInfo.get(this.ldapEstablishment.getDomainAttribute());
+		final String domainName = this.ldapEstablishment.getDefaultDomain();
 
 		Assert.hasText(uai, "No RNE provided in user info !");
 		Assert.hasText(domainName, "No domain name provided in user info !");

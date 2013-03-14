@@ -75,7 +75,7 @@
 
 <c:when test="${not empty sympaList and fn:length(sympaList) gt 0}">
         
-		    <span class="esupsympaportletresults"><p>>>> <spring:message code="results.caption" arguments="${fn:length(sympaList)}" htmlEscape="true"/></p></span>
+		    <span class="esupsympaportletresults"><p> <spring:message code="results.caption" arguments="${fn:length(sympaList)}" htmlEscape="true"/></p></span>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<ul>  
 				<li><span><spring:message code="list.name" htmlEscape="true"/></span> : <a class="esupsympaportletLink" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></li>
