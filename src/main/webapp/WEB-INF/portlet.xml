@@ -45,9 +45,15 @@
     	<role-link>${esup.sympa.group.newListForRolesLink}</role-link>
     </security-role-ref>
   </portlet>
-  <!-- attribut utilisateur à faire remonter dans la portlet-->
+  <!-- attributs utilisateur à faire remonter dans la portlet-->
   <user-attribute>
   	<name>${esup.sympa.portal.attribute.mail}</name>
+  </user-attribute>
+  <user-attribute>
+  	<name>${esup.sympa.portal.attribute.uai}</name>
+  </user-attribute>
+  <user-attribute>
+  	<name>${esup.sympa.portal.attribute.uid}</name>
   </user-attribute>
   <!-- le proxy ticket pour la portlet -->
   <user-attribute>

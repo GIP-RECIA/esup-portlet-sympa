@@ -136,6 +136,11 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			final String uid = userInfo.get(this.ldapPerson.getUidAttribute());
 			final String mail = userInfo.get(this.ldapPerson.getMailAttribute());
 			final String uai = userInfo.get(this.ldapPerson.getUaiAttribute());
+
+			Assert.hasText(uid, "UAI shouldn't be empty !");
+			Assert.hasText(uai, "UAI shouldn't be empty !");
+			Assert.hasText(mail, "UAI shouldn't be empty !");
+
 			map.put("uai", uai);
 			map.put("mail", mail);
 
