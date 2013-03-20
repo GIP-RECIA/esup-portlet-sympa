@@ -13,7 +13,9 @@
 
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 
-<c:choose>
+<div class="sympaTopLevel">
+
+	<c:choose>
 	<c:when test="${not empty listAdmin and listAdmin == true}">
 		<%-- If administrator --%>
 		<jsp:include page="/WEB-INF/jsp/admin/adminView.jsp" />
@@ -22,6 +24,8 @@
 		<%-- else simple user --%>
 		<jsp:include page="/WEB-INF/jsp/user/userView.jsp" />
 	</c:otherwise>
-</c:choose>
+	</c:choose>
+
+</div>
 
 <%@ include file="/WEB-INF/jsp/resources.jsp" %>

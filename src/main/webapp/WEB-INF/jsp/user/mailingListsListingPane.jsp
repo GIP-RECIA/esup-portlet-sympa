@@ -114,7 +114,9 @@
           			</c:choose>
 				</td>
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
-				<td class="c centered icon_column_with_title"><insa:icon value="${list.subscriber}"/></td>
+				<td class="c centered icon_column_with_title">
+					<insa:icon value="${list.subscriber}"/>
+				</td>
 				<td class="c centered icon_column_with_title">
 					<c:choose>
 					<c:when test="${list.owner==true}">
@@ -128,11 +130,13 @@
 					</c:otherwise>
 					</c:choose>
 				</td>
-				<td class="c centered icon_column_with_title"><insa:icon value="${list.editor}"/></td>
+				<td class="c centered icon_column_with_title">
+					<insa:icon value="${list.editor}"/>
+				</td>
 				<td class="centered icon_column_without_title">
 					<c:choose>
 					<%-- Display archive link for owners and subjects only --%>
-					<c:when test="${list.owner==true || list.subject==true}">
+					<c:when test="${list.owner==true || list.subscriber==true}">
 	        			<a class="portlet-menu-item" target="_blank" 
 	        				href="<c:out value="${list.listArchivesUrl}" escapeXml="true"/>" 
 	          				title="<spring:message code="gotoListArchives" arguments="${list.address}" htmlEscape="true"/>" >
