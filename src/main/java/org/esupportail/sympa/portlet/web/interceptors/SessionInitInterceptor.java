@@ -19,7 +19,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletSession;
 
-import org.esco.sympa.util.UserInfoHelper;
+import org.esco.sympa.util.UserInfoService;
 import org.esupportail.sympa.domain.model.UserPreferences;
 import org.springframework.web.portlet.handler.HandlerInterceptorAdapter;
 
@@ -43,7 +43,7 @@ public class SessionInitInterceptor extends HandlerInterceptorAdapter {
 			// new bean
 			this.userPreferences.setUserId(request.getRemoteUser());
 			Set<String> userRoles = new HashSet<String>();
-			Map<String,String> userinfo = UserInfoHelper.getUserInfo(request);
+			Map<String,String> userinfo = UserInfoService.getInstance().getUserInfo(request);
 			String mail = userinfo.get(this.getUserInfoMailAttr());
 			if ( mail != null ) {
 				mail = mail.trim();

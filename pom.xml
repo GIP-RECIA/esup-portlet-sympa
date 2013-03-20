@@ -49,6 +49,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.esupportail</groupId>
 			<artifactId>esup-commons2-springmvc-portlet</artifactId>
 			<version>0.2.8</version>
@@ -75,7 +81,7 @@
 		<dependency>
 			<groupId>org.apache.pluto</groupId>
 			<artifactId>pluto-taglib</artifactId>
-			<version>1.1.3</version>
+			<version>1.1.7</version>
 			<type>jar</type>
 			<scope>provided</scope>
 			<exclusions>
@@ -177,10 +183,18 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<includes>
+		          	<include>**/*.xml</include>
+		          	<include>**/*.properties</include>
+		        </includes>
 			</resource>
 			<resource>
 				<directory>src/main/webapp</directory>
 				<filtering>true</filtering>
+				<includes>
+		          	<include>**/*.xml</include>
+		          	<include>**/*.properties</include>
+		        </includes>
 			</resource>
 		</resources>
 		<testResources>
@@ -194,8 +208,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -272,17 +286,17 @@
 							<value>true</value>
 						</systemProperty>
 					</systemProperties>
+					<webAppSourceDirectory>target/esup-portlet-sympa</webAppSourceDirectory>
+					<webAppConfig implementation="org.mortbay.jetty.plugin.Jetty6PluginWebAppContext">
+						<sessionHandler implementation="org.mortbay.jetty.servlet.SessionHandler">
+							<sessionManager implementation="org.mortbay.jetty.servlet.HashSessionManager">
+								<sessionPath>/</sessionPath>
+							</sessionManager>
+						</sessionHandler>
+					</webAppConfig>
 				</configuration>
 			</plugin>
-
-			<plugin>
-		        <groupId>org.mortbay.jetty</groupId>
-		        <artifactId>maven-jetty-plugin</artifactId>
-		        <version>6.1.10</version>
-		        <configuration>
-					
-		        </configuration>
-			</plugin>			
+		
 		</plugins>
 		<pluginManagement>
 			<plugins>

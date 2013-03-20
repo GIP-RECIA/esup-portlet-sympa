@@ -62,11 +62,13 @@ function handleCreateList(dialogDomElement, e) {
 	//It is in fact the server that will open a connection to the ESCO-SympaRemote php page
 	//This is because 1)  It will have access to the site and 2)  Avoids cross domain scripting security limitations
 	
+	var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
+	
 	$.ajax({
 
         async: true,
         type: 'POST',
-        url: '/esup-portlet-sympa/servlet-ajax/doCreateList',
+        url: ajaxServletUrl + '/doCreateList',
         data: {
         	queryString : queryString
         },
@@ -240,6 +242,8 @@ function intializeCreateList(uai) {
  */
 
 function initJstree(uai) {
+	var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
+	
     //When a node is opened, ensure all the drag/drop functionality
     //is binded.  
     $("#createListTree").bind("loaded.jstree", function (event, data) {
@@ -265,7 +269,7 @@ function initJstree(uai) {
 
             "ajax": {
 
-                "url": "/esup-portlet-sympa/servlet-ajax/jstreeData",
+                "url": ajaxServletUrl + "/jstreeData",
                 "traditional" : true,
 
                 "data": function() {
@@ -310,7 +314,7 @@ function initJstree(uai) {
                 },
                 "folder": {
                     "icon": {
-                        "image": "/esup-portlet-sympa/media/icons/folder.png"
+                        "image": ajaxServletUrl + "/../media/icons/folder.png"
                     	//"image" : ""
                     },
                     // can have files and other folders inside of it, but NOT `drive` nodes
@@ -320,7 +324,7 @@ function initJstree(uai) {
                 // The `drive` nodes 
                 "group": {
                     "icon": {
-                        "image": "/esup-portlet-sympa/media/icons/groupe.png"
+                        "image": ajaxServletUrl + "/../media/icons/groupe.png"
                     	//"image" : ""
                     },
                     // can have files and folders inside, but NOT other `drive` nodes

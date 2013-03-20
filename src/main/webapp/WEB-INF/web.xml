@@ -53,6 +53,16 @@
         <filter-name>CAS Validation Filter</filter-name>
         <url-pattern>/proxy/receptor</url-pattern>
     </filter-mapping>
+    
+    <filter>
+        <filter-name>requestContextFilter</filter-name>
+        <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	        <filter-name>requestContextFilter</filter-name>
+	        <servlet-name>spring</servlet-name> <!-- Dispatcher Servlet name -->
+	</filter-mapping>
+
 	<!-- Listener pour le lancement de Spring au démarrage du contexte -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -73,9 +83,23 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
+	<!-- Spring web MVC -->
+	<servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    
 	<!-- Mapping du rendu -->
 	<servlet-mapping>
 		<servlet-name>ViewRendererServlet</servlet-name>
 		<url-pattern>/WEB-INF/servlet/view</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Ajax servlet -->
+	<servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/servlet-ajax/*</url-pattern>
+    </servlet-mapping>
+    
 </web-app>

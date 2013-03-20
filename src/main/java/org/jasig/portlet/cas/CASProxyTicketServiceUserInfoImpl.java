@@ -24,7 +24,7 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.sympa.util.UserInfoHelper;
+import org.esco.sympa.util.UserInfoService;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -45,9 +45,10 @@ public class CASProxyTicketServiceUserInfoImpl implements ICASProxyTicketService
 		this.ticketValidator = ticketValidator;
 	}
 
+	@Override
 	public String haveProxyTicket(final PortletRequest request) {
 		// retrieve the CAS ticket from the UserInfo map
-		Map<String,String> userinfo = UserInfoHelper.getUserInfo(request);
+		Map<String,String> userinfo = UserInfoService.getInstance().getUserInfo(request);
 		final String ticket = userinfo.get("casProxyTicket");
 
 		return ticket;
@@ -56,6 +57,7 @@ public class CASProxyTicketServiceUserInfoImpl implements ICASProxyTicketService
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.cas.ICASProxyTicketService#getProxyTicket(javax.portlet.PortletRequest)
 	 */
+	@Override
 	public Assertion getProxyTicket(final PortletRequest request) {
 
 		// retrieve the CAS ticket from the UserInfo map
@@ -87,6 +89,7 @@ public class CASProxyTicketServiceUserInfoImpl implements ICASProxyTicketService
 	 * (non-Javadoc)
 	 * @see org.jasig.portlet.cas.ICASProxyTicketService#getCasServiceToken(edu.yale.its.tp.cas.client.CASReceipt, java.lang.String)
 	 */
+	@Override
 	public String getCasServiceToken(final Assertion assertion, final String target) {
 		final String proxyTicket = assertion.getPrincipal().getProxyTicketFor(target);
 		if (proxyTicket == null){

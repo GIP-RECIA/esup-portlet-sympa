@@ -26,14 +26,18 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>
+				<!-- MBD: temp, is replaced by maven filter in prod
+ 				<value>
 					file:/home/max/git/esup-portlet-sympa/esco-config.properties
-				</value>
+				</value> -->
 				<value>classpath:esco-main.properties</value>
 			</list>
 		</property>
 	</bean>
 
+	<!-- Properties for Spring 3 annotations (@Value) -->
+  	<util:properties id="config" location="classpath:esco-main.properties" />
+  
 	<!-- ehcache -->
 	<bean id="cacheManager"
 		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">

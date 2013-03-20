@@ -53,6 +53,7 @@ import org.apache.log4j.Logger;
 import org.esco.sympa.domain.groupfinder.IEtabGroupsFinder;
 import org.esupportail.commons.services.smtp.SimpleSmtpServiceImpl;
 import org.esupportail.commons.services.smtp.SmtpService;
+import org.esupportail.commons.utils.Assert;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
 import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.listfinder.model.ModelRequest;
@@ -61,6 +62,7 @@ import org.esupportail.sympa.domain.listfinder.model.PreparedRequest;
 import org.esupportail.sympa.portlet.web.controllers.HomeController;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -73,16 +75,27 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
-@Scope("request")
+@Scope("session")
 public class ServletAjaxController implements InitializingBean {
 
-	private Logger log = Logger.getLogger(ServletAjaxController.class);
+	private final Logger log = Logger.getLogger(ServletAjaxController.class);
 
 	@Autowired
 	protected ApplicationContext context;
 
 	@Autowired
 	protected HttpServletRequest request;
+
+	@Autowired
+	protected IDaoService daoService;
+
+	@Autowired
+	protected SmtpService smtp;
+
+	/** Autowire the bean with Id jsTreeGroupsFinder. */
+	@Autowired
+	@Qualifier("jsTreeGroupsFinder")
+	protected IEtabGroupsFinder jsTreeGroupFinder;
 
 	@Resource(name="config")
 	private Properties properties;
@@ -91,12 +104,18 @@ public class ServletAjaxController implements InitializingBean {
 
 	protected Locale locale;
 
+	@Override
 	public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.context, "No app context injected !");
+		Assert.notNull(this.request, "No HTTP request injected !");
+		Assert.notNull(this.daoService, "No DAO service injected !");
+		Assert.notNull(this.smtp, "No SMTP service injected !");
+		Assert.notNull(this.jsTreeGroupFinder, "No JS tree group finder injected !");
+		Assert.notNull(this.properties, "No properties injected !");
+
 		this.request.setCharacterEncoding("UTF-8");
 		this.locale = RequestContextUtils.getLocale(this.request);
 	}
-
-
 
 	/**
 	 * @param establishementId the UAI, id of the establishment
@@ -122,24 +141,21 @@ public class ServletAjaxController implements InitializingBean {
 			//return new ModelAndView("error", modelMap);
 		}
 
-		IDaoService daoService = (IDaoService) this.context.getBean("daoService");
-		Model model = daoService.getModel(new BigInteger(modelId));
-
-
+		Model model = this.daoService.getModel(new BigInteger(modelId));
 
 		modelMap.put("listDescription", listDescription);
 
-		ModelSubscribers modelSubscribers = daoService.getModelSubscriber(model);
+		ModelSubscribers modelSubscribers = this.daoService.getModelSubscriber(model);
 		this.log.debug("Additional groups filter is " + modelSubscribers.getGroupFilter());
 		modelMap.put("subscribersGroup", modelSubscribers.getGroupFilter());
 
 		List<JsCreateListRow> editorsAliases = new ArrayList<JsCreateListRow>();
 
-		List<PreparedRequest> listPreparedRequest = daoService.getAllPreparedRequests();
+		List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
 
 		for (PreparedRequest preparedRequest : listPreparedRequest) {
 			JsCreateListRow row = new JsCreateListRow();
-			ModelRequest modelRequest = daoService.getModelRequest(preparedRequest, model);
+			ModelRequest modelRequest = this.daoService.getModelRequest(preparedRequest, model);
 			switch(modelRequest.getCategoryAsEnum()) {
 			case CHECKED:
 				row.setChecked(true);
@@ -161,11 +177,8 @@ public class ServletAjaxController implements InitializingBean {
 		}
 
 		modelMap.put("editorsAliases", editorsAliases);
-
 		modelMap.put("createListURLBase", this.createListURLBase);
-
 		modelMap.put("type", model.getModelName());
-
 
 		Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
 		Matcher m = p.matcher(model.getListname());
@@ -196,11 +209,12 @@ public class ServletAjaxController implements InitializingBean {
 
 		request.getSession().setAttribute("createListAdditionalGroupsCache", new HashMap<String, List<String>>());
 
-		return new ModelAndView("esupsympaCreateList", modelMap);
+		return new ModelAndView("admin/createMailingListForm", modelMap);
 	}
 
 	@RequestMapping("/doCreateList")
-	public @ResponseBody String doCreateList(final String queryString, final HttpServletRequest request, final HttpServletResponse response) {
+	public @ResponseBody String doCreateList(final String queryString, final HttpServletRequest request,
+			final HttpServletResponse response) {
 
 		try {
 			this.log.debug("Connecting to SypmaRemote with the url [" + this.createListURLBase + "]");
@@ -266,7 +280,6 @@ public class ServletAjaxController implements InitializingBean {
 		return "Error";
 	}
 
-
 	/**
 	 * Send an email.
 	 * This email is BCC sended to the sender.
@@ -279,7 +292,9 @@ public class ServletAjaxController implements InitializingBean {
 	 * @param response HTTP rersponse
 	 */
 	@RequestMapping("/sendEmail")
-	public void sendEmail(final String fromAddress, final String toAddress, final String subject, final String message, final HttpServletRequest request, final HttpServletResponse response) {
+	public void sendEmail(final String fromAddress, final String toAddress,
+			final String subject, final String message, final HttpServletRequest request,
+			final HttpServletResponse response) {
 		// MBD: Envoi avec BCC au from.
 		// MBD: Ajout du choix du sujet du mail
 		try {
@@ -291,19 +306,17 @@ public class ServletAjaxController implements InitializingBean {
 			InternetAddress[] bccs = new InternetAddress[1];
 			bccs[0] = from;
 
-			SmtpService smtp = (SmtpService) this.context.getBean("smtpService");
-
-			if (smtp instanceof SimpleSmtpServiceImpl) {
-				SimpleSmtpServiceImpl impl = (SimpleSmtpServiceImpl) smtp;
+			if (this.smtp instanceof SimpleSmtpServiceImpl) {
+				SimpleSmtpServiceImpl impl = (SimpleSmtpServiceImpl) this.smtp;
 				impl.setFromAddress(from);
 			}
 
 			//smtp.send(tos, "-", "", message);
 
 			if (StringUtils.isEmpty(subject)) {
-				smtp.sendtocc(tos, null, bccs, "-", null, message, null);
+				this.smtp.sendtocc(tos, null, bccs, "-", null, message, null);
 			} else {
-				smtp.sendtocc(tos, null, bccs, subject, null, message, null);
+				this.smtp.sendtocc(tos, null, bccs, subject, null, message, null);
 			}
 
 		} catch (UnsupportedEncodingException ex) {
@@ -319,7 +332,9 @@ public class ServletAjaxController implements InitializingBean {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/jstreeData")
-	public @ResponseBody List<JsList> jstreeData(final String establishementId, @RequestParam(value = "selectedGroups", required = false) final String[] selectedGroups, final HttpServletRequest request) {
+	public @ResponseBody List<JsList> jstreeData(final String establishementId,
+			@RequestParam(value = "selectedGroups", required = false) final String[] selectedGroups,
+			final HttpServletRequest request) {
 
 		List<String> additionalGroups = null;
 		Map<String, List<String>> createListAdditionalGroupsCache = null;
@@ -342,15 +357,13 @@ public class ServletAjaxController implements InitializingBean {
 		//if the list was not in the cache, then fetch them
 		if (additionalGroups == null) {
 			//Fetch the list of available lists
-			IEtabGroupsFinder availableListFinder =
-					(IEtabGroupsFinder) this.context.getBean("jsTreeGroupsFinder");
 
 			// Construct user info map to call the groups finder.
 			Map<String, String> userInfo = new HashMap<String, String>();
 			String uaiUserPropertyKey = this.properties.getProperty("portal.attribute.uai");
 			userInfo.put(uaiUserPropertyKey, establishementId);
 
-			Collection<String> additionalGroupsColl = availableListFinder.findGroupsOfEtab(userInfo );
+			Collection<String> additionalGroupsColl = this.jsTreeGroupFinder.findGroupsOfEtab(userInfo );
 
 			additionalGroups = new ArrayList<String>(additionalGroupsColl);
 			Collections.sort(additionalGroups);

@@ -66,16 +66,22 @@ public class ReentrantFormController extends AbstractCommandController {
 		// Trigger rendering of the specified view, using the final model.
 		//return new ModelAndView(getViewName(), model);
 
+		ModelAndView mv = null;
+
 		if(this.userAgentInspector.isMobile(request)) {
-			return new ModelAndView(this.ESUPSYMPA_MOBILE_VIEW, model);
+			mv = new ModelAndView(this.ESUPSYMPA_MOBILE_VIEW, model);
 		} else {
 			WindowState state = request.getWindowState();
 			if (WindowState.MAXIMIZED.equals(state)) {
-				return new ModelAndView(this.ESUPSYMPA_WIDE_VIEW, model);
+				mv = new ModelAndView(this.ESUPSYMPA_WIDE_VIEW, model);
 			} else {
-				return new ModelAndView(this.ESUPSYMPA_NARROW_VIEW, model);
+				mv = new ModelAndView(this.ESUPSYMPA_NARROW_VIEW, model);
 			}
+
+			mv.addObject("listAdmin", isListAdmin);
 		}
+
+		return mv;
 	}
 
 	@SuppressWarnings("rawtypes")

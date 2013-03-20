@@ -39,11 +39,13 @@ function handleOpenCreateList(e) {
 
     console.log("List desc : " + listDescription);
     
+    var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
+    
     $.ajax({
 
         async: true,
         type: 'POST',
-        url: '/esup-portlet-sympa/servlet-ajax/loadCreateList',
+        url: ajaxServletUrl + '/loadCreateList',
         data: {
             "establishementId": uai,
             "modelId": modelId,
