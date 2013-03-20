@@ -28,9 +28,10 @@ public class EscoSympaExistingListFinder implements IExistingListsFinder, Initia
 	private LdapEstablishment ldapEstablishment;
 
 	/** {@inheritDoc} */
+	@Override
 	public Collection<String> findExistingLists(final Map<String, String> userInfo) {
 		final String uai = userInfo.get(this.ldapPerson.getUaiAttribute());
-		final String domainName = this.ldapEstablishment.getDefaultDomain();
+		final String domainName = this.ldapEstablishment.getMailingListDomain(uai);
 
 		Assert.hasText(uai, "No RNE provided in user info !");
 		Assert.hasText(domainName, "No domain name provided in user info !");
@@ -74,6 +75,7 @@ public class EscoSympaExistingListFinder implements IExistingListsFinder, Initia
 
 	}
 
+	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(this.escoDomainService, "No domain service injected !");
 		Assert.notNull(this.ldapPerson, "No Ldap Person injected !");

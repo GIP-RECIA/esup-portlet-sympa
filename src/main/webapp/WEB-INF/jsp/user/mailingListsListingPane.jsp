@@ -99,10 +99,6 @@
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
 				<td>
-					<a class="portlet-menu-item" href="<c:out value="${list.listUrl}" escapeXml="true"/>" 
-						target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>">
-						<c:out value="${list.address}" escapeXml="true"/>
-					</a>
 					<c:choose>
 	        			<c:when test="${list.editor==true}">
 							<a class="portlet-menu-item mailLink" 
@@ -134,11 +130,19 @@
 				</td>
 				<td class="c centered icon_column_with_title"><insa:icon value="${list.editor}"/></td>
 				<td class="centered icon_column_without_title">
-        			<a class="portlet-menu-item" target="_blank" 
-        				href="<c:out value="${list.listArchivesUrl}" escapeXml="true"/>" 
-          				title="<spring:message code="gotoListArchives" arguments="${list.address}" htmlEscape="true"/>" >
-          				<img src="<c:url value="/media/icons/archives.png"/>" alt="<c:out value="${iconAlt}" escapeXml="true"/>" />
-          			</a>
+					<c:choose>
+					<%-- Display archive link for owners and subjects only --%>
+					<c:when test="${list.owner==true || list.subject==true}">
+	        			<a class="portlet-menu-item" target="_blank" 
+	        				href="<c:out value="${list.listArchivesUrl}" escapeXml="true"/>" 
+	          				title="<spring:message code="gotoListArchives" arguments="${list.address}" htmlEscape="true"/>" >
+	          				<img src="<c:url value="/media/icons/archives.png"/>" alt="<c:out value="${iconAlt}" escapeXml="true"/>" />
+	          			</a>
+					</c:when>
+					<c:otherwise>
+						&nbsp;
+					</c:otherwise>
+					</c:choose>	          			
           		</td>
         		<td class="icon_column_without_title">
           			<c:if test="${list.owner==true}">
