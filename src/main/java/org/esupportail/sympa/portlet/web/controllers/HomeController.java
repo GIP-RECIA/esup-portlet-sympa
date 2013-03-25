@@ -29,6 +29,7 @@ import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
 import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.AvailableMailingListsFound;
 import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.LdapPerson;
@@ -225,14 +226,23 @@ public class HomeController extends ReentrantFormController {
 			List<IMailingListModel> listMailingListModels = daoService.getMailingListModels(listModels, userInfo);
 
 			//Get the mailing lists that we can create
-			Collection<IMailingList> listLists =
+			final AvailableMailingListsFound availableLists =
 					this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
+			final Collection<IMailingList> creatableLists = availableLists.getCreatableLists();
+			final Collection<IMailingList> updatableLists = availableLists.getUpdatableLists();
+
+			//Convert domain objects to UI
+			List<JsCreateListTableRow> createTableData = this.convertMailingListsToJsListTableTow(domain, creatableLists);
+			List<JsCreateListTableRow> updateTableData = this.convertMailingListsToJsListTableTow(domain, updatableLists);
+
+			map.put("createTableData", createTableData);
+			map.put("updateTableData", updateTableData);
 
 			List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
 
 			//Convert domain objects to UI
-			if (listLists != null) {
-				for(IMailingList mailList : listLists) {
+			if (creatableLists != null) {
+				for(IMailingList mailList : creatableLists) {
 					JsCreateListTableRow row = new JsCreateListTableRow();
 					row.setName(mailList.getName().toLowerCase() + "@" + domain);
 					row.setSubject(mailList.getDescription());
@@ -242,9 +252,26 @@ public class HomeController extends ReentrantFormController {
 					tableData.add(row);
 				}
 			}
-
-			map.put("tableData", tableData);
 		}
+	}
+
+	protected List<JsCreateListTableRow> convertMailingListsToJsListTableTow(
+			final String domain, final Collection<IMailingList> creatableLists) {
+		List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
+
+		if (creatableLists != null) {
+			for(IMailingList mailList : creatableLists) {
+				JsCreateListTableRow row = new JsCreateListTableRow();
+				row.setName(mailList.getName().toLowerCase() + "@" + domain);
+				row.setSubject(mailList.getDescription());
+				row.setModelId(mailList.getModel().getId());
+				row.setModelParam(mailList.getModelParameter());
+				HomeController.LOG.debug("Loading creatable list " + row.toString());
+				tableData.add(row);
+			}
+		}
+
+		return tableData;
 	}
 
 	private void fetchIsAdmin(final Map<String,Object> map, final List<String> isMemberOfList, final String adminRegex) {

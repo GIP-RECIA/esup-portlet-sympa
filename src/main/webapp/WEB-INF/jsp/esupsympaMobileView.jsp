@@ -13,14 +13,22 @@
 
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 
-<div class="esupsympaportlet-messages-mobile">
-<h3><spring:message code="title" htmlEscape="true"/></h3>
-<span id="sympalink"><p><img src="<%=request.getContextPath()%>/media/icons/application_go.png" /><a href="${homeUrl}" target="blank"><spring:message code="gotoSympa" htmlEscape="true"/></a></p></span>
 <c:set var="namespace"><portlet:namespace/></c:set>
-<portlet:actionURL var="actionURL">
-</portlet:actionURL>
-<%-- create list --%>
+<portlet:actionURL var="actionURL" />
 
+<%-- Include the part to send email --%>
+<jsp:include page="/WEB-INF/jsp/user/writeMailForm.jsp" />
+
+<div class="esupsympaportlet-messages-mobile">
+
+<h3><spring:message code="title" htmlEscape="true"/></h3>
+
+<%-- We don't want this link anymore in mobile view
+<span id="sympalink"><p><img src="<%=request.getContextPath()%>/media/icons/application_go.png" /><a href="${homeUrl}" target="blank"><spring:message code="gotoSympa" htmlEscape="true"/></a></p></span>
+--%>
+
+<%-- create list 
+We don't want the create list link in mobile view
 <c:if test="${not empty createList and fn:length(createList) gt 0}">
 
 		<c:forEach items="${createList}" var="create">
@@ -28,6 +36,8 @@
 		</c:forEach>
 	
 </c:if>
+--%>
+
 <form method="post" class="c" action="<c:out value="${actionURL}" escapeXml="true"/>">
 	<p><span><spring:message code="search.title" htmlEscape="true"/></span> : </p>
 	<spring:bind path="searchForm.subscriber">
@@ -78,12 +88,31 @@
 		    <span class="esupsympaportletresults"><p> <spring:message code="results.caption" arguments="${fn:length(sympaList)}" htmlEscape="true"/></p></span>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<ul>  
-				<li><span><spring:message code="list.name" htmlEscape="true"/></span> : <a class="esupsympaportletLink" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></li>
-				<li><span><spring:message code="list.subject" htmlEscape="true"/></span> : <c:out value="${list.subject}" escapeXml="true"/></li>
-				<li><span><spring:message code="list.rights" htmlEscape="true"/></span> : 
-				<c:if test="${list.subscriber==true}"><spring:message code="list.subscriber" htmlEscape="true"/> -</c:if>
-				<c:if test="${list.owner==true}"><spring:message code="list.owner" htmlEscape="true"/> - </c:if>
-				<c:if test="${list.editor==true}"><spring:message code="list.editor" htmlEscape="true"/></c:if>
+				<li>
+					<span><spring:message code="list.name" htmlEscape="true"/></span> : 
+					<c:choose>
+	        			<c:when test="${list.editor==true}">
+							<a class="portlet-menu-item mailLink" 
+					  			href="#" target="_blank" 
+					  			title="<spring:message code="simpleEmail.title" 
+					  			arguments="${list.address}" htmlEscape="true"/>" >
+								<c:out value="${list.address}" escapeXml="true" />
+							</a>
+	          			</c:when>
+	          			<c:otherwise>
+	          				<c:out value="${list.address}" escapeXml="true"/>
+	          			</c:otherwise>
+          			</c:choose>
+				</li>
+				<li>
+					<span><spring:message code="list.subject" htmlEscape="true"/></span> : 
+					<c:out value="${list.subject}" escapeXml="true"/>
+				</li>
+				<li>
+					<span><spring:message code="list.rights" htmlEscape="true"/></span> : 
+					<c:if test="${list.subscriber==true}"><spring:message code="list.subscriber" htmlEscape="true"/> -</c:if>
+					<c:if test="${list.owner==true}"><spring:message code="list.owner" htmlEscape="true"/> - </c:if>
+					<c:if test="${list.editor==true}"><spring:message code="list.editor" htmlEscape="true"/></c:if>
 				</li>
 			</ul>
 			</c:forEach>
@@ -93,3 +122,18 @@
 </c:otherwise>
 </c:choose>
 </div>
+
+<link rel="stylesheet" href="<spring:url value="/css/jquery-ui-1.8.16.custom.css" />" 
+	type="text/css"  media="screen, projection">
+
+<script type="text/javascript" src="<spring:url value="/js/jquery-1.6.4.js" />">
+</script>
+		
+<script type="text/javascript" src="<spring:url value="/js/jquery-ui-1.8.16.custom.js" />">
+</script>
+	
+<script type="text/javascript" src="<spring:url value="/js/esupsympa.js" />">                                                     
+</script>
+	
+<script type="text/javascript" src="<spring:url value="/js/esupsympaUserLists.js" />">
+</script>

@@ -97,7 +97,7 @@
 		</thead>
 		<tbody>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
-			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
+			<tr <c:if test="${varStatus.index%2!=0}">class="portlet-table-alternate"</c:if>>
 				<td>
 					<c:choose>
 	        			<c:when test="${list.editor==true}">

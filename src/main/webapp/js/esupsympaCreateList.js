@@ -1,10 +1,26 @@
+(function ($) {
+    $(document).ready(function () {
+        $("#esupsympaAdminTabs").tabs({
+            select: function (event, ui) {
+
+                console.log(ui);
+            }
+        });
+        
+        $("#esupsympaAdminTabs").show();
+        
+        $("#esupsympaAdminTabs").tabs('select', parseInt( $("form.userListCriteriaForm input.tabIndex").val() ));
+    });
+})(jQuery);
+
+
 function handleCreateList(dialogDomElement, e) {
+	var dialogElement = getJqueryObj(dialogDomElement);
 	
 	cursor_wait();
 	
 	var createListURLBase = $("#createListURLBase").text();
 	
-
 	console.log(createListURLBase);
 	
 	var listSelectedGroups = new Array();
@@ -18,6 +34,14 @@ function handleCreateList(dialogDomElement, e) {
 		listSelectedGroups.push(requestId);
 	});
 	
+	// Get the operation from the "class action" of the dialog dom element
+	console.log(dialogElement);
+	var operation;
+	if (dialogElement.hasClass("action:UPDATE")) {
+		operation = "UPDATE";
+	} else {
+		operation = "CREATE";
+	}
 
 	var uai = $("#userUAI").val() || " ";
 	uai = $.trim(uai);
@@ -34,8 +58,10 @@ function handleCreateList(dialogDomElement, e) {
 	console.log("type " + type);
 	type = $.trim(type);
 	
-	var queryString = 'operation=CREATE&policy=newsletter';
+	var queryString = "operation=" + operation;
 	
+	queryString =  queryString + "&policy=newsletter";
+		
 	queryString = queryString + "&type=" + type; 
 	
 	//queryString = queryString + "&uai=" + uai;
@@ -74,35 +100,74 @@ function handleCreateList(dialogDomElement, e) {
         },
         success: function (r) {
             console.log("doCreateList success " + r);
-            showResultsDialog(r);            
+            showResultsDialog(r, operation);            
         },
         error: function (xhr,err) {
             console.log("doCreateList error ");
-            showResultsDialog(xhr.responseText);
+            showResultsDialog(xhr.responseText, operation);
         },
         complete: function (r) {
         	cursor_clear();
-        	getJqueryObj(dialogDomElement).dialog("close");
+        	dialogElement.dialog("close");
         }
     });
 	
 }
 
-function handleCloseResultsDialog(dialogElem) {
+function handleCloseList(e) {
+	var source = e.target;
+	var row = getJqueryObj(source).closest("tr");
+	var listNameObj = row.find("div.listName");
+	
+	var sympaRemoteUrl = $("#createListURLBase").text();
+	console.log(sympaRemoteUrl);
+	
+	var queryString = "operation=CLOSE";
+	queryString =  queryString + "&listname=" + listNameObj.text().trim();
+	console.log("URL created is " + sympaRemoteUrl + "?" + queryString);
+	
+	var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
+	$.ajax({
+        async: true,
+        type: 'POST',
+        url: ajaxServletUrl + '/doCloseList',
+        data: {
+        	queryString : queryString
+        },
+        success: function (r) {
+            console.log("doCloseList success " + r);
+            showResultsDialog(r, "CLOSE");            
+        },
+        error: function (xhr,err) {
+            console.log("doCloseList error ");
+            showResultsDialog(xhr.responseText, "CLOSE");
+        },
+        complete: function (r) {
+        	cursor_clear();
+        	dialogElement.dialog("close");
+        }
+    });
+}
+
+function handleCloseResultsDialog(dialogElem, operation) {
 	
 	dialogElem.dialog("close");
 	
-	refreshCreateListTable(true);
+	if (operation == "CREATE") {
+		refreshCreateListTable(true);
+	} else {
+		refreshUpdateListTable(false);
+	}
 }
 
-function showResultsDialog(text) {
+function showResultsDialog(text, operation) {
 	$("#resultsDialogText").html(text);
 	
 	$( "#resultsDialog" ).dialog({
 		buttons: [
         {
             text: "Ok",
-            click: function() { return handleCloseResultsDialog($(this)); }
+            click: function() { return handleCloseResultsDialog($(this), operation); }
         }],
         modal: true,
         dialogClass: "resultsDialog sympaDialog"
@@ -361,7 +426,7 @@ function handleDrop(dragElement, dropElement) {
 	
 	//$("#createListTree .draggable").draggable("destroy");
 	
-	var sourcePath, targetPath;
+	//var sourcePath, targetPath;
 	//console.log(dragElement);
 	//console.log(dropElement);
 	var elem = getJqueryObj(dragElement).closest("li");

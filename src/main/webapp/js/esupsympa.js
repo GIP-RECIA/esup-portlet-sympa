@@ -31,7 +31,6 @@ function handleSendSimpleEmail(e) {
     console.log("Clicked" + message);
 
     $.ajax({
-
         async: true,
         type: 'POST',
         url: '/esup-portlet-sympa/servlet-ajax/sendEmail',
@@ -53,13 +52,19 @@ function handleSendSimpleEmail(e) {
     });
 }
 
+function refreshUpdateListTable(invalidateCache) {
+	console.log("refreshUpdateListTable");
+
+  $("form.userListCriteriaForm input.tabIndex").val("2");
+  $("form.userListCriteriaForm input.invalidateCache").val(invalidateCache);
+  $("form.userListCriteriaForm").submit();
+}
+
 function refreshCreateListTable(invalidateCache) {
 	console.log("refreshCreateListTable");
 
   $("form.userListCriteriaForm input.tabIndex").val("1");
-  
   $("form.userListCriteriaForm input.invalidateCache").val(invalidateCache);
-  
   $("form.userListCriteriaForm").submit();
 }
 
@@ -67,9 +72,7 @@ function refreshMyListsTable(invalidateCache) {
 	console.log("refreshMyListsTable" );
   
   $("form.userListCriteriaForm input.tabIndex").val("0");
-  
   $("form.userListCriteriaForm input.invalidateCache").val(invalidateCache);
-  
   $("form.userListCriteriaForm").submit();
 }
 
@@ -80,20 +83,6 @@ function refreshMyListsTable(invalidateCache) {
         console.log("doc ready");
         
         styleTable($("div.sympaTopLevel table.userListsTable"));
-        
-        
-        
-        //When not in admin mode, this id does not exist and the code will safely do nothing
-        $("#esupsympaAdminTabs").tabs({
-            select: function (event, ui) {
-
-                console.log(ui);
-            }
-        });
-        
-        $("#esupsympaAdminTabs").show();
-        
-        $("#esupsympaAdminTabs").tabs('select', parseInt( $("form.userListCriteriaForm input.tabIndex").val() ));
 
         $(".mailLink").bind('click', function (e) {
 

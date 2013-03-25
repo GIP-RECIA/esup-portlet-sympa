@@ -1,21 +1,28 @@
 <%@ include file="/WEB-INF/jsp/includes.jsp"%>
 
-<script type="text/javascript" src="<spring:url value="/js/jquery-1.6.4.js" />">
-</script>
+<%-- Dialog div configuration which will open with the create list form. --%>
 
-<script type="text/javascript" src="<spring:url value="/js/jquery-ui-1.8.16.custom.js" />">
-</script>
-
-<script type="text/javascript" src="<spring:url value="/js/jquery.cookie.js" />">
-</script>
-
-<div id="createButtonText" style="display:none">
+<div class="validButtonText" style="display:none">
 	<spring:message code="esupsympaCreateList.createButton"/> 
 </div>
 
-<div id="cancelButtonText" style="display:none">
+<div class="cancelButtonText" style="display:none">
 	<spring:message code="esupsympaCreateList.cancelButton"/>
 </div>
+
+<div class="subTitle" style="display:none">
+	<div>
+		<spring:message code="esupsympaCreateList.createListSubTitle" arguments="${listDescription}"
+	 		htmlEscape="true" />
+ 	</div>
+</div>
+	
+<%-- The create list form dialog is configured for creation --%>
+<div class="createListDialog action:CREATE" style="display: none" 
+	title="<spring:message code="esupsympaCreateList.createListTitle"/>" >
+</div>
+
+<%-- Dialog div configuration which will open with the create list form. --%>
 
 <div id="okButtonText" style="display:none">
 	<spring:message code="esupsympaCreateListTable.contexthelp.close"/>
@@ -31,18 +38,17 @@
 	</div>
 </div>
 
-<div id="createListDialog" style="display: none" 
-	title="<spring:message code="esupsympaCreateList.createListTitle"/>" >
-    
-</div>
+<%-- End Dialog div configuration. --%>
 
 <div class="subTitle">
 	<spring:message code="esupsympaCreateListTable.subTitle"/>
 </div>
+<br/>
 <div>
 	<spring:message code="esupsympaCreateListTable.desc"/>
 	<img class="contextHelpButton" src="<c:url value="/media/icons/context_help.png"/>"
-        alt="<c:out value="${iconAlt}" escapeXml="true"/>" />
+        alt="<spring:message code="esupsympaCreateListTable.contexthelp.title"/>"
+        title="<spring:message code="esupsympaCreateListTable.contexthelp.title"/>" />
 </div>
 
 <div id="createListTableBox">
@@ -55,7 +61,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach var="rowEntry" items="${tableData}" >
+		<c:forEach var="rowEntry" items="${createTableData}" >
 			<tr>
 			  	<td>
 			  		${rowEntry.name}  
@@ -67,19 +73,11 @@
 				</td>
 				<td>
 					<img class="createListButton" src="<c:url value="/media/icons/plus.png"/>"
-						alt="<c:out value="${iconAlt}" escapeXml="true"/>" />
+						alt="<spring:message code="esupsympaCreateListTable.createButton"/>"
+						title="<spring:message code="esupsympaCreateListTable.createButton"/>" />
 			  	</td>
 			</tr>
 		</c:forEach>
 		</tbody>
 	</table>
 </div>
-
-<script type="text/javascript" src="<spring:url value="/js/jquery.jstree.js" />">
-</script>      
-      
-<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateListTable.js" />">
-</script>
-
-<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateList.js" />">
-</script>

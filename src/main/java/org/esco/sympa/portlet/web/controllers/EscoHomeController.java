@@ -34,6 +34,7 @@ import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
 import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.AvailableMailingListsFound;
 import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.LdapPerson;
@@ -153,6 +154,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 					uai), new Domain(domain), this.formToCriterion(form), false);
 
 			List<CreateListInfo> createList = this.domainService.getCreateListInfo();
+
 			map.put("sympaList", sympaList);
 			map.put("createList", createList);
 
@@ -261,14 +263,25 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 		List<IMailingListModel> listMailingListModels = this.daoService.getMailingListModels(listModels, userInfo);
 
 		//Get the mailing lists that we can create
-		Collection<IMailingList> listLists =
+		final AvailableMailingListsFound availableLists =
 				this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
-
-		List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
+		final Collection<IMailingList> creatableLists = availableLists.getCreatableLists();
+		final Collection<IMailingList> updatableLists = availableLists.getUpdatableLists();
 
 		//Convert domain objects to UI
-		if (listLists != null) {
-			for(IMailingList mailList : listLists) {
+		List<JsCreateListTableRow> createTableData = this.convertMailingListsToJsListTableTow(domain, creatableLists);
+		List<JsCreateListTableRow> updateTableData = this.convertMailingListsToJsListTableTow(domain, updatableLists);
+
+		map.put("createTableData", createTableData);
+		map.put("updateTableData", updateTableData);
+	}
+
+	protected List<JsCreateListTableRow> convertMailingListsToJsListTableTow(
+			final String domain, final Collection<IMailingList> creatableLists) {
+		List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
+
+		if (creatableLists != null) {
+			for(IMailingList mailList : creatableLists) {
 				JsCreateListTableRow row = new JsCreateListTableRow();
 				row.setName(mailList.getName().toLowerCase() + "@" + domain);
 				row.setSubject(mailList.getDescription());
@@ -279,9 +292,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			}
 		}
 
-
-
-		map.put("tableData", tableData);
+		return tableData;
 	}
 
 	private void fetchIsAdmin(final Map<String,Object> map, final List<String> isMemberOfList, String adminRegex, final String uai) {

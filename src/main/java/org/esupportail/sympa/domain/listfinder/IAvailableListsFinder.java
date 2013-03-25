@@ -3,6 +3,8 @@ package org.esupportail.sympa.domain.listfinder;
 import java.util.Collection;
 import java.util.Map;
 
+import org.esupportail.sympa.domain.listfinder.model.AvailableMailingListsFound;
+
 /**
  * 
  * Interface definissant l'objet capable de determiner quelles sont
@@ -28,5 +30,6 @@ public interface IAvailableListsFinder {
 	 * @param modeles les modeles de listes connus
 	 * @return une collection de mailing lists
 	 */
-	public Collection<IMailingList> getAvailableAndNonExistingLists(Map<String,String> userInfo, Collection<IMailingListModel> modeles);
+	public AvailableMailingListsFound getAvailableAndNonExistingLists(Map<String,String> userInfo, Collection<IMailingListModel> modeles);
+
 }

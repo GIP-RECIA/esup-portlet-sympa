@@ -13,6 +13,8 @@
 
 <%@ include file="/WEB-INF/jsp/includes.jsp"%>
 
+<div id="createListURLBase" style="display:none">${createListURLBase}</div>
+
 <input type="hidden" id="userUAI" value="${uai}" />
 <input type="hidden" id="ajaxServletUrl" value="<spring:url value="/servlet-ajax" />" />
 
@@ -32,6 +34,11 @@
 					<spring:message code="esupsympaAdmin.createList.title" htmlEscape="true" />
 				</a>
 			</li>
+			<li>
+				<a href="#tabs-3">
+					<spring:message code="esupsympaAdmin.updateList.title" htmlEscape="true" />
+				</a>
+			</li>			
 		</ul>
 		<div id="tabs-1">
 			<jsp:include page="/WEB-INF/jsp/user/mailingListsListingPane.jsp" />
@@ -40,5 +47,26 @@
 		<div id="tabs-2">
 			<jsp:include page="/WEB-INF/jsp/admin/createMailingListPane.jsp" />
 		</div>
+		
+		<div id="tabs-3">
+			<jsp:include page="/WEB-INF/jsp/admin/updateMailingListPane.jsp" />
+		</div>		
 	</div>
+
 </div>
+
+
+<%@ include file="/WEB-INF/jsp/resources.jsp" %>
+
+<script type="text/javascript" src="<spring:url value="/js/jquery.cookie.js" />">
+</script>
+
+<script type="text/javascript" src="<spring:url value="/js/jquery.jstree.js" />">
+</script>      
+      
+<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateListTable.js" />">
+</script>
+
+<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateList.js" />">
+</script>	
+	

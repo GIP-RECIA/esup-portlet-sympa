@@ -12,6 +12,7 @@ import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
 import org.esupportail.sympa.domain.listfinder.IExistingListsFinder;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
 import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.AvailableMailingListsFound;
 
 /**
  * Implementation basique du 'module' permettant de sortir la liste des
@@ -47,6 +48,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 	private IListsFromGroupsPatternMatcher listsFromGroupsPatternMatcher;
 
 	/** {@inheritDoc} */
+	@Override
 	public void setExistingListsFinder(final IExistingListsFinder existingListFinder) {
 		this.existingListsFinder = existingListFinder;
 	}
@@ -64,12 +66,18 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 	 * @return la collection de mailing lists qu'il est possible de creer
 	 * pour cet etablissement
 	 */
-	public Collection<IMailingList> getAvailableAndNonExistingLists (
+	@Override
+	public AvailableMailingListsFound getAvailableAndNonExistingLists (
 			final Map<String,String> userInfo, final Collection<IMailingListModel> modeles) {
+
+		AvailableMailingListsFound availableLists = new AvailableMailingListsFound();
 
 		// Create an empty Collection of Mailing Lists
 		// => all the lists that could be created by the admin
-		Collection<IMailingList> availablelists = new TreeSet<IMailingList>();
+		Collection<IMailingList> creatableLists = new TreeSet<IMailingList>();
+		Collection<IMailingList> updatableLists = new TreeSet<IMailingList>();
+		availableLists.setCreatableLists(creatableLists);
+		availableLists.setUpdatableLists(updatableLists);
 
 		// Get all the groups of the current educational establishment
 		Collection<String> groupsOfEtab = this.etabGroupsFinder.findGroupsOfEtab(userInfo);
@@ -89,7 +97,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 				Collection<IMailingList> results = this.listsFromGroupsPatternMatcher.findPossibleListsWithModel(
 						groupsOfEtab, currentModel);
 				AvailableListsFinderBasicImpl.log.debug("Mailing Lists found " + results.size() + " for model [" + currentModel.toString() + "]");
-				availablelists.addAll(results);
+				creatableLists.addAll(results);
 			}
 		}
 
@@ -97,21 +105,22 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 		Collection<String> existingLists = this.existingListsFinder.findExistingLists(userInfo);
 		AvailableListsFinderBasicImpl.log.debug("Existing lists found " + existingLists.size());
 
-		Iterator<IMailingList> itLists = availablelists.iterator();
+		Iterator<IMailingList> itLists = creatableLists.iterator();
 		if (itLists != null) {
 			while (itLists.hasNext()) {
 				IMailingList list = itLists.next();
 
 				// On test si la liste fait partie des listes existantes
 				if (existingLists.contains(list.getName().toLowerCase())) {
+					updatableLists.add(list);
 					itLists.remove();
 					AvailableListsFinderBasicImpl.log.debug("List " + list.toString() + " already exists, removing");
 				}
 			}
 		}
 
-		AvailableListsFinderBasicImpl.log.debug("Available lists count " + availablelists.size());
-		return availablelists;
+		AvailableListsFinderBasicImpl.log.debug("Available lists count " + creatableLists.size());
+		return availableLists;
 	}
 
 	public void setEtabGroupsFinder(final IEtabGroupsFinder groupsFinder) {

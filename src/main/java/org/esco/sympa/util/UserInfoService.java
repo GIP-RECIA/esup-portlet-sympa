@@ -34,7 +34,7 @@ public class UserInfoService {
 	static {
 		UserInfoService.ADMIN_USER_INFO = new HashMap<String, String>();
 		UserInfoService.ADMIN_USER_INFO.put("casProxyTicket", "testEnv_casProxyTicket");
-		UserInfoService.ADMIN_USER_INFO.put("mail", "CUNAFO@demo-orleans-tours.fr");
+		UserInfoService.ADMIN_USER_INFO.put("mail", "mxbossard@gmail.com"); // maxime.bossard@recia.fr  CUNAFO@demo-orleans-tours.fr
 		UserInfoService.ADMIN_USER_INFO.put("isMemberOf", "esco:admin:Listes_Diffusion:local:FICTIF_0450822X");
 		UserInfoService.ADMIN_USER_INFO.put("uid", "F1000ugr");
 		UserInfoService.ADMIN_USER_INFO.put("ESCOUAICourant", "0450822X");

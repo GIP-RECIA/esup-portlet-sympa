@@ -78,6 +78,15 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @Scope("session")
 public class ServletAjaxController implements InitializingBean {
 
+	/** Base of error messages for list creation. */
+	private static final String CREATE_ERROR_MSG_BASE = "esupsympaCreateList";
+
+	/** Base of error messages for list modification. */
+	private static final String UPDATE_ERROR_MSG_BASE = "esupsympaUpdateList";
+
+	/** Base of error messages for list closing. */
+	private static final String CLOSE_ERROR_MSG_BASE = "esupsympaCloseList";
+
 	private final Logger log = Logger.getLogger(ServletAjaxController.class);
 
 	@Autowired
@@ -103,6 +112,8 @@ public class ServletAjaxController implements InitializingBean {
 	private String createListURLBase;
 
 	protected Locale locale;
+
+	private Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -190,8 +201,6 @@ public class ServletAjaxController implements InitializingBean {
 
 		modelMap.put("uai", establishementId);
 
-		modelMap.put("createListURLBase", this.createListURLBase);
-
 		StringBuilder userAttributes = new StringBuilder(128);
 		Map<String, String> placeholderValuesMap = (Map<String, String>)
 				request.getSession().getAttribute(HomeController.PLACEHOLDER_VALUES_MAP_SESSION_KEY);
@@ -255,10 +264,81 @@ public class ServletAjaxController implements InitializingBean {
 
 				//***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
 				errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
+				String message = errorCodeText;
+
+				final String baseErrorMsg = this.findErrorMessageBase(queryString);
+				if (StringUtils.isNotBlank(baseErrorMsg)) {
+					//Build a resource key in order to display a translated message
+					String errorMessageKey = baseErrorMsg + ".failure."
+							+ errorCodeNumber + "." + errorCodeText;
+
+					message = this.context.getMessage(errorMessageKey, null, this.locale);
+				}
+
+				//0 means success, anything else, return an error code to let the ajax handler know something is amiss
+				if (!errorCodeNumber.equals("0")) {
+					response.setStatus(500);
+				}
+
+				return message;
+			}
+
+
+		} catch (MalformedURLException ex) {
+			this.log.error("URL exception", ex);
+		}  catch (IOException ex) {
+			this.log.error("URL exception", ex);
+		}
+
+		return "Error";
+	}
+
+	@RequestMapping("/doCloseList")
+	public @ResponseBody String doCloseList(final String queryString, final HttpServletRequest request, final HttpServletResponse response) {
+
+		try {
+			this.log.debug("Connecting to SypmaRemote with the url [" + this.createListURLBase + "]");
+			URL uri = new URL(this.createListURLBase);
+
+			URLConnection urlConnection = uri.openConnection();
+
+			//Use POST to hit the SympaRemote web application
+			urlConnection.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+			this.log.debug("Posting querystring [" + queryString + "]");
+			//Send the queryString
+			wr.write(queryString);
+			wr.flush();
+
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(
+							urlConnection.getInputStream()));
+			StringBuffer input = new StringBuffer();
+			String inputLine;
+
+			this.log.debug("create List response: ");
+			while ((inputLine = in.readLine()) != null) {
+				this.log.debug(inputLine);
+				input.append(inputLine);
+			}
+
+			in.close();
+			String errorCode = input.toString();
+
+			//Match a regular expression to determine if this is an error code in the
+			//form Digit,CODE
+			Pattern p = Pattern.compile("(\\d),(.*)");
+			Matcher m = p.matcher(errorCode);
+			if (m.matches()) {
+				String errorCodeNumber = m.group(1);
+				String errorCodeText = m.group(2).toLowerCase();
+
+				//***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
+				errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
 
 				//Build a resource key in order to display a translated message
-				String errorMessageKey =
-						"esupsympaCreateList.failure." + errorCodeNumber + "." + errorCodeText;
+				String errorMessageKey = ServletAjaxController.CLOSE_ERROR_MSG_BASE + ".failure."
+						+ errorCodeNumber + "." + errorCodeText;
 
 				String message = this.context.getMessage(errorMessageKey, null, this.locale);
 
@@ -269,7 +349,6 @@ public class ServletAjaxController implements InitializingBean {
 
 				return message;
 			}
-
 
 		} catch (MalformedURLException ex) {
 			this.log.error("URL exception", ex);
@@ -295,30 +374,12 @@ public class ServletAjaxController implements InitializingBean {
 	public void sendEmail(final String fromAddress, final String toAddress,
 			final String subject, final String message, final HttpServletRequest request,
 			final HttpServletResponse response) {
-		// MBD: Envoi avec BCC au from.
 		// MBD: Ajout du choix du sujet du mail
 		try {
-			InternetAddress[] tos = new InternetAddress[1];
-			tos[0] = new InternetAddress(toAddress,  toAddress);
+			this.sendEmail(fromAddress, toAddress, subject, message);
 
-			InternetAddress from = new InternetAddress(fromAddress, fromAddress);
-
-			InternetAddress[] bccs = new InternetAddress[1];
-			bccs[0] = from;
-
-			if (this.smtp instanceof SimpleSmtpServiceImpl) {
-				SimpleSmtpServiceImpl impl = (SimpleSmtpServiceImpl) this.smtp;
-				impl.setFromAddress(from);
-			}
-
-			//smtp.send(tos, "-", "", message);
-
-			if (StringUtils.isEmpty(subject)) {
-				this.smtp.sendtocc(tos, null, bccs, "-", null, message, null);
-			} else {
-				this.smtp.sendtocc(tos, null, bccs, subject, null, message, null);
-			}
-
+			// MBD: Envoi d'un second mail au from pour qu'il est une trace dans sa boite mail.
+			this.sendEmail(toAddress, fromAddress, subject, message);
 		} catch (UnsupportedEncodingException ex) {
 			this.log.warn(ex);
 			response.setStatus(403);
@@ -327,7 +388,28 @@ public class ServletAjaxController implements InitializingBean {
 
 		//set status ok
 		response.setStatus(200);
+	}
 
+	protected void sendEmail(final String fromAddress, final String toAddress, final String subject,
+			final String message) throws UnsupportedEncodingException {
+		InternetAddress[] tos = new InternetAddress[1];
+		tos[0] = new InternetAddress(toAddress,  toAddress);
+
+		InternetAddress from = new InternetAddress(fromAddress, fromAddress);
+		InternetAddress[] bccs = new InternetAddress[0];
+
+		if (this.smtp instanceof SimpleSmtpServiceImpl) {
+			SimpleSmtpServiceImpl impl = (SimpleSmtpServiceImpl) this.smtp;
+			impl.setFromAddress(from);
+		}
+
+		//smtp.send(tos, "-", "", message);
+
+		if (StringUtils.isEmpty(subject)) {
+			this.smtp.sendtocc(tos, null, bccs, "-", null, message, null);
+		} else {
+			this.smtp.sendtocc(tos, null, bccs, subject, null, message, null);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -413,6 +495,23 @@ public class ServletAjaxController implements InitializingBean {
 		}
 
 		return listsToCreate;
+	}
+
+	protected String findErrorMessageBase(final String queryString) {
+		String baseErrorMsg = null;
+		Matcher opMatcher = this.operationPattern.matcher(queryString);
+		if (opMatcher.find()) {
+			final String operation = opMatcher.group(1);
+			if ("CREATE".equals(operation)) {
+				baseErrorMsg = ServletAjaxController.CREATE_ERROR_MSG_BASE;
+			} else if ("UPDATE".equals(operation)) {
+				baseErrorMsg = ServletAjaxController.UPDATE_ERROR_MSG_BASE;
+			} else if ("CLOSE".equals(operation)) {
+				baseErrorMsg = ServletAjaxController.CLOSE_ERROR_MSG_BASE;
+			}
+		}
+
+		return baseErrorMsg;
 	}
 
 	/**

@@ -1,7 +1,5 @@
 <%@ include file="/WEB-INF/jsp/includes.jsp"%>
 
-
-<div id = "createListURLBase" style="display:none">${createListURLBase}</div>
 <div id = "createListURL_type" style="display:none">${type}</div>
 <div id = "createListURL_typeParam" style="display:none">${typeParam}</div>
 <div id = "createListURL_typeParamName" style="display:none">${typeParamName}</div>
@@ -10,10 +8,6 @@
 	<input type="hidden" id="userAttributes" value="${userAttributes}" />
 </c:if>
 
-<div class="subTitle">
-  <spring:message code="esupsympaCreateList.createListSubTitle" arguments="${listDescription}"
-    htmlEscape="true" />
-</div>
 <div>
   <spring:message code="esupsympaCreateList.groupListTitle" />
 </div>

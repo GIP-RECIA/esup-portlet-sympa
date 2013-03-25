@@ -30,12 +30,14 @@ import org.esupportail.sympa.domain.model.UserSympaList;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
 import org.esupportail.sympa.domain.services.SympaListCriterion;
 import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.util.CollectionUtils;
 
 
 public class EscoDomainServiceImpl implements IEscoDomainService {
 	private Map <String,AbstractEscoSympaServer> serverList;
 	private static Log logger = LogFactory.getLog(EscoDomainServiceImpl.class);
 
+	@Override
 	public List<UserSympaListWithUrl> getWhich(final UAI uai, final Domain domain) {
 		// watchout; user centric ...
 		Collection<AbstractEscoSympaServer> srvList = this.getServerList().values();
@@ -46,11 +48,15 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 				result.addAll(srvResult);
 			}
 		}
+
+		this.fillListInTestEnvironment(result);
+
 		// default sort on list address
 		this.sortResults(result);
 		return result;
 	}
 
+	@Override
 	public List<UserSympaListWithUrl> getWhich(final UAI uai, final Domain domain, final List<SympaListCriterion> criterions, final boolean matchAll) {
 		List<UserSympaListWithUrl> sympaList = this.getWhich(uai, domain);
 		if ( (criterions == null) || (criterions.size() <= 0) ) {
@@ -62,6 +68,9 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 				filteredList.add(item);
 			}
 		}
+
+		this.fillListInTestEnvironment(filteredList);
+
 		return filteredList;
 	}
 
@@ -69,6 +78,7 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 	 * Invalidate cache for all sympa servers
 	 * @see org.esupportail.sympa.domain.services.IDomainService#invalidateCache()
 	 */
+	@Override
 	public void invalidateCache() {
 		Collection<AbstractEscoSympaServer> srvList = this.getServerList().values();
 		for ( AbstractEscoSympaServer s : srvList ) {
@@ -81,6 +91,7 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 		}
 	}
 
+	@Override
 	public List<UserSympaListWithUrl> getLists(final UAI uai, final Domain domain) {
 		Collection<AbstractEscoSympaServer> srvList = this.getServerList().values();
 		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
@@ -90,11 +101,16 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 				result.addAll(srvResult);
 			}
 		}
+
+		this.fillListInTestEnvironment(result);
+
 		// default sort on list address
 		this.sortResults(result);
+
 		return result;
 	}
 
+	@Override
 	public List<CreateListInfo> getCreateListInfo() {
 		Collection<AbstractEscoSympaServer> srvList = this.getServerList().values();
 		List<CreateListInfo> result = new ArrayList<CreateListInfo>();
@@ -105,6 +121,41 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * In test environment prevent the sympa web service to return an empty list.
+	 * 
+	 * @param sympaList
+	 */
+	protected void fillListInTestEnvironment(final List<UserSympaListWithUrl> sympaList) {
+		if (CollectionUtils.isEmpty(sympaList)
+				&& "true".equals(System.getProperty("testEnv"))) {
+			UserSympaListWithUrl testList1 = new UserSympaListWithUrl();
+			testList1.setAddress("eleves400@0450822x.list.netocentre.fr");
+			testList1.setSubject("Les eleves de la classe 400");
+			testList1.setOwner(true);
+
+			UserSympaListWithUrl testList4= new UserSympaListWithUrl();
+			testList4.setAddress("eleves501@0450822x.list.netocentre.fr");
+			testList4.setSubject("Les élèves de la classe 501");
+			testList4.setSubscriber(true);
+
+			UserSympaListWithUrl testList2 = new UserSympaListWithUrl();
+			testList2.setAddress("eleves@0450822x.list.netocentre.fr ");
+			testList2.setSubject("Tous les eleves de l'etablissement");
+			testList2.setEditor(true);
+
+			UserSympaListWithUrl testList3= new UserSympaListWithUrl();
+			testList3.setAddress("profs605@0450822x.list.netocentre.fr ");
+			testList3.setSubject("Tous les profs de la classe 605");
+			testList3.setSubscriber(true);
+
+			sympaList.add(testList1);
+			sympaList.add(testList2);
+			sympaList.add(testList3);
+			sympaList.add(testList4);
+		}
 	}
 
 	private boolean matchCriterions(final UserSympaList item, final List<SympaListCriterion> crits,final boolean matchAll) {
@@ -158,6 +209,7 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 			this.sortOn = field;
 		}
 
+		@Override
 		public int compare(final UserSympaList o1, final UserSympaList o2) {
 			int result = 0;
 			switch (this.sortOn) {
@@ -204,6 +256,7 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 	/**
 	 * @return the serverList
 	 */
+	@Override
 	public Map<String, AbstractEscoSympaServer> getServerList() {
 		Map<String, AbstractEscoSympaServer> serverListToUse = new HashMap<String, AbstractEscoSympaServer>();
 		for(String serverKey: this.serverList.keySet()) {
@@ -215,6 +268,7 @@ public class EscoDomainServiceImpl implements IEscoDomainService {
 		return serverListToUse;
 	}
 
+	@Override
 	public String getHomeUrl() {
 		String homeUrl="#";
 		for(String serverKey: this.serverList.keySet()) {

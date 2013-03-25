@@ -13,7 +13,7 @@ function handleOpenContextHelp(e) {
     });
 }
 
-function handleOpenCreateList(e) {
+function openCreateFormDialog(e, targetPane) {
     var uai = $("#userUAI").val();
 
     var source = e.target;
@@ -35,12 +35,13 @@ function handleOpenCreateList(e) {
     var listDescriptionObj = row.find("div.listDescription");
     
     console.log("List desc len: " + listDescriptionObj.length);
-    var listDescription = row.find("div.listDescription").html();
+    var listDescription = row.find("div.listDescription").html().trim();
 
     console.log("List desc : " + listDescription);
     
     var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
     
+    var targetDialogDiv = targetPane + " div.createListDialog";
     $.ajax({
 
         async: true,
@@ -55,22 +56,23 @@ function handleOpenCreateList(e) {
         success: function (r) {
             console.log("loadCreateList success");
 
-            $("#createListDialog").html(r);
+            var staticContent = $(targetDialogDiv + " div.subTitile").html();
+            $(targetDialogDiv).html(staticContent + r);
 
             intializeCreateList(uai);
 
-            $("#createListDialog").dialog({
+            $(targetDialogDiv).dialog({
                 width: 860,
                 modal: true,
                 dialogClass: "createListDialog sympaDialog",
                 close: handleCreateListDialogClose,
                 buttons: [{
-                    text: $("#createButtonText").html(),
+                    text: $(targetPane + " div.validButtonText").html(),
                     click: function (e) {
                         handleCreateList(this, e);
                     }
                 }, {
-                    text: $("#cancelButtonText").html(),
+                    text: $(targetPane + " div.cancelButtonText").html(),
                     click: function (e) {
                         handleCancelCreateList(this, e);
                     }
@@ -87,11 +89,26 @@ function handleOpenCreateList(e) {
     });
 }
 
+function handleOpenCreateList(e) {
+	openCreateFormDialog(e, "#tabs-2");
+}
+
+/**
+ * MBD: The update list form is the creation form.
+ * Indeed, to modify the list, we simply recreate it.
+ */
+function handleOpenUpdateList(e) {
+	openCreateFormDialog(e, "#tabs-3");
+}
 
 $(document).ready(function () {
     console.log("document.ready createListTable.js");
 
     $("img.createListButton").bind("click", handleOpenCreateList);
+    
+    $("img.updateListButton").bind("click", handleOpenUpdateList);
+    
+    $("img.closeListButton").bind("click", handleCloseList);
 
     $("img.contextHelpButton").bind("click", handleOpenContextHelp);
 

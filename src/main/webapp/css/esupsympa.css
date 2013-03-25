@@ -23,33 +23,38 @@ div.sympaTopLevel div.subTitle {
 }
 
 div.sympaTopLevel table.userListsTable,
-div.sympaTopLevel table#createListTable
+div.sympaTopLevel table#createListTable,
+div.sympaTopLevel table#updateListTable
 {	
 	border-collapse : collapse;
 	width: 90%;
 }
 
 div.sympaTopLevel table.userListsTable tbody td.centered, 
-div.sympaTopLevel table#createListTable tbody td.centered
+div.sympaTopLevel table#createListTable tbody td.centered,
+div.sympaTopLevel table#updateListTable tbody td.centered
 {	
 	text-align: center;
 }
 
 div.sympaTopLevel table.userListsTable tbody td img, 
-div.sympaTopLevel table#createListTable tbody td img 
+div.sympaTopLevel table#createListTable tbody td img,
+div.sympaTopLevel table#updateListTable tbody td img  
 {
 	border: none;	
 	height: 20px;
 }
 
 div.sympaTopLevel table.userListsTable tbody td.icon_column_without_title, 
-div.sympaTopLevel table#createListTable tbody td.icon_column_without_title 
+div.sympaTopLevel table#createListTable tbody td.icon_column_without_title,
+div.sympaTopLevel table#updateListTable tbody td.icon_column_without_title  
 {
 	width: 20px;	
 }
 
 div.sympaTopLevel table.userListsTable tbody td.icon_column_with_title, 
-div.sympaTopLevel table#createListTable tbody td.icon_column_with_title 
+div.sympaTopLevel table#createListTable tbody td.icon_column_with_title,
+div.sympaTopLevel table#updateListTable tbody td.icon_column_with_title 
 {
 	width: 110px;	
 } 
@@ -79,7 +84,8 @@ div.sympaTopLevel tr.odd {
 }
 
 div.sympaTopLevel table.userListsTable thead tr td,
-div.sympaTopLevel table#createListTable thead tr td
+div.sympaTopLevel table#createListTable thead tr td,
+div.sympaTopLevel table#updateListTable thead tr td
  {
 	/*background: #1C94C4;*/
 	text-align: left;
@@ -88,12 +94,14 @@ div.sympaTopLevel table#createListTable thead tr td
 
 div.sympaTopLevel table.userListsTable thead tr td.centered,
 div.sympaTopLevel table#createListTable thead tr td.centered
+div.sympaTopLevel table#updateListTable thead tr td.centered
 {
 text-align: center	
 }
 
 div.sympaTopLevel table.userListsTable td,
-div.sympaTopLevel table#createListTable td {
+div.sympaTopLevel table#createListTable td,
+div.sympaTopLevel table#updateListTable td {
 	border: none;
 	padding: 1px 3px 1px 3px; /* top right bottom left */
 }
@@ -157,14 +165,16 @@ div.sympaTopLevel table#createListTable td {
 
 /*esupsympaCreateListTable.jsp styles*/
 
-div.sympaTopLevel div#createListTableBox {
+div.sympaTopLevel div#createListTableBox, 
+div.sympaTopLevel div#updateListTableBox {
 	height: 370px;
 	width: auto;
 	margin-top: 20px;
  	overflow: auto;
 }
 
-div.sympaTopLevel table#createListTable td {
+div.sympaTopLevel table#createListTable td,
+div.sympaTopLevel table#updateListTable td {
 	padding-left: 5px;
 }
 

@@ -27,5 +27,3 @@
 	</c:choose>
 
 </div>
-
-<%@ include file="/WEB-INF/jsp/resources.jsp" %>

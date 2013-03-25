@@ -236,16 +236,17 @@
 	</bean>
 
 	<!-- Bean responsible for fetching the existing lists in sympa -->
-	<bean id="myExistingListsFinder" class="org.esupportail.sympa.domain.services.SympaExistingListFinder">
+	<bean id="myExistingListsFinder" class="org.esupportail.sympa.domain.listfinder.services.SympaExistingListFinder">
 		<property name="domainService" ref="domainService" />
+		<property name="ldapPerson" ref="ldapPerson" />
 	</bean>
 
 	<!-- Component that filters the lists based on the pattern in the model (based on grouped regexp) -->
-	<bean id="mylistsFromGroupsPatternMatcher" class="org.esco.sympa.portlet.availablelistsfinder.listsfromgroupspatternmatcher.ListsFromGroupsPatternMatcherBasicImpl" />
+	<bean id="mylistsFromGroupsPatternMatcher" class="org.esco.sympa.domain.listfinder.services.ListsFromGroupsPatternMatcherBasicImpl" />
 
 	<!-- Finds the available lists to create (which are not already included in the exisisting lists). -->
 	
-	<bean id="escoAvailableListFinder" class="org.esco.sympa.domain.listfinder.services.AvailableListsFinderBasicImpl">
+	<bean id="escoAvailableListFinder" class="org.esupportail.sympa.domain.listfinder.services.BasicAvailableListFinder">
 		<!-- 
 		 |	This value is replaced by the email domain fetched from the current establishment via the class LdapEstablishment.
 		 |	Therefore, the value normally should not have any noticable effect on the application  

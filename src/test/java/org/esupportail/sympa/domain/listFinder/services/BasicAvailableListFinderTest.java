@@ -11,6 +11,7 @@ import java.util.Map;
 import org.esupportail.sympa.domain.listfinder.IExistingListsFinder;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
 import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.AvailableMailingListsFound;
 import org.esupportail.sympa.domain.listfinder.model.BasicMailingListModel;
 import org.esupportail.sympa.domain.listfinder.services.BasicAvailableListFinder;
 import org.junit.Assert;
@@ -82,8 +83,8 @@ public class BasicAvailableListFinderTest {
 	@Test
 	public void testGetAvailableAndNonExistingLists() throws Exception {
 		Map<String, String> userInfo = new HashMap<String, String>();
-		Collection<IMailingList> mailingLists = this.balf.getAvailableAndNonExistingLists(userInfo, BasicAvailableListFinderTest.LIST_MODELS);
-
+		AvailableMailingListsFound avLists = this.balf.getAvailableAndNonExistingLists(userInfo, BasicAvailableListFinderTest.LIST_MODELS);
+		Collection<IMailingList> mailingLists = avLists.getCreatableLists();
 		Assert.assertNotNull("Mailing lists returned should not be null !", mailingLists);
 		Assert.assertEquals("4 Mailing lists should be creatable !", 4, mailingLists.size());
 

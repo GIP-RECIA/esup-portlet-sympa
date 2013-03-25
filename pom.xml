@@ -285,6 +285,10 @@
 							<name>testEnv</name>
 							<value>true</value>
 						</systemProperty>
+						<systemProperty>
+							<name>file.encoding</name>
+							<value>UTF-8</value>
+						</systemProperty>
 					</systemProperties>
 					<webAppSourceDirectory>target/esup-portlet-sympa</webAppSourceDirectory>
 					<webAppConfig implementation="org.mortbay.jetty.plugin.Jetty6PluginWebAppContext">
