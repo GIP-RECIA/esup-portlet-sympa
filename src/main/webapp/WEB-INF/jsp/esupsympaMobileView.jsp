@@ -15,9 +15,6 @@
 
 <c:set var="namespace"><portlet:namespace/></c:set>
 <portlet:actionURL var="actionURL" />
-
-<link rel="stylesheet" href="<spring:url value="/css/esupsympa.css" />" 
-	type="text/css"  media="all">
 	
 <%-- Include the part to send email --%>
 <jsp:include page="/WEB-INF/jsp/user/writeMailForm.jsp" />
@@ -128,7 +125,10 @@ We don't want the create list link in mobile view
 
 <link rel="stylesheet" href="<spring:url value="/css/jquery-ui-1.8.16.custom.css" />" 
 	type="text/css"  media="screen, projection">
-
+	
+<link rel="stylesheet" href="<spring:url value="/css/esupsympa-mobile.css" />" 
+	type="text/css"  media="all">
+	
 <script type="text/javascript" src="<spring:url value="/js/jquery-1.6.4.js" />">
 </script>
 		
