@@ -4,8 +4,12 @@
 	padding-top: 20px;
 }
 
-.simpleSmtpDialog {
-	background-color: transparent;
+.simpleSmptDialog {
+	background-color: inherit !important;
+}
+
+.esupsympaportlet-messages-mobile a {
+	text-decoration: underline;	
 }
 
 #simple_email_from_box {
