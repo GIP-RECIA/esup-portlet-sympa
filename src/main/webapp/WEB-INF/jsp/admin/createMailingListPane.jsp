@@ -10,25 +10,23 @@
 	<spring:message code="esupsympaCreateList.cancelButton"/>
 </div>
 
-<div class="subTitle" style="display:none">
-	<div>
-		<spring:message code="esupsympaCreateList.createListSubTitle" arguments="${listDescription}"
-	 		htmlEscape="true" />
+<div class="subTitleText" style="display:none">
+	<div class="subTitle">
+		<spring:message code="esupsympaCreateList.createListSubTitle" htmlEscape="true" />
  	</div>
 </div>
 	
 <%-- The create list form dialog is configured for creation --%>
-<div class="createListDialog action:CREATE" style="display: none" 
+<%-- Dialog div configuration which will open with the create list form. --%>
+<div id="createListDialog" class="createListDialog action:CREATE" style="display: none" 
 	title="<spring:message code="esupsympaCreateList.createListTitle"/>" >
 </div>
 
-<%-- Dialog div configuration which will open with the create list form. --%>
-
-<div id="okButtonText" style="display:none">
+<div class="okButtonText" style="display:none">
 	<spring:message code="esupsympaCreateListTable.contexthelp.close"/>
 </div>
 
-<div id="contextHelpDialog" style="display:none"
+<div id="createContextHelpDialog" class="contextHelpDialog" style="display:none"
 	title="<spring:message code="esupsympaCreateListTable.contexthelp.title" htmlEscape="true"/>">
 	<div class="desc">
 		<spring:message code="esupsympaCreateListTable.contexthelp.desc"/>
@@ -43,7 +41,7 @@
 <div class="subTitle">
 	<spring:message code="esupsympaCreateListTable.subTitle"/>
 </div>
-<br/>
+
 <div>
 	<spring:message code="esupsympaCreateListTable.desc"/>
 	<img class="contextHelpButton" src="<c:url value="/media/icons/context_help.png"/>"

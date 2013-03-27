@@ -54,14 +54,3 @@
   </div>
 
 </div>
-
-<div id="waitingDialog" style="display:none"
-title="<spring:message code="waitingDialog.title"/>">
-      <spring:message code="waitingDialog.bodyText" />
-    </div>
-
-    
-<div id="resultsDialog" style="display:none" 
-title="<spring:message code="esupsympaCreateList.createListTitle" />">
-<div id="resultsDialogText"></div>
-</div>

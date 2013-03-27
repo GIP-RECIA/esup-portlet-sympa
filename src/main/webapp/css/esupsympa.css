@@ -308,7 +308,7 @@ ul#createListSelectedGroups_list {
 
 /* context help */
 
-#contextHelpDialog div.desc {
+.contextHelpDialog div.desc {
 	margin-top: 20px;
 	margin-bottom: 20px;
 }

@@ -115,16 +115,24 @@ function handleCreateList(dialogDomElement, e) {
 }
 
 function handleCloseList(e) {
+	var targetDialogDiv = "div.closeListDialog";
 	var source = e.target;
 	var row = getJqueryObj(source).closest("tr");
 	var listNameObj = row.find("div.listName");
+	var listName = listNameObj.text().trim();
+	var queryString = "?operation=CLOSE&listname=" + listName;
+	console.log("URL query is: " + queryString);
 	
-	var sympaRemoteUrl = $("#createListURLBase").text();
-	console.log(sympaRemoteUrl);
+	var confirmMsg = $(".closeConfirmText").text().trim();
+	confirmMsg = confirmMsg.replace("{0}", listName);
+	var confirm = window.confirm(confirmMsg);
+	if (!confirm) {
+		// No confirmation so exit
+		return;
+	}
 	
-	var queryString = "operation=CLOSE";
-	queryString =  queryString + "&listname=" + listNameObj.text().trim();
-	console.log("URL created is " + sympaRemoteUrl + "?" + queryString);
+	// Display wait
+	cursor_wait();
 	
 	var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
 	$.ajax({
@@ -143,14 +151,13 @@ function handleCloseList(e) {
             showResultsDialog(xhr.responseText, "CLOSE");
         },
         complete: function (r) {
+        	// Close wait
         	cursor_clear();
-        	dialogElement.dialog("close");
         }
     });
 }
 
 function handleCloseResultsDialog(dialogElem, operation) {
-	
 	dialogElem.dialog("close");
 	
 	if (operation == "CREATE") {
@@ -163,7 +170,7 @@ function handleCloseResultsDialog(dialogElem, operation) {
 function showResultsDialog(text, operation) {
 	$("#resultsDialogText").html(text);
 	
-	$( "#resultsDialog" ).dialog({
+	$("#resultsDialog").dialog({
 		buttons: [
         {
             text: "Ok",

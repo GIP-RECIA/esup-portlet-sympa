@@ -3,33 +3,52 @@
 <%-- Dialog div configuration which will open with the create list form. --%>
 
 <div class="validButtonText" style="display:none">
-	<spring:message code="esupsympaUpdateList.updateButton"/> 
+	<spring:message code="esupsympaUpdateList.updateButton" /> 
 </div>
 
 <div class="cancelButtonText" style="display:none">
-	<spring:message code="esupsympaUpdateList.cancelButton"/>
+	<spring:message code="esupsympaUpdateList.cancelButton" />
 </div>
 
-<div class="subTitle" style="display:none">
-	<div>
-		<spring:message code="esupsympaUpdateList.subTitle" arguments="${listDescription}"
-	 		htmlEscape="true" />
+<div class="closeConfirmText" style="display:none">
+	<spring:message code="esupsympaUpdateListTable.closeConfirm" />
+</div>
+
+<div class="subTitleText" style="display:none">
+	<div class="subTitle">
+		<spring:message code="esupsympaUpdateList.subTitle" htmlEscape="true" />
 	</div>
 </div>
 
 <%-- The create list form dialog is configured for update --%>
-<div class="createListDialog action:UPDATE" style="display: none" 
+<div id="updateListDialog" class="createListDialog action:UPDATE" style="display: none" 
 	title="<spring:message code="esupsympaUpdateList.title"/>">
 </div>
 
+<div class="okButtonText" style="display:none">
+	<spring:message code="esupsympaUpdateListTable.contexthelp.close"/>
+</div>
+
+<div id="updateContextHelpDialog" class="contextHelpDialog" style="display:none"
+	title="<spring:message code="esupsympaUpdateListTable.contexthelp.title" htmlEscape="true"/>">
+	<div class="desc">
+		<spring:message code="esupsympaUpdateListTable.contexthelp.desc"/>
+	</div>
+	<div >
+		<spring:message code="esupsympaUpdateListTable.contexthelp.text"/>
+	</div>
+</div>
 <%-- End Dialog div configuration. --%>
 
 <div class="subTitle">
 	<spring:message code="esupsympaUpdateListTable.subTitle"/>
 </div>
-<br/>
+
 <div>
 	<spring:message code="esupsympaUpdateListTable.desc"/>
+	<img class="contextHelpButton" src="<c:url value="/media/icons/context_help.png"/>"
+       	alt="<spring:message code="esupsympaUpdateListTable.contexthelp.title"/>"
+       	title="<spring:message code="esupsympaUpdateListTable.contexthelp.title"/>" />
 </div>
 
 <c:choose>
@@ -82,4 +101,14 @@
 		</p>
 	</div>
 </c:otherwise>
-</c:choose>	
+</c:choose>
+
+<div id="waitingDialog" style="display:none"
+	title="<spring:message code="waitingDialog.title"/>">
+	<spring:message code="waitingDialog.bodyText" />
+</div>
+
+<div id="resultsDialog" style="display:none" 
+	title="<spring:message code="esupsympaCreateList.createListTitle" />">
+	<div id="resultsDialogText"></div>
+</div>

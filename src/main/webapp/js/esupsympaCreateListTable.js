@@ -1,19 +1,19 @@
 
-function handleOpenContextHelp(e) {
-	$("#contextHelpDialog").dialog({
+function handleOpenContextHelp(e, targetPane, targetDialog) {
+	$(targetDialog).dialog({
         width: 650,
         modal: true,
         buttons: [{
-            text: $("#okButtonText").html(),
-            click: function (e) {
-            	$("#contextHelpDialog").dialog("close");
+            text: $(targetPane + " .okButtonText").text().trim(),
+            click: function (dialogElem) {
+            	$(this).dialog("close");
             }
         }],
         dialogClass: "sympaDialog"
     });
 }
 
-function openCreateFormDialog(e, targetPane) {
+function openCreateFormDialog(e, targetPane, targetDialog) {
     var uai = $("#userUAI").val();
 
     var source = e.target;
@@ -41,7 +41,6 @@ function openCreateFormDialog(e, targetPane) {
     
     var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
     
-    var targetDialogDiv = targetPane + " div.createListDialog";
     $.ajax({
 
         async: true,
@@ -56,23 +55,24 @@ function openCreateFormDialog(e, targetPane) {
         success: function (r) {
             console.log("loadCreateList success");
 
-            var staticContent = $(targetDialogDiv + " div.subTitile").html();
-            $(targetDialogDiv).html(staticContent + r);
+            var staticContent = $(targetPane + " div.subTitleText").html();
+            staticContent = staticContent.replace("{0}", listDescription);
+            $(targetDialog).html(staticContent + r);
 
             intializeCreateList(uai);
 
-            $(targetDialogDiv).dialog({
+            $(targetDialog).dialog({
                 width: 860,
                 modal: true,
                 dialogClass: "createListDialog sympaDialog",
                 close: handleCreateListDialogClose,
                 buttons: [{
-                    text: $(targetPane + " div.validButtonText").html(),
+                    text: $(targetPane + " div.validButtonText").text().trim(),
                     click: function (e) {
                         handleCreateList(this, e);
                     }
                 }, {
-                    text: $(targetPane + " div.cancelButtonText").html(),
+                    text: $(targetPane + " div.cancelButtonText").text().trim(),
                     click: function (e) {
                         handleCancelCreateList(this, e);
                     }
@@ -90,7 +90,7 @@ function openCreateFormDialog(e, targetPane) {
 }
 
 function handleOpenCreateList(e) {
-	openCreateFormDialog(e, "#tabs-2");
+	openCreateFormDialog(e, "#tabs-2", "#createListDialog");
 }
 
 /**
@@ -98,7 +98,15 @@ function handleOpenCreateList(e) {
  * Indeed, to modify the list, we simply recreate it.
  */
 function handleOpenUpdateList(e) {
-	openCreateFormDialog(e, "#tabs-3");
+	openCreateFormDialog(e, "#tabs-3", "#updateListDialog");
+}
+
+function HandleOpenCreateHelp(e) {
+	handleOpenContextHelp(e, "#tabs-2", "#createContextHelpDialog");
+}
+
+function HandleOpenUpdateHelp(e) {
+	handleOpenContextHelp(e, "#tabs-3", "#updateContextHelpDialog");
 }
 
 $(document).ready(function () {
@@ -110,9 +118,9 @@ $(document).ready(function () {
     
     $("img.closeListButton").bind("click", handleCloseList);
 
-    $("img.contextHelpButton").bind("click", handleOpenContextHelp);
+    $("#tabs-2 img.contextHelpButton").bind("click", HandleOpenCreateHelp);
 
-
+    $("#tabs-3 img.contextHelpButton").bind("click", HandleOpenUpdateHelp);
 });
 
 
