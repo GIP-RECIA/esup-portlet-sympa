@@ -16,6 +16,9 @@
 <c:set var="namespace"><portlet:namespace/></c:set>
 <portlet:actionURL var="actionURL" />
 
+<link rel="stylesheet" href="<spring:url value="/css/esupsympa.css" />" 
+	type="text/css"  media="all">
+	
 <%-- Include the part to send email --%>
 <jsp:include page="/WEB-INF/jsp/user/writeMailForm.jsp" />
 
