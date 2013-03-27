@@ -120,7 +120,7 @@ function handleCloseList(e) {
 	var row = getJqueryObj(source).closest("tr");
 	var listNameObj = row.find("div.listName");
 	var listName = listNameObj.text().trim();
-	var queryString = "?operation=CLOSE&listname=" + listName;
+	var queryString = "operation=CLOSE&listname=" + listName;
 	console.log("URL query is: " + queryString);
 	
 	var confirmMsg = $(".closeConfirmText").text().trim();
