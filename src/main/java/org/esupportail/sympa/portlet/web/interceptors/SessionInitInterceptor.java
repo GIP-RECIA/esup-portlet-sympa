@@ -43,7 +43,7 @@ public class SessionInitInterceptor extends HandlerInterceptorAdapter {
 			// new bean
 			this.userPreferences.setUserId(request.getRemoteUser());
 			Set<String> userRoles = new HashSet<String>();
-			Map<String,String> userinfo = UserInfoService.getInstance().getUserInfo(request);
+			Map<String,String> userinfo = UserInfoService.getUserInfo(request);
 			String mail = userinfo.get(this.getUserInfoMailAttr());
 			if ( mail != null ) {
 				mail = mail.trim();

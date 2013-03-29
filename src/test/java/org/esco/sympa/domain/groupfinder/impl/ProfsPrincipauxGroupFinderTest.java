@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.services;
+package org.esco.sympa.domain.groupfinder.impl;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.esco.sympa.domain.groupfinder.impl.MultiValuedAttributeGroupFinder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:ldapContext.xml", "classpath:portlet/sympa-portlet.xml"})
+@ContextConfiguration(locations = {"classpath:portlet/sympa-portlet.xml"})
 public class ProfsPrincipauxGroupFinderTest {
 
 	private static final String UAI_TEST_VALUE = "0371122U";

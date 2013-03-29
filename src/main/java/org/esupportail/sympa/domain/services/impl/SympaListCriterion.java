@@ -9,8 +9,9 @@
  * Licensed under the GPL License, (please see the LICENCE file)
  */
 
-package org.esupportail.sympa.domain.services;
+package org.esupportail.sympa.domain.services.impl;
 
+import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
 
 public class SympaListCriterion {

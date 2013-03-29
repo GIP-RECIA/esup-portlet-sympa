@@ -28,7 +28,7 @@ import org.esco.sympa.domain.services.sympa.EscoCachingSympaServerAxisWsImpl;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.UserSympaList;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
-import org.esupportail.sympa.domain.services.SympaListCriterion;
+import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.util.CollectionUtils;
 

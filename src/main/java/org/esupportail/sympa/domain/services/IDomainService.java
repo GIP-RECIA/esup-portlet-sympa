@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.esupportail.sympa.domain.services.sympa.AbstractSympaServer;
 
 
@@ -26,6 +27,14 @@ public abstract interface IDomainService {
 		editor,
 		subscriber
 	};
+
+	/**
+	 * When the application layer needs to tell implementors of this interface that any results that
+	 * may have been cached are now invalid.  This method should be called after data on the sympa servers
+	 * could have been changed, such as after creation of a list for example.
+	 */
+	public void invalidateCache();
+
 	public List<UserSympaListWithUrl> getWhich();
 	public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion>criterion,boolean mathAll);
 	public List<UserSympaListWithUrl> getLists();

@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.services;
+package org.esco.sympa.domain.groupfinder.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;

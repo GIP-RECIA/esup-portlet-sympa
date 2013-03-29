@@ -37,7 +37,7 @@ import org.esupportail.sympa.domain.model.UserAttributeMapping;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
 import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
-import org.esupportail.sympa.domain.services.SympaListCriterion;
+import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.esupportail.sympa.portlet.web.beans.HomeForm;
 import org.esupportail.sympa.servlet.JsCreateListTableRow;
 import org.esupportail.web.portlet.mvc.ReentrantFormController;
@@ -49,10 +49,6 @@ public class HomeController extends ReentrantFormController {
 
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(HomeController.class);
-
-	/** Session key of the placeholder values map. */
-	public static final String PLACEHOLDER_VALUES_MAP_SESSION_KEY =
-			"UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
 
 	private IDomainService domainService;
 
@@ -89,7 +85,7 @@ public class HomeController extends ReentrantFormController {
 		// Build the placeholder values and put it in session.
 		Map<String, String> placeholderValuesMap = this.getUserAttributeMapping()
 				.buildPlaceholderValuesMap(userInfo);
-		request.getPortletSession().setAttribute(HomeController.PLACEHOLDER_VALUES_MAP_SESSION_KEY,
+		request.getPortletSession().setAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY,
 				placeholderValuesMap, javax.portlet.PortletSession.APPLICATION_SCOPE);
 
 

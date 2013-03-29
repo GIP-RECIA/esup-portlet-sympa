@@ -22,13 +22,10 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.sympa.domain.model.Domain;
 import org.esco.sympa.domain.model.EscoUserAttributeMapping;
 import org.esco.sympa.domain.model.LdapEstablishment;
-import org.esco.sympa.domain.model.UAI;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
-import org.esco.sympa.domain.services.IEscoDomainService;
 import org.esco.sympa.util.UserInfoService;
 import org.esupportail.sympa.domain.listfinder.IAvailableListsFinder;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
@@ -39,10 +36,11 @@ import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
-import org.esupportail.sympa.domain.services.SympaListCriterion;
+import org.esupportail.sympa.domain.services.IRobotDomainNameResolver;
+import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.esupportail.sympa.portlet.web.beans.HomeForm;
-import org.esupportail.sympa.portlet.web.controllers.HomeController;
 import org.esupportail.sympa.servlet.JsCreateListTableRow;
 import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.beans.BeansException;
@@ -57,11 +55,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(EscoHomeController.class);
 
-	/** Session key of the placeholder values map. */
-	public static final String PLACEHOLDER_VALUES_MAP_SESSION_KEY =
-			"UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
-
-	private IEscoDomainService domainService;
+	private IDomainService domainService;
 
 	/** User attributes mapping. */
 	private EscoUserAttributeMapping userAttributeMapping;
@@ -74,6 +68,8 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	private IAvailableListsFinder availableListFinder;
 
 	private IDaoService daoService;
+
+	private IRobotDomainNameResolver robotDomainNameResolver;
 
 	/** {@inheritDoc} */
 	@Override
@@ -110,11 +106,11 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 
 		if (form.isInvalidateCache()) {
 			EscoHomeController.LOG.info("Clearing cache");
-			this.domainService.invalidateCache();
+			this.getDomainService().invalidateCache();
 			form.setInvalidateCache(false);
 		}
 
-		Map<String, String> userInfo = UserInfoService.getInstance().getUserInfo(request);
+		Map<String, String> userInfo = UserInfoService.getUserInfo(request);
 
 		// Add user informations in portal attributes map.
 		userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);
@@ -122,7 +118,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 		// Build the placeholder values and put it in session.
 		Map<String, String> placeholderValuesMap = this.getUserAttributeMapping()
 				.buildPlaceholderValuesMap(userInfo);
-		request.getPortletSession().setAttribute(HomeController.PLACEHOLDER_VALUES_MAP_SESSION_KEY,
+		request.getPortletSession().setAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY,
 				placeholderValuesMap, javax.portlet.PortletSession.APPLICATION_SCOPE);
 
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -134,9 +130,9 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 
 		//Fetch bean in order to have the ldap attribute config and to query for isMemberOf
 		try {
-			final String uid = userInfo.get(this.ldapPerson.getUidAttribute());
-			final String mail = userInfo.get(this.ldapPerson.getMailAttribute());
-			final String uai = userInfo.get(this.ldapPerson.getUaiAttribute());
+			final String uid = userInfo.get(UserInfoService.getPortalUidAttribute());
+			final String mail = userInfo.get(UserInfoService.getPortalMailAttribute());
+			final String uai = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
 			Assert.hasText(uid, "UAI shouldn't be empty !");
 			Assert.hasText(uai, "UAI shouldn't be empty !");
@@ -149,11 +145,9 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			//is done by comparing the domain of the list address (after the @).
 			//As domains are 1 to 1 with establishments
 			//this can be used to tell what lists belong to which establishment.
-			String domain = this.ldapEstablishment.getMailingListDomain(uai);
-			List<UserSympaListWithUrl> sympaList = this.domainService.getWhich(new UAI(
-					uai), new Domain(domain), this.formToCriterion(form), false);
+			List<UserSympaListWithUrl> sympaList = this.getDomainService().getWhich(this.formToCriterion(form), false);
 
-			List<CreateListInfo> createList = this.domainService.getCreateListInfo();
+			List<CreateListInfo> createList = this.getDomainService().getCreateListInfo();
 
 			map.put("sympaList", sympaList);
 			map.put("createList", createList);
@@ -168,7 +162,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			// No ldapPerson bean declared
 		}
 
-		String homeUrl = this.domainService.getHomeUrl();
+		String homeUrl = this.getDomainService().getHomeUrl();
 		map.put("homeUrl",homeUrl);
 
 
@@ -247,12 +241,12 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	 * @param establishementId
 	 */
 	private void fetchCreateListTableData(final Map<String,Object> map, final Map<String,String> userInfo) {
-		String establishementId = userInfo.get(this.ldapPerson.getUaiAttribute());
+		String establishementId = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
 		EscoHomeController.LOG.debug("Entering loadCreateListTable.  UAI: [" + establishementId + "]");
 
 		//Find the establishements email address domain
-		String domain = this.ldapEstablishment.getMailingListDomain(establishementId);
+		final String domain = this.robotDomainNameResolver.resolveRobotDomainName();
 		EscoHomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
 
 		//Fetch the models from the ESCO-SympaRemote database
@@ -363,14 +357,11 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	/**
 	 * @return the domainService
 	 */
-	public IEscoDomainService getDomainService() {
+	public IDomainService getDomainService() {
 		return this.domainService;
 	}
 
-	/**
-	 * @param domainService the domainService to set
-	 */
-	public void setDomainService(final IEscoDomainService domainService) {
+	public void setDomainService(final IDomainService domainService) {
 		this.domainService = domainService;
 	}
 
@@ -418,6 +409,14 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 
 	public void setDaoService(final IDaoService daoService) {
 		this.daoService = daoService;
+	}
+
+	public IRobotDomainNameResolver getRobotDomainNameResolver() {
+		return this.robotDomainNameResolver;
+	}
+
+	public void setRobotDomainNameResolver(final IRobotDomainNameResolver listeDomainNameResolver) {
+		this.robotDomainNameResolver = listeDomainNameResolver;
 	}
 
 }

@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.impl.SympaRobot;
 
 
 public abstract class AbstractSympaServer {
@@ -75,8 +76,8 @@ public abstract class AbstractSympaServer {
 	/**
 	 * @return the homeUrl
 	 */
-	public String getHomeUrl() {
-		return this.homeUrl;
+	public String getHomeUrl(final SympaRobot robot) {
+		return robot.transformRobotUrl(this.homeUrl);
 	}
 	/**
 	 * @param homeUrl the homeUrl to set
@@ -99,8 +100,8 @@ public abstract class AbstractSympaServer {
 	/**
 	 * @return the adminUrl
 	 */
-	public String getAdminUrl() {
-		return this.adminUrl;
+	public String getAdminUrl(final SympaRobot robot) {
+		return robot.transformRobotUrl(this.adminUrl);
 	}
 	/**
 	 * @param adminUrl the adminUrl to set
@@ -111,8 +112,8 @@ public abstract class AbstractSympaServer {
 	/**
 	 * @return the archivesUrl
 	 */
-	public String getArchivesUrl() {
-		return this.archivesUrl;
+	public String getArchivesUrl(final SympaRobot robot) {
+		return robot.transformRobotUrl(this.archivesUrl);
 	}
 	/**
 	 * @param archivesUrl the archivesUrl to set
@@ -123,8 +124,8 @@ public abstract class AbstractSympaServer {
 	/**
 	 * @return the newListUrl
 	 */
-	public String getNewListUrl() {
-		return this.newListUrl;
+	public String getNewListUrl(final SympaRobot robot) {
+		return robot.transformRobotUrl(this.newListUrl);
 	}
 	/**
 	 * @param newListUrl the newListUrl to set
@@ -133,13 +134,13 @@ public abstract class AbstractSympaServer {
 		this.newListUrl = newListUrl;
 	}
 
-	public abstract List<UserSympaListWithUrl> getWhich();
+	public abstract List<UserSympaListWithUrl> getWhich(final SympaRobot robot);
 
-	public abstract List<UserSympaListWithUrl> getLists();
+	public abstract List<UserSympaListWithUrl> getLists(final SympaRobot robot);
 
-	public CreateListInfo getCreateListInfo() {
+	public CreateListInfo getCreateListInfo(final SympaRobot robot) {
 		// no new list url; no createListInfo
-		if ( this.getNewListUrl() == null ) {
+		if ( this.getNewListUrl(robot) == null ) {
 			return null;
 		}
 		// having roles ?
@@ -174,7 +175,7 @@ public abstract class AbstractSympaServer {
 		if ( canReturn ) {
 			infos = new CreateListInfo();
 			infos.setServerName(this.getName());
-			infos.setAccessUrl(this.generateConnectUrl(this.getNewListUrl()));
+			infos.setAccessUrl(this.generateConnectUrl(this.getNewListUrl(robot)));
 		}
 		return infos;
 	}
@@ -200,7 +201,7 @@ public abstract class AbstractSympaServer {
 		return false;
 	}
 
-	protected String generateListUrl(final String listHomepage) {
+	protected String generateListUrl(final SympaRobot robot, final String listHomepage) {
 		return this.generateConnectUrl(listHomepage);
 	}
 	protected String generateConnectUrl(final String url) {
@@ -217,7 +218,7 @@ public abstract class AbstractSympaServer {
 		String strTmp = tmpConnectUrl.replaceFirst("%s", tmpUrl);
 		return strTmp;
 	}
-	protected String generateListAdminUrl(final String listAddress) {
+	protected String generateListAdminUrl(final SympaRobot robot, final String listAddress) {
 		String strListName = listAddress;
 		if ( (listAddress != null) && (listAddress.length() > 0) ) {
 			int atIdx = listAddress.indexOf("@");
@@ -225,11 +226,11 @@ public abstract class AbstractSympaServer {
 				strListName = listAddress.substring(0, atIdx);
 			}
 		}
-		String tmpUrl = this.getAdminUrl();
+		String tmpUrl = this.getAdminUrl(robot);
 		return this.generateConnectUrl(tmpUrl.replaceFirst("%l", strListName));
 	}
 
-	protected String generateListArchivesUrl(final String listAddress) {
+	protected String generateListArchivesUrl(final SympaRobot robot, final String listAddress) {
 		String strListName = listAddress;
 		if ( (listAddress != null) && (listAddress.length() > 0) ) {
 			int atIdx = listAddress.indexOf("@");
@@ -237,7 +238,7 @@ public abstract class AbstractSympaServer {
 				strListName = listAddress.substring(0, atIdx);
 			}
 		}
-		String tmpUrl = this.getArchivesUrl();
+		String tmpUrl = this.getArchivesUrl(robot);
 		return this.generateConnectUrl(tmpUrl.replaceFirst("%l", strListName));
 	}
 	/**

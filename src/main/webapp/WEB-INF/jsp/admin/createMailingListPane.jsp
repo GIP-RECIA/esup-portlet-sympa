@@ -39,7 +39,7 @@
 <%-- End Dialog div configuration. --%>
 
 <div class="subTitle">
-	<spring:message code="esupsympaCreateListTable.subTitle"/>
+	<spring:message code="esupsympaCreateListTable.subTitle" />
 </div>
 
 <div>

@@ -20,10 +20,10 @@
 	<bean id="userAttributeMapping" class="org.esco.sympa.domain.model.EscoUserAttributeMapping">
 		<property name="mapping">
 			<map>
-				<entry key="%UAI" value="${esup.sympa.portal.attribute.uai}" />
-				<entry key="{UAI}" value="${esup.sympa.portal.attribute.uai}" />
-				<entry key="%RNE" value="${esup.sympa.portal.attribute.uai}" />
-				<entry key="{RNE}" value="${esup.sympa.portal.attribute.uai}" />
+				<entry key="%UAI" value="${portal.attribute.uai}" />
+				<entry key="{UAI}" value="${portal.attribute.uai}" />
+				<entry key="%RNE" value="${portal.attribute.uai}" />
+				<entry key="{RNE}" value="${portal.attribute.uai}" />
 				<entry key="%SIREN" value-ref="userAttributeSirenKey" />
 				<entry key="{SIREN}" value-ref="userAttributeSirenKey" />
 			</map>

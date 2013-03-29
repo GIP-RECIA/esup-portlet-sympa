@@ -20,8 +20,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.esupportail.sympa.domain.model.UserSympaList;
-import org.esupportail.sympa.domain.services.SympaListCriterion;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
+import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.springframework.beans.DirectFieldAccessor;
 
 

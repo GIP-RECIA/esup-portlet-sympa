@@ -7,13 +7,13 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.sympa.domain.model.Domain;
 import org.esco.sympa.domain.model.LdapEstablishment;
-import org.esco.sympa.domain.model.UAI;
-import org.esco.sympa.domain.services.IEscoDomainService;
+import org.esco.sympa.util.UserInfoService;
 import org.esupportail.sympa.domain.listfinder.IExistingListsFinder;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.IDomainService;
+import org.esupportail.sympa.domain.services.IRobotDomainNameResolver;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -21,28 +21,23 @@ public class EscoSympaExistingListFinder implements IExistingListsFinder, Initia
 
 	private Log log = LogFactory.getLog(EscoSympaExistingListFinder.class);
 
-	private IEscoDomainService escoDomainService;
+	private IDomainService domainService;
 
 	private LdapPerson ldapPerson;
 
 	private LdapEstablishment ldapEstablishment;
 
+	private IRobotDomainNameResolver robotDomainNameResolver;
+
 	/** {@inheritDoc} */
 	@Override
 	public Collection<String> findExistingLists(final Map<String, String> userInfo) {
-		final String uai = userInfo.get(this.ldapPerson.getUaiAttribute());
-		final String domainName = this.ldapEstablishment.getMailingListDomain(uai);
-
+		final String uai = userInfo.get(UserInfoService.getPortalUaiAttribute());
+		final String domainName = this.robotDomainNameResolver.resolveRobotDomainName();
 		Assert.hasText(uai, "No RNE provided in user info !");
-		Assert.hasText(domainName, "No domain name provided in user info !");
+		Assert.hasText(domainName, "Unable to resolve the domain name !");
 
-		if (this.log.isDebugEnabled()) {
-			this.log.debug(String.format(
-					"Finding existing lists with UAI [%1$s] and domain [%2$s]",
-					uai, domainName));
-		}
-
-		List<UserSympaListWithUrl> lists = this.escoDomainService.getLists(new UAI(uai), new Domain(domainName));
+		List<UserSympaListWithUrl> lists = this.domainService.getLists();
 
 		this.log.debug("Total lists returned : " + lists.size());
 
@@ -77,20 +72,18 @@ public class EscoSympaExistingListFinder implements IExistingListsFinder, Initia
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.escoDomainService, "No domain service injected !");
+		Assert.notNull(this.domainService, "No domain service injected !");
 		Assert.notNull(this.ldapPerson, "No Ldap Person injected !");
 		Assert.notNull(this.ldapEstablishment, "No Ldap Establishment injected !");
+		Assert.notNull(this.robotDomainNameResolver, "No IRobotDomainNameResolver injected !");
 	}
 
-	/**
-	 * @param domainService the domainService to set
-	 */
-	public void setEscoDomainService(final IEscoDomainService domainService) {
-		this.escoDomainService = domainService;
+	public IDomainService getDomainService() {
+		return this.domainService;
 	}
 
-	public IEscoDomainService getEscoDomainService() {
-		return this.escoDomainService;
+	public void setDomainService(final IDomainService domainService) {
+		this.domainService = domainService;
 	}
 
 	public LdapPerson getLdapPerson() {
@@ -107,6 +100,14 @@ public class EscoSympaExistingListFinder implements IExistingListsFinder, Initia
 
 	public void setLdapEstablishment(final LdapEstablishment ldapEstablishment) {
 		this.ldapEstablishment = ldapEstablishment;
+	}
+
+	public IRobotDomainNameResolver getRobotDomainNameResolver() {
+		return this.robotDomainNameResolver;
+	}
+
+	public void setRobotDomainNameResolver(final IRobotDomainNameResolver listeDomainNameResolver) {
+		this.robotDomainNameResolver = listeDomainNameResolver;
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.esupportail.sympa.domain.services;
+package org.esco.sympa.domain.groupfinder.impl;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.esco.sympa.domain.groupfinder.impl.MultiValuedAttributeGroupFinder;
 import org.esupportail.sympa.domain.model.UserAttributeMapping;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:ldapContext.xml", "classpath:portlet/sympa-portlet.xml"})
+@ContextConfiguration(locations = {"classpath:portlet/sympa-portlet.xml"})
 public class TeachingGroupFinderTest {
 
 	private static final String SIREN_TEST_VALUE = "19371122300019";

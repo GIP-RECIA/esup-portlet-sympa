@@ -46,7 +46,6 @@ public class EscoCachingSympaServerAxisWsImpl extends EscoSympaServerAxisWsImpl 
 		this.cache.removeAll();
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<UserSympaListWithUrl> getWhich(final UAI uai, final Domain domain) {

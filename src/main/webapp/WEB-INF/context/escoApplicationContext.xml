@@ -14,13 +14,6 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-	<import resource="portlet/esco-sympa-portlet.xml" />
-
-	<!-- Import the rest of the beans from their respective xml file locations -->
-	<import resource="escoLdapContext.xml" />
-	<import resource="escoDatabaseContext.xml" />
-	<import resource="escoEmailContext.xml" />
-
 	<!-- property configurer -->
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -37,6 +30,20 @@
 
 	<!-- Properties for Spring 3 annotations (@Value) -->
   	<util:properties id="config" location="classpath:esco-main.properties" />
+  
+	<!-- Import the rest of the beans from their respective xml file locations -->
+	<import resource="portlet/esco-sympa-portlet.xml" />
+	<import resource="escoLdapContext.xml" />
+	<import resource="escoDatabaseContext.xml" />
+	<import resource="escoEmailContext.xml" />
+	<import resource="escoGroupsFinderContext.xml" />
+  
+  	<bean id="userInfoService" class="org.esco.sympa.util.UserInfoService">
+  		<property name="portalMailAttribute" value="${portal.attribute.mail}" />
+		<property name="portalUidAttribute" value="${portal.attribute.uid}" />  		
+  		<property name="portalUaiAttribute" value="${portal.attribute.uai}" />
+  		<property name="portalCasProxyTicketAttribute" value="${portal.attribute.casProxyTicket}" />
+  	</bean>
   
 	<!-- ehcache -->
 	<bean id="cacheManager"
@@ -89,53 +96,54 @@
 
 	<!-- service -->
 	
-	<!-- It is important that this class be a singleton as multiple 
-		controllers should have the same instance of this class -->
-	<bean id="domainService" class="org.esco.sympa.domain.services.EscoDomainServiceImpl"
+	<bean id="escoPortletReqDomainResolver" class="org.esco.sympa.domain.services.impl.EscoPortletPrefsRobotDomainNameResolver"
 		scope="singleton">
+		<property name="ldapPerson" ref="ldapPerson" />
+		<property name="defaultDomainName" value="${robots.server.defaultDomain}" />
+	</bean>
+	
+	<bean id="robotDomainService" class="org.esupportail.sympa.domain.services.impl.RobotServiceFactory"
+		scope="session">
+		<aop:scoped-proxy proxy-target-class="false"/>
+		
+		<property name="robotDomainNameResolver" ref="escoPortletReqDomainResolver" />
+		<property name="sympaServer">
+			<bean
+				class="org.esupportail.sympa.domain.services.sympa.SpringCachingSympaServerAxisWsImpl"
+				scope="globalSession">
+				<aop:scoped-proxy />
 
-		<property name="serverList">
-			<map>
-				<entry key="server.default">
-					<bean
-						class="org.esco.sympa.domain.services.sympa.EscoSpringCachingSympaServerAxisWsImpl"
-						scope="globalSession">
-						<aop:scoped-proxy />
-
-						<!-- 
-						 | Url to access the admin page of a list. 
-						 | %l is replaced with the list name. 
-						 + -->
-						<property name="adminUrl" value="${sympa.server.default.url}/admin/%l" />
-						<!-- 
-						 | Url to access the archives page of a list. 
-						 | %l is replaced with the list name 
-						 + -->
-						<property name="archivesUrl" value="${sympa.server.default.url}/arc/%l" />
-						
-						<!-- 
-						 | ConnectUrl, if present, is used to authenticate before proceding to the sympa page. 
-						 | %s is replaced with the sympa url 
-						 + -->
-						<!-- <property name="connectUrl" 
-							value="${cas.base.server.url}/login?service=%s%3Fchecked_cas=0" /> -->
-							
-						<property name="name" value="${sympa.server.name}" />
-						<property name="newListUrl" value="${sympa.server.default.url}/net/create_list_request" />
-						<property name="homeUrl" value="${sympa.server.default.url}/net" />
-						<property name="endPointUrl" value="${sympa.server.default.endpointUrl}" />
-						<property name="timeout" value="5000" />
-						<property name="credentialRetriever" ref="${credentialRetriever}" />
-						<property name="indentityRetriever" ref="userIdentityRetrieverImpl" />
-						<property name="cacheManager" ref="cacheManager" />
-						<property name="newListForRoles">
-							<set>
-								<value>${group.newListForRoles}</value>
-							</set>
-						</property>
-					</bean>
-				</entry>
-			</map>
+				<!-- 
+				 | Url to access the admin page of a list. 
+				 | %l is replaced with the list name. 
+				 + -->
+				<property name="adminUrl" value="${robots.server.url}/admin/%l" />
+				<!-- 
+				 | Url to access the archives page of a list. 
+				 | %l is replaced with the list name 
+				 + -->
+				<property name="archivesUrl" value="${robots.server.url}/arc/%l" />
+				
+				<!-- 
+				 | ConnectUrl, if present, is used to authenticate before proceding to the sympa page. 
+				 | %s is replaced with the sympa url 
+				 + -->
+				<property name="connectUrl" value="${cas.base.server.url}/login?service=%s%3Fchecked_cas=0" />
+				
+				<property name="name" value="${robots.server.name}" />
+				<property name="newListUrl" value="${robots.server.url}/net/create_list_request" />
+				<property name="homeUrl" value="${robots.server.url}/net" />
+				<property name="endPointUrl" value="${robots.server.endpointUrl}" />
+				<property name="timeout" value="5000" />
+				<property name="credentialRetriever" ref="${credentialRetriever}" />
+				<property name="indentityRetriever" ref="userIdentityRetrieverImpl" />
+				<property name="cacheManager" ref="cacheManager" />
+				<property name="newListForRoles">
+					<set>
+						<value>${group.newListForRoles}</value>
+					</set>
+				</property>
+			</bean>
 		</property>
 	</bean>
 
@@ -271,7 +279,8 @@
 	<bean id="homeController"
 		class="org.esco.sympa.portlet.web.controllers.EscoHomeController">
 		<property name="viewName" value="home" />
-		<property name="domainService" ref="domainService" />
+		<property name="domainService" ref="robotDomainService" />
+		<property name="robotDomainNameResolver" ref="escoPortletReqDomainResolver" />
 		<property name="requireSession" value="true" />
 		<property name="commandClass"
 			value="org.esupportail.sympa.portlet.web.beans.HomeForm" />
@@ -294,9 +303,10 @@
 	<!-- Bean responsible for fetching the existing lists in sympa -->
 	<bean id="myExistingListsFinder"
 		class="org.esco.sympa.domain.listfinder.services.EscoSympaExistingListFinder">
-		<property name="escoDomainService" ref="domainService" />
+		<property name="domainService" ref="robotDomainService" />
 		<property name="ldapPerson" ref="ldapPerson" />
 		<property name="ldapEstablishment" ref="ldapEstablishment" />
+		<property name="robotDomainNameResolver" ref="escoPortletReqDomainResolver" />
 	</bean>
 
 	<!-- Component that filters the lists based on the pattern in the model 
@@ -309,12 +319,6 @@
 
 	<bean id="escoAvailableListFinder"
 		class="org.esco.sympa.domain.listfinder.services.AvailableListsFinderBasicImpl">
-		<!-- | This value is replaced by the email domain fetched from the current 
-			establishment via the class LdapEstablishment. | Therefore, the value normally 
-			should not have any noticable effect on the application + -->
-		<property name="listDomain">
-			<value>list.netocentre.fr</value>
-		</property>
 
 		<!-- Bean responsible for fetching the list of groups -->
 		<property name="etabGroupsFinder">

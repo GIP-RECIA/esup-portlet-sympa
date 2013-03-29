@@ -9,12 +9,11 @@
  * Licensed under the GPL License, (please see the LICENCE file)
  */
 
-package org.esupportail.sympa.domain.services;
+package org.esupportail.sympa.domain.services.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,9 @@ import org.apache.commons.logging.LogFactory;
 import org.esupportail.sympa.domain.model.CreateListInfo;
 import org.esupportail.sympa.domain.model.UserSympaList;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.sympa.AbstractSympaServer;
+import org.esupportail.sympa.domain.services.sympa.CachingSympaServerAxisWsImpl;
 import org.springframework.beans.DirectFieldAccessor;
 
 
@@ -32,12 +33,27 @@ public class DomainServiceImpl implements IDomainService {
 	private Map <String,AbstractSympaServer> serverList;
 	private static Log logger = LogFactory.getLog(DomainServiceImpl.class);
 
+	/** {@inheritDoc} */
+	@Override
+	public void invalidateCache() {
+		Collection<AbstractSympaServer> srvList = this.getServerList().values();
+		for ( AbstractSympaServer s : srvList ) {
+			if (s instanceof CachingSympaServerAxisWsImpl) {
+				CachingSympaServerAxisWsImpl cachedServer =
+						(CachingSympaServerAxisWsImpl) s;
+				cachedServer.invalidateCache();
+			}
+
+		}
+	}
+
+	@Override
 	public List<UserSympaListWithUrl> getWhich() {
 		// watchout; user centric ...
 		Collection<AbstractSympaServer> srvList = this.getServerList().values();
 		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
 		for ( AbstractSympaServer s : srvList ) {
-			List<UserSympaListWithUrl> srvResult = s.getWhich();
+			List<UserSympaListWithUrl> srvResult = s.getWhich(SympaRobot.getDefaultRobot());
 			if ( (srvResult != null) && (srvResult.size() > 0) ) {
 				result.addAll(srvResult);
 			}
@@ -47,6 +63,7 @@ public class DomainServiceImpl implements IDomainService {
 		return result;
 	}
 
+	@Override
 	public List<UserSympaListWithUrl> getWhich(final List<SympaListCriterion> criterions, final boolean matchAll) {
 		List<UserSympaListWithUrl> sympaList = this.getWhich();
 		if ( (criterions == null) || (criterions.size() <= 0) ) {
@@ -61,11 +78,12 @@ public class DomainServiceImpl implements IDomainService {
 		return filteredList;
 	}
 
+	@Override
 	public List<UserSympaListWithUrl> getLists() {
 		Collection<AbstractSympaServer> srvList = this.getServerList().values();
 		List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
 		for ( AbstractSympaServer s : srvList ) {
-			List<UserSympaListWithUrl> srvResult = s.getLists();
+			List<UserSympaListWithUrl> srvResult = s.getLists(SympaRobot.getDefaultRobot());
 			if ( (srvResult != null) && (srvResult.size() > 0) ) {
 				result.addAll(srvResult);
 			}
@@ -75,11 +93,12 @@ public class DomainServiceImpl implements IDomainService {
 		return result;
 	}
 
+	@Override
 	public List<CreateListInfo> getCreateListInfo() {
 		Collection<AbstractSympaServer> srvList = this.getServerList().values();
 		List<CreateListInfo> result = new ArrayList<CreateListInfo>();
 		for ( AbstractSympaServer s : srvList ) {
-			CreateListInfo infos = s.getCreateListInfo();
+			CreateListInfo infos = s.getCreateListInfo(SympaRobot.getDefaultRobot());
 			if ( infos != null ) {
 				result.add(infos);
 			}
@@ -126,64 +145,10 @@ public class DomainServiceImpl implements IDomainService {
 		Collections.sort(toSort, new UserSympaListComparator());
 	}
 
-	class UserSympaListComparator implements Comparator<UserSympaList> {
-		boolean sortOrder; // true mean ascending
-		SympaListFields sortOn;
-		public UserSympaListComparator() {
-			this.sortOrder = true;
-			this.sortOn = SympaListFields.address;
-		}
-		public UserSympaListComparator(final SympaListFields field,final boolean order) {
-			this.sortOrder = order;
-			this.sortOn = field;
-		}
-
-		public int compare(final UserSympaList o1, final UserSympaList o2) {
-			int result = 0;
-			switch (this.sortOn) {
-			case address :
-				result = this.compareString(o1.getAddress(), o2.getAddress());
-				break;
-			case owner :
-				result = this.compareBoolean(o1.isOwner(), o2.isOwner());
-				break;
-			case editor:
-				result = this.compareBoolean(o1.isEditor(), o2.isEditor());
-				break;
-			case subscriber:
-				result = this.compareBoolean(o1.isSubscriber(), o2.isSubscriber());
-				break;
-			}
-			return result;
-		}
-		private int compareBoolean(final boolean b1, final boolean b2) {
-			int result = 0;
-			if ( (b1 && b2) || (!b1 && !b2) ) {
-				return 0;
-			}
-			if ( this.sortOrder ) {
-				result = ( b1 ) ? 1 : -1;
-			} else {
-				result = ( b1 ) ? -1 : 1;
-			}
-			return result;
-		}
-		private int compareString(final String s1, final String s2) {
-			if ( (s1 == null) || (s2 == null) ) {
-				return 0;
-			}
-			int result = 0;
-			if ( this.sortOrder ) {
-				result = s1.compareTo(s2);
-			} else {
-				result = s2.compareTo(s1);
-			}
-			return result;
-		}
-	}
 	/**
 	 * @return the serverList
 	 */
+	@Override
 	public Map<String, AbstractSympaServer> getServerList() {
 		Map<String, AbstractSympaServer> serverListToUse = new HashMap<String, AbstractSympaServer>();
 		for(String serverKey: this.serverList.keySet()) {
@@ -195,11 +160,12 @@ public class DomainServiceImpl implements IDomainService {
 		return serverListToUse;
 	}
 
+	@Override
 	public String getHomeUrl() {
 		String homeUrl="#";
 		for(String serverKey: this.serverList.keySet()) {
 			if(this.serverList.get(serverKey).shouldBeUsed()) {
-				homeUrl=this.serverList.get(serverKey).getHomeUrl();
+				homeUrl=this.serverList.get(serverKey).getHomeUrl(SympaRobot.getDefaultRobot());
 			}
 		}
 		return homeUrl;

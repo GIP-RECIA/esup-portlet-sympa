@@ -290,7 +290,9 @@
 							<value>UTF-8</value>
 						</systemProperty>
 					</systemProperties>
+					<!-- Where are the portlet sources ?
 					<webAppSourceDirectory>target/esup-portlet-sympa</webAppSourceDirectory>
+					 -->
 					<webAppConfig implementation="org.mortbay.jetty.plugin.Jetty6PluginWebAppContext">
 						<sessionHandler implementation="org.mortbay.jetty.servlet.SessionHandler">
 							<sessionManager implementation="org.mortbay.jetty.servlet.HashSessionManager">

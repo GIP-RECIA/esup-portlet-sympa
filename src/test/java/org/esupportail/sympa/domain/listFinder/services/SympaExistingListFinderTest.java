@@ -92,8 +92,6 @@ public class SympaExistingListFinderTest {
 		// Init mocks
 		MockitoAnnotations.initMocks(this);
 
-		Mockito.when(this.ldapPerson.getUidAttribute()).thenReturn(SympaExistingListFinderTest.UID);
-
 		Mockito.when(this.domainService.getLists()).thenReturn(SympaExistingListFinderTest.SYMPA_LISTS);
 
 		// Inint tested object

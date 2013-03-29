@@ -28,6 +28,14 @@ import org.springframework.web.portlet.mvc.AbstractCommandController;
  */
 public class ReentrantFormController extends AbstractCommandController {
 
+	/** Session key of the placeholder values map. */
+	public static final String PLACEHOLDER_VALUES_MAP_SESSION_KEY =
+			"UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
+
+	/** Session key of the placeholder values map. */
+	public static final String SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY =
+			"SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY";
+
 	private Log logger = LogFactory.getLog(ReentrantFormController.class);
 
 	private String viewName;
@@ -55,6 +63,11 @@ public class ReentrantFormController extends AbstractCommandController {
 		if (referenceData != null) {
 			model.putAll(referenceData);
 		}
+
+		final String sympaRemoteEndpointUrl = request.getPreferences().getValue(
+				ReentrantFormController.SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY, "DEFAULT");
+		request.getPortletSession().setAttribute(ReentrantFormController.SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY,
+				sympaRemoteEndpointUrl, javax.portlet.PortletSession.APPLICATION_SCOPE);
 
 		boolean isListAdmin = (Boolean) model.get("isListAdmin") ;
 
@@ -190,4 +203,5 @@ public class ReentrantFormController extends AbstractCommandController {
 	public void setUserAgentInspector(final UserAgentInspector userAgentInspector) {
 		this.userAgentInspector = userAgentInspector;
 	}
+
 }

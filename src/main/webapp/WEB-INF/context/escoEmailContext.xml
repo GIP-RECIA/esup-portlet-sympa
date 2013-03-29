@@ -33,17 +33,17 @@
 	<!-- Defines the SMTP server to use in order to send mail with the simple 
 		email form -->
 	<bean id="smtpServer1" class="org.esupportail.commons.services.smtp.SmtpServer">
-		<property name="host" value="${esup.sympa.smtp.host}" />
-		<property name="port" value="${esup.sympa.smtp.port}" />
-		<property name="user" value="${esup.sympa.smtp.user}" />
-		<property name="password" value="${esup.sympa.smtp.password}" />
+		<property name="host" value="${smtp.host}" />
+		<property name="port" value="${smtp.port}" />
+		<property name="user" value="${smtp.user}" />
+		<property name="password" value="${smtp.password}" />
 	</bean>
 	<!-- A default from address. Is replaced by the users email address defined 
 		in their mail ldap attribute. Therefor, not so important to define these 
 		values -->
 	<bean id="smtpFromAddress" class="javax.mail.internet.InternetAddress">
-		<property name="address" value="webmaster@domain.org" />
-		<property name="personal" value="WebMaster" />
+		<property name="address" value="ent@recia.fr" />
+		<property name="personal" value="adminENT" />
 	</bean>
 	<!-- Defines the available outgoing email configurations. A configuration 
 		has a list of matching profiles. If there is a match with the users email 

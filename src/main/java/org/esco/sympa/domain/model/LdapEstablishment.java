@@ -22,14 +22,8 @@ public class LdapEstablishment {
 	private String estSearchString;
 	private String estSearchFilter;
 
-	/** Ldap domain name attribute. */
-	private String domainAttribute;
-
 	/** Ldap siren attribute. */
 	private String sirenAttribute;
-
-	private String defaultDomain;
-	private String domainOverride;
 
 	private String defaultSiren;
 
@@ -49,34 +43,6 @@ public class LdapEstablishment {
 	 */
 	public void setDefaultSiren(final String defaultSiren) {
 		this.defaultSiren = defaultSiren;
-	}
-
-	/**
-	 * @return the domainOverride
-	 */
-	public String getDomainOverride() {
-		return this.domainOverride;
-	}
-
-	/**
-	 * @param domainOverride the domainOverride to set
-	 */
-	public void setDomainOverride(final String domainOverride) {
-		this.domainOverride = domainOverride;
-	}
-
-	/**
-	 * @return the defaultDomain
-	 */
-	public String getDefaultDomain() {
-		return this.defaultDomain;
-	}
-
-	/**
-	 * @param defaultDomain the defaultDomain to set
-	 */
-	public void setDefaultDomain(final String defaultDomain) {
-		this.defaultDomain = defaultDomain;
 	}
 
 	/**
@@ -105,20 +71,6 @@ public class LdapEstablishment {
 	 */
 	public void setEstSearchFilter(final String estSearchFilter) {
 		this.estSearchFilter = estSearchFilter;
-	}
-
-	/**
-	 * @return the domainAttribute
-	 */
-	public String getDomainAttribute() {
-		return this.domainAttribute;
-	}
-
-	/**
-	 * @param domainAttribute the domainAttribute to set
-	 */
-	public void setDomainAttribute(final String domainAttribute) {
-		this.domainAttribute = domainAttribute;
 	}
 
 	/**
@@ -171,48 +123,6 @@ public class LdapEstablishment {
 
 	}
 
-	public String getMailingListDomain(final String uai) {
-
-		if (StringUtils.hasText(this.domainOverride)) {
-
-			String processedDomain = UAI.replaceUai(this.domainOverride, uai);
-
-			LdapEstablishment.LOG.debug("Domain override is defined, returning [" + processedDomain + "]");
-
-			return processedDomain;
-		}
-
-		String searchString = StringUtils.replace(this.estSearchString, "%UAI", uai);
-		String searchFilter = StringUtils.replace(this.estSearchFilter, "%UAI", uai);
-
-		LdapEstablishment.LOG.debug("Searching for mailing list domain for establishment ["
-				+ uai + "] with searchString " + searchString + " and searchfilter " + searchFilter);
-
-		AttributesMapper domainMapper = new AttributesMapper() {
-			public Object mapFromAttributes(final Attributes attrs)
-					throws NamingException {
-				Attribute attr = attrs.get(LdapEstablishment.this.getDomainAttribute());
-				Object result = null;
-				if (attr != null) {
-					result = attr.get();
-				}
-				return result;
-			} };
-
-			List<String> l = LdapUtils.ldapSearch(this.ldapTemplate, searchFilter,
-					searchString, domainMapper);
-			if ((l == null) || (l.size() != 1)) {
-				LdapEstablishment.LOG.debug("LDAP Establishement domain search "
-						+ "did not return anything");
-			} else {
-				String result = l.iterator().next();
-				LdapEstablishment.LOG.debug("LDAP Establishement domain search returned " + result);
-				return result;
-			}
-
-			return UAI.replaceUai(this.defaultDomain, uai);
-	}
-
 	public String getSiren(final String uai) {
 		String result = this.defaultSiren;
 
@@ -223,6 +133,7 @@ public class LdapEstablishment {
 				+ uai + "] with searchString " + searchString + " and searchfilter " + searchFilter);
 
 		AttributesMapper domainMapper = new AttributesMapper() {
+			@Override
 			public Object mapFromAttributes(final Attributes attrs)
 					throws NamingException {
 				Attribute attr = attrs.get(LdapEstablishment.this.getSirenAttribute());

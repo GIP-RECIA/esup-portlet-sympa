@@ -35,9 +35,6 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 	/** Logger */
 	private static final Logger log = Logger.getLogger(AvailableListsFinderBasicImpl.class);
 
-	/** Le domaine de base des listes (utilise pour fabriquer le nom du robot sympa) */
-	private String listDomain;
-
 	/** Le mecanisme de recherche des groupes de l'etablissement injecte par Spring */
 	private IEtabGroupsFinder etabGroupsFinder;
 
@@ -101,7 +98,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 			}
 		}
 
-		AvailableListsFinderBasicImpl.log.debug("Finding existing lists with userInfo [" + userInfo.toString() + "] and domain [" + this.listDomain + "]");
+		AvailableListsFinderBasicImpl.log.debug("Finding existing lists with userInfo [" + userInfo.toString() + "]");
 		Collection<String> existingLists = this.existingListsFinder.findExistingLists(userInfo);
 		AvailableListsFinderBasicImpl.log.debug("Existing lists found " + existingLists.size());
 
@@ -129,10 +126,6 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 
 	public void setListsFromGroupsPatternMatcher(final IListsFromGroupsPatternMatcher patternMatcher) {
 		this.listsFromGroupsPatternMatcher = patternMatcher;
-	}
-
-	public void setListDomain(final String domain) {
-		this.listDomain = domain;
 	}
 
 }

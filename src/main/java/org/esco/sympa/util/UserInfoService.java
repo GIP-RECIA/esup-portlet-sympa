@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
+import org.esupportail.commons.utils.Assert;
+import org.springframework.beans.factory.InitializingBean;
+
 /**
  * Helper design to retrieve user info.
  * This helper allow the portlet to work in test environment by mocking the user info,
@@ -16,9 +19,7 @@ import javax.portlet.PortletRequest;
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
-public class UserInfoService {
-
-	private static final UserInfoService INSTANCE = new UserInfoService();
+public class UserInfoService implements InitializingBean {
 
 	private static Map<String, String> MOCKED_USER_INFO = null;
 	static {
@@ -50,14 +51,13 @@ public class UserInfoService {
 		UserInfoService.BASIC_USER_INFO.put("ESCOUAICourant", "0450822X");
 	}
 
-	/** Hidden constructor. */
-	private UserInfoService() {
-		super();
-	}
+	private static String portalMailAttribute;
 
-	public static UserInfoService getInstance() {
-		return UserInfoService.INSTANCE;
-	}
+	private static String portalUaiAttribute;
+
+	private static String portalUidAttribute;
+
+	private static String portalCasProxyTicketAttribute;
 
 	/**
 	 * Retrieve the user info from portlet context, or the Mocked user info
@@ -67,7 +67,7 @@ public class UserInfoService {
 	 * @return the user info map
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, String> getUserInfo(final PortletRequest request) {
+	public static Map<String, String> getUserInfo(final PortletRequest request) {
 		Map<String, String> userInfo = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
 		if ((userInfo == null) && "true".equals(System.getProperty("testEnv"))) {
 			userInfo = UserInfoService.ADMIN_USER_INFO;
@@ -75,5 +75,46 @@ public class UserInfoService {
 
 		return userInfo;
 	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Assert.hasText(UserInfoService.portalMailAttribute, "No portal mail attribute configured !");
+		Assert.hasText(UserInfoService.portalUaiAttribute, "No portal UAI attribute configured !");
+		Assert.hasText(UserInfoService.portalUidAttribute, "No portal uid attribute configured !");
+		Assert.hasText(UserInfoService.portalCasProxyTicketAttribute, "No portal CAS proxy ticket attribute configured !");
+	}
+
+	public static String getPortalMailAttribute() {
+		return UserInfoService.portalMailAttribute;
+	}
+
+	public void setPortalMailAttribute(final String portalMailAttribute) {
+		UserInfoService.portalMailAttribute = portalMailAttribute;
+	}
+
+	public static String getPortalUaiAttribute() {
+		return UserInfoService.portalUaiAttribute;
+	}
+
+	public void setPortalUaiAttribute(final String portalUaiAttribute) {
+		UserInfoService.portalUaiAttribute = portalUaiAttribute;
+	}
+
+	public static String getPortalUidAttribute() {
+		return UserInfoService.portalUidAttribute;
+	}
+
+	public void setPortalUidAttribute(final String portalUidAttribute) {
+		UserInfoService.portalUidAttribute = portalUidAttribute;
+	}
+
+	public static String getPortalCasProxyTicketAttribute() {
+		return UserInfoService.portalCasProxyTicketAttribute;
+	}
+
+	public void setPortalCasProxyTicketAttribute(final String portalCasProxyTicketAttribute) {
+		UserInfoService.portalCasProxyTicketAttribute = portalCasProxyTicketAttribute;
+	}
+
 
 }

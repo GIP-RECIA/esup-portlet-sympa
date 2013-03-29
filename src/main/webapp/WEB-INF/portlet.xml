@@ -20,6 +20,18 @@
   <portlet>
     <portlet-name>SympaPortlet</portlet-name>
     <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+    
+    <portlet-preferences>
+		<preference>
+     		<name>robotDomainName</name>
+     		<value>DEFAULT</value>
+ 		</preference>
+ 		<preference>
+     		<name>sympaRemoteUrl</name>
+     		<value>DEFAULT</value>
+ 		</preference>
+    </portlet-preferences>
+    
     <init-param>
       <name>contextConfigLocation</name>
       <value>/WEB-INF/context/portlet/esco-sympa-portlet.xml</value>
@@ -28,6 +40,7 @@
     	<name>defaultHtmlEscape</name>
     	<value>false</value>
     </init-param>
+    
     <expiration-cache>0</expiration-cache>
     <supports>
       <mime-type>text/html</mime-type>
@@ -60,4 +73,5 @@
   	<description>get proxy ticket from portal</description>
   	<name>${esup.sympa.portal.attribute.casProxyTicket}</name>
   </user-attribute>
+  
 </portlet-app>

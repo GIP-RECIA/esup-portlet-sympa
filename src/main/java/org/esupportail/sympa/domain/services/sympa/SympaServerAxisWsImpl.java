@@ -25,6 +25,7 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.axis.transport.http.HTTPConstants;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
+import org.esupportail.sympa.domain.services.impl.SympaRobot;
 import org.esupportail.sympa.domain.services.sympa.ICredentialRetriever.TYPE;
 import org.sympa.client.ws.axis.v544.SOAPStub;
 import org.sympa.client.ws.axis.v544.SympaPort_PortType;
@@ -41,7 +42,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	private SympaPort_PortType port = null;
 
 	@Override
-	public List<UserSympaListWithUrl> getWhich() {
+	public List<UserSympaListWithUrl> getWhich(final SympaRobot robot) {
 		// first of all; get a fresh new port if needed
 		if(this.port!=null) {
 			try {
@@ -56,7 +57,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 		}
 		if(this.port == null) {
 			try {
-				this.port = this.getPort();
+				this.port = this.getPort(robot);
 			} catch (MalformedURLException e) {
 				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
@@ -101,9 +102,9 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 				//  append various urls
 
 
-				item.setListUrl(this.generateListUrl(item.getHomepage()));
-				item.setListAdminUrl(this.generateListAdminUrl(item.getAddress()));
-				item.setListArchivesUrl(this.generateListArchivesUrl(item.getAddress()));
+				item.setListUrl(this.generateListUrl(robot, item.getHomepage()));
+				item.setListAdminUrl(this.generateListAdminUrl(robot, item.getAddress()));
+				item.setListArchivesUrl(this.generateListArchivesUrl(robot, item.getAddress()));
 				result.add(item);
 			}
 		}
@@ -112,7 +113,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<UserSympaListWithUrl> getLists() {
+	public List<UserSympaListWithUrl> getLists(final SympaRobot robot) {
 		// first of all; get a fresh new port if needed
 		if(this.port!=null) {
 			try {
@@ -127,7 +128,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 		}
 		if(this.port == null) {
 			try {
-				this.port = this.getPort();
+				this.port = this.getPort(robot);
 			} catch (MalformedURLException e) {
 				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
@@ -172,17 +173,18 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 		return result;
 	}
 
-	private SympaPort_PortType getPort() throws MalformedURLException, ServiceException, RemoteException {
+	private SympaPort_PortType getPort(final SympaRobot robot) throws MalformedURLException, ServiceException, RemoteException {
 		SympaSOAP locator = new SympaSOAPLocator();
 		((SympaSOAPLocator)locator).setMaintainSession(true); // mandatory for cookie after login
-		SympaPort_PortType port = locator.getSympaPort(new URL(this.getEndPointUrl()));
+		final String enpointUrl = this.getEndPointUrl(robot);
+		SympaPort_PortType port = locator.getSympaPort(new URL(enpointUrl));
 		// set a timeout on port (10 seconds)
 		((org.apache.axis.client.Stub)port).setTimeout(this.getTimeout());
 		// now authenticate
 		TYPE credsType = this.getCredentialRetriever().getType();
-		SympaCredential creds = this.getCredentialRetriever().getCredentialForService(this.endPointUrl);
+		SympaCredential creds = this.getCredentialRetriever().getCredentialForService(enpointUrl);
 		if ( creds == null ) {
-			this.logger.error("unable to retrieve credential for service "+this.endPointUrl);
+			this.logger.error("unable to retrieve credential for service " + enpointUrl);
 			return null;
 		}
 		switch ( credsType ) {
@@ -226,8 +228,8 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	/**
 	 * @return the endPointUrl
 	 */
-	public String getEndPointUrl() {
-		return this.endPointUrl;
+	public String getEndPointUrl(final SympaRobot robot) {
+		return robot.transformRobotUrl(this.endPointUrl);
 	}
 
 	/**

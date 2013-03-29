@@ -19,30 +19,13 @@ public class LdapPerson {
 
 	private LdapTemplate ldapTemplate;
 
-	private String uidAttribute;
 	private String webmailProfileAttribute;
-	private String mailAttribute;
 	private String memberAttribute;
-	private String uaiAttribute;
 
 	private String personSearchString;
 	private String personSearchFilter;
 
 	private String adminRegex;
-
-	/**
-	 * @return the mailAttribute
-	 */
-	public String getMailAttribute() {
-		return this.mailAttribute;
-	}
-
-	/**
-	 * @param mailAttribute the mailAttribute to set
-	 */
-	public void setMailAttribute(final String mailAttribute) {
-		this.mailAttribute = StringUtils.trim(mailAttribute);
-	}
 
 	/**
 	 * @return the adminRegex
@@ -56,20 +39,6 @@ public class LdapPerson {
 	 */
 	public void setAdminRegex(final String adminRegex) {
 		this.adminRegex = adminRegex;
-	}
-
-	/**
-	 * @return the uaiAttribute
-	 */
-	public String getUaiAttribute() {
-		return this.uaiAttribute;
-	}
-
-	/**
-	 * @param uaiAttribute the uaiAttribute to set
-	 */
-	public void setUaiAttribute(final String uaiAttribute) {
-		this.uaiAttribute = StringUtils.trim(uaiAttribute);
 	}
 
 	public String getPersonSearchString() {
@@ -94,14 +63,6 @@ public class LdapPerson {
 
 	public void setMemberAttribute(final String memberAttribute) {
 		this.memberAttribute = StringUtils.trim(memberAttribute);
-	}
-
-	public String getUidAttribute() {
-		return this.uidAttribute;
-	}
-
-	public void setUidAttribute(final String uidAttribute) {
-		this.uidAttribute = StringUtils.trim(uidAttribute);
 	}
 
 	public String getWebmailProfileAttribute() {
@@ -148,6 +109,7 @@ public class LdapPerson {
 			List<LdapPerson.Person> l = this.ldapTemplate.search(
 					searchString, this.personSearchFilter,
 					new AttributesMapper() {
+						@Override
 						public Object mapFromAttributes(final Attributes attrs)
 								throws NamingException {
 							Person p = new Person();

@@ -59,7 +59,7 @@ import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.listfinder.model.ModelRequest;
 import org.esupportail.sympa.domain.listfinder.model.ModelSubscribers;
 import org.esupportail.sympa.domain.listfinder.model.PreparedRequest;
-import org.esupportail.sympa.portlet.web.controllers.HomeController;
+import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -109,7 +109,7 @@ public class ServletAjaxController implements InitializingBean {
 	@Resource(name="config")
 	private Properties properties;
 
-	private String createListURLBase;
+	private String defaultSympaRemotEndpointUrl;
 
 	protected Locale locale;
 
@@ -188,7 +188,7 @@ public class ServletAjaxController implements InitializingBean {
 		}
 
 		modelMap.put("editorsAliases", editorsAliases);
-		modelMap.put("createListURLBase", this.createListURLBase);
+		modelMap.put("createListURLBase", this.defaultSympaRemotEndpointUrl);
 		modelMap.put("type", model.getModelName());
 
 		Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
@@ -203,7 +203,7 @@ public class ServletAjaxController implements InitializingBean {
 
 		StringBuilder userAttributes = new StringBuilder(128);
 		Map<String, String> placeholderValuesMap = (Map<String, String>)
-				request.getSession().getAttribute(HomeController.PLACEHOLDER_VALUES_MAP_SESSION_KEY);
+				request.getSession().getAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY);
 		for (Entry<String, String> userAttribute : placeholderValuesMap.entrySet()) {
 			userAttributes.append("&");
 			userAttributes.append(userAttribute.getKey());
@@ -226,8 +226,9 @@ public class ServletAjaxController implements InitializingBean {
 			final HttpServletResponse response) {
 
 		try {
-			this.log.debug("Connecting to SypmaRemote with the url [" + this.createListURLBase + "]");
-			URL uri = new URL(this.createListURLBase);
+			final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl(request);
+			this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
+			URL uri = new URL(sympaRemoteEndpointUrl);
 
 			URLConnection urlConnection = uri.openConnection();
 
@@ -297,8 +298,9 @@ public class ServletAjaxController implements InitializingBean {
 	public @ResponseBody String doCloseList(final String queryString, final HttpServletRequest request, final HttpServletResponse response) {
 
 		try {
-			this.log.debug("Connecting to SypmaRemote with the url [" + this.createListURLBase + "]");
-			URL uri = new URL(this.createListURLBase);
+			final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl(request);
+			this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
+			URL uri = new URL(sympaRemoteEndpointUrl);
 
 			URLConnection urlConnection = uri.openConnection();
 
@@ -497,6 +499,21 @@ public class ServletAjaxController implements InitializingBean {
 		return listsToCreate;
 	}
 
+	/**
+	 * Retrieve the Sympa Remote endpoint URL from the HTTP session.
+	 */
+	protected String retrieveSympaRemoteEndpointUrl(final HttpServletRequest request) {
+		String sympaRemoteEndpointUrl = (String) request.getSession().getAttribute(
+				ReentrantFormController.SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY);
+
+		if (StringUtils.isBlank(sympaRemoteEndpointUrl) ||
+				"DEFAULT".equals(sympaRemoteEndpointUrl)) {
+			sympaRemoteEndpointUrl = this.defaultSympaRemotEndpointUrl;
+		}
+
+		return sympaRemoteEndpointUrl;
+	}
+
 	protected String findErrorMessageBase(final String queryString) {
 		String baseErrorMsg = null;
 		Matcher opMatcher = this.operationPattern.matcher(queryString);
@@ -517,16 +534,16 @@ public class ServletAjaxController implements InitializingBean {
 	/**
 	 * @return the createListURLBase
 	 */
-	public String getCreateListURLBase() {
-		return this.createListURLBase;
+	public String getDefaultSympaRemotEndpointUrl() {
+		return this.defaultSympaRemotEndpointUrl;
 	}
 
 	/**
 	 * @param createListURLBase the createListURLBase to set
 	 */
-	@Value("#{config['liste.escoSympaRemote.createListURL']}")
-	public void setCreateListURLBase(final String createListURLBase) {
-		this.createListURLBase = createListURLBase;
+	@Value("#{config['sympaRemote.defaultEndpointUrl']}")
+	public void setDefaultSympaRemotEndpointUrl(final String url) {
+		this.defaultSympaRemotEndpointUrl = url;
 	}
 
 }

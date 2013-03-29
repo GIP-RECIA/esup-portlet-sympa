@@ -48,7 +48,7 @@ public class CASProxyTicketServiceUserInfoImpl implements ICASProxyTicketService
 	@Override
 	public String haveProxyTicket(final PortletRequest request) {
 		// retrieve the CAS ticket from the UserInfo map
-		Map<String,String> userinfo = UserInfoService.getInstance().getUserInfo(request);
+		Map<String,String> userinfo = UserInfoService.getUserInfo(request);
 		final String ticket = userinfo.get("casProxyTicket");
 
 		return ticket;

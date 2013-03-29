@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.sympa.util.UserInfoService;
 import org.esupportail.commons.utils.Assert;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.model.UserAttributeMapping;
@@ -32,6 +33,7 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
 	/** Ldap Person searcher. */
 	private LdapPerson ldapPerson;
 
+	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(this.ldapEstablishment, "No LdapEstablishment injected !");
 		Assert.notNull(this.ldapPerson, "No LdapPerson injected !");
@@ -57,7 +59,7 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
 	 * @param userInfo modifiable attribute map.
 	 */
 	private void addSirenToUserInfo(final Map<String, String> userInfo) {
-		String uai = userInfo.get(this.getLdapPerson().getUaiAttribute());
+		String uai = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
 		if (StringUtils.hasText(uai)) {
 			String siren = this.ldapEstablishment.getSiren(uai);

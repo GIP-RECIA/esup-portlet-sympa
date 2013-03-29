@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr Copyright (C) 2010 
+	Esup Portail http://www.esup-portail.org @Author (C) 2010 Olivier Franco 
+	<Olivier.Franco@insa-lyon.fr> @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr> 
+	@Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr> @Contributor 
+	(C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr> Licensed under the 
+	GPL License, (please see the LICENCE file) -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<!-- This bean is used to find the groups that are 'merged' with the models 
+		in order to present the available mailing lists to the user -->
+	<bean id="myEtabGroupsFinder" class="org.esco.sympa.domain.groupfinder.impl.LdapGroupFinder">
+		<property name="ldapTemplate" ref="ldapTemplate" />
+		<!-- Ldap search filter. %UAI is replaced with the establishment id -->
+		<property name="ldapSearchFilter" value="(cn=*%UAI*)" />
+		<!-- Ldap search string. %UAI is replaced with the establishment id -->
+		<property name="ldapSearchBaseDN" value="ou=groups" />
+		<!-- Ldap attribute in which the group name is stored -->
+		<property name="ldapGroupAttribute" value="cn" />
+		
+		<property name="userAttributeMapping" ref="userAttributeMapping" />
+	</bean>
+
+	<!-- This bean is used to find the groups that are 'merged' with the models 
+		in order to present the available mailing lists to the user -->
+	<bean id="mvaPeopleGroupsFinder"
+		class="org.esco.sympa.domain.groupfinder.impl.MultiValuedAttributeGroupFinder">
+		<property name="ldapTemplate" ref="ldapTemplate" />
+				<!-- Ldap search string. %UAI is replaced with the establishment id -->
+		<property name="ldapSearchBaseDN" value="ou=people" />
+		<property name="userAttributeMapping" ref="userAttributeMapping" />
+	</bean>
+	
+	<bean id="teachingProfsGroupsFinder" parent="mvaPeopleGroupsFinder">
+		<!-- All this groups will be prefixed -->
+		<property name="groupPrefix" value="gpProfs-"/>
+		
+		<!-- Ldap attribute in which the group name is stored -->
+		<property name="ldapGroupAttribute" value="ENTAuxEnsGroupes" />
+		
+		<!-- Ldap search filter. %UAI is replaced with the establishment id -->
+		<property name="ldapSearchFilter"
+			value="(ENTAuxEnsGroupes=ENTStructureSiren=%SIREN,ou=structures,dc=esco-centre,dc=fr*)" />
+	</bean>
+
+	<bean id="teachingStudentsGroupsFinder" parent="mvaPeopleGroupsFinder">
+		<!-- All this groups will be prefixed -->
+		<property name="groupPrefix" value="gpEleves-"/>
+		
+		<!-- Ldap attribute in which the group name is stored -->
+		<property name="ldapGroupAttribute" value="ENTEleveGroupes" />
+		
+		<!-- Ldap search filter. %UAI is replaced with the establishment id -->
+		<property name="ldapSearchFilter"
+			value="(ENTEleveGroupes=ENTStructureSiren=%SIREN,ou=structures,dc=esco-centre,dc=fr*)" />
+	</bean>
+	
+	<bean id="profsPrincipauxGroupsFinder" parent="mvaPeopleGroupsFinder">
+			<!-- All this groups will be prefixed -->
+		<property name="groupPrefix" value="profsPrincipaux-"/>
+		
+				<!-- Ldap attribute in which the group name is stored -->
+		<property name="ldapGroupAttribute" value="isMemberOf" />
+
+		<!-- Ldap search filter. %UAI is replaced with the establishment id -->
+		<property name="ldapSearchFilter" value="(isMemberOf=*%UAI:*:Profs Principaux)" />
+	</bean>
+
+	<!-- This bean is used to find the additional groups that are proposed in 
+		the create list screen. -->
+	<bean id="additionalGroupsFinder"
+		class="org.esco.sympa.domain.groupfinder.impl.ConcatenateGroupFinder">
+
+		<property name="groupsFinders">
+			<list>
+				<ref local="profsPrincipauxGroupsFinder" />
+				<ref local="jsTreeGroupsFinder" />
+				<ref local="teachingProfsGroupsFinder" />
+				<ref local="teachingStudentsGroupsFinder" />
+			</list>
+		</property>
+
+	</bean>
+
+	<!-- This bean is used to find the moderating groups that are proposed in 
+		the JSTree. -->
+	<bean id="jsTreeGroupsFinder" class="org.esco.sympa.domain.groupfinder.impl.RegexGroupFinder">
+		<!-- Reuse the configuration. This is the same groups finder used to find 
+			the lists that can be created ; if need be, can be independant -->
+		<property name="groupsFinder" ref="myEtabGroupsFinder" />
+
+		<!-- Regular expression to filter based on groupNameAttribute -->
+		<property name="regularExpressionFilter" value=".*_%UAI.*" />
+		
+		<property name="userAttributeMapping" ref="userAttributeMapping" />
+	</bean>
+
+</beans>
