@@ -177,6 +177,9 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 		SympaSOAP locator = new SympaSOAPLocator();
 		((SympaSOAPLocator)locator).setMaintainSession(true); // mandatory for cookie after login
 		final String enpointUrl = this.getEndPointUrl(robot);
+		if (this.logger.isDebugEnabled()) {
+			this.logger.debug(String.format("SympaSoap endpoint URL: [%1$s] for Robot: [%2$s].", this.endPointUrl, robot));
+		}
 		SympaPort_PortType port = locator.getSympaPort(new URL(enpointUrl));
 		// set a timeout on port (10 seconds)
 		((org.apache.axis.client.Stub)port).setTimeout(this.getTimeout());

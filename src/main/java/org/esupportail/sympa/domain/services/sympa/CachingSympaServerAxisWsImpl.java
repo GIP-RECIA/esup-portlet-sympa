@@ -67,7 +67,7 @@ public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 
 	private void setCachedValue(final String cacheKey, final Object toCache) {
 		if ( this.logger.isDebugEnabled() ) {
-			this.logger.debug(String.format("Caching element: [%1$s] for key: [%2$s].", cacheKey, toCache.toString()));
+			this.logger.debug(String.format("Caching element: [%1$s] for key: [%2$s].", toCache.toString(), cacheKey));
 		}
 
 		this.cache.put(new Element(cacheKey, toCache));

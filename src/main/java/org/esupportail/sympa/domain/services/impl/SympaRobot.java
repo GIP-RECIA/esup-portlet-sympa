@@ -41,6 +41,11 @@ public class SympaRobot {
 		super();
 	}
 
+	@Override
+	public String toString() {
+		return "SympaRobot [domainName=" + this.domainName + "]";
+	}
+
 	public SympaRobot(final String pDomainName) {
 		super();
 
