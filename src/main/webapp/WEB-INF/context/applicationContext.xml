@@ -245,7 +245,6 @@
 	<bean id="mylistsFromGroupsPatternMatcher" class="org.esco.sympa.domain.listfinder.services.ListsFromGroupsPatternMatcherBasicImpl" />
 
 	<!-- Finds the available lists to create (which are not already included in the exisisting lists). -->
-	
 	<bean id="escoAvailableListFinder" class="org.esupportail.sympa.domain.listfinder.services.BasicAvailableListFinder">
 		<!-- 
 		 |	This value is replaced by the email domain fetched from the current establishment via the class LdapEstablishment.

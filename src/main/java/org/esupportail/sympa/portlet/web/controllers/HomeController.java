@@ -21,7 +21,6 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.sympa.domain.model.LdapEstablishment;
 import org.esco.sympa.domain.model.email.EmailConfiguration;
 import org.esco.sympa.domain.model.email.IEmailUtility;
 import org.esco.sympa.util.UserInfoService;
@@ -37,6 +36,7 @@ import org.esupportail.sympa.domain.model.UserAttributeMapping;
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
 import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
+import org.esupportail.sympa.domain.services.IRobotDomainNameResolver;
 import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.esupportail.sympa.portlet.web.beans.HomeForm;
 import org.esupportail.sympa.servlet.JsCreateListTableRow;
@@ -57,6 +57,8 @@ public class HomeController extends ReentrantFormController {
 
 	/** Available list finder. */
 	private IAvailableListsFinder availableListFinder;
+
+	private IRobotDomainNameResolver robotDomainNameResolver;
 
 	@Override
 	public Object newCommand(final PortletRequest request) throws Exception {
@@ -80,7 +82,7 @@ public class HomeController extends ReentrantFormController {
 			final Errors errors) throws Exception {
 		HomeForm form = (HomeForm)command;
 
-		Map<String, String> userInfo = UserInfoService.getInstance().getUserInfo(request);
+		Map<String, String> userInfo = UserInfoService.getUserInfo(request);
 
 		// Build the placeholder values and put it in session.
 		Map<String, String> placeholderValuesMap = this.getUserAttributeMapping()
@@ -108,9 +110,9 @@ public class HomeController extends ReentrantFormController {
 		try {
 			LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
 
-			final String uid = userInfo.get(ldapPerson.getUidAttribute());
-			final String mail = userInfo.get(ldapPerson.getMailAttribute());
-			final String uai = userInfo.get(ldapPerson.getUaiAttribute());
+			final String uid = userInfo.get(UserInfoService.getPortalUidAttribute());
+			final String mail = userInfo.get(UserInfoService.getPortalMailAttribute());
+			final String uai = userInfo.get(UserInfoService.getPortalUaiAttribute());
 			map.put("uai", uai);
 			map.put("mail", mail);
 
@@ -201,19 +203,16 @@ public class HomeController extends ReentrantFormController {
 	private void fetchCreateListTableData(final Map<String,Object> map, final Map<String,String> userInfo) {
 		if (this.availableListFinder != null) {
 			LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
-			String establishementId = userInfo.get(ldapPerson.getUaiAttribute());
+			String establishementId = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
 			HomeController.LOG.debug("Entering loadCreateListTable.  UAI: [" + establishementId + "]");
 
 			//Find the establishements email address domain
-			LdapEstablishment ldapEstablishment = (LdapEstablishment) this.getApplicationContext().getBean("ldapEstablishment");
-
-			String domain = ldapEstablishment.getMailingListDomain(establishementId);
+			final String domain = this.robotDomainNameResolver.resolveRobotDomainName();
 			HomeController.LOG.debug("Mailing list domain for establishment is [" + domain + "]");
 
 			//Fetch the models from the ESCO-SympaRemote database
 			IDaoService daoService = (IDaoService) this.getApplicationContext().getBean("daoService");
-
 
 			List<Model> listModels = daoService.getAllModels();
 
