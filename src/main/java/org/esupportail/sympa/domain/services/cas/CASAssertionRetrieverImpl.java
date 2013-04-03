@@ -5,10 +5,10 @@
  * @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr>
  * @Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr>
  * @Contributor (C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr>
+ * @Contributor (C) 2013 Maxime BOSSARD (GIP-RECIA) <mxbossard@gmail.com>
  *
  * Licensed under the GPL License, (please see the LICENCE file)
  */
-
 package org.esupportail.sympa.domain.services.cas;
 
 import org.esupportail.sympa.domain.model.UserPreferences;
