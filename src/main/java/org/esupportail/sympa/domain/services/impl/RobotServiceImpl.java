@@ -81,6 +81,8 @@ public class RobotServiceImpl implements IDomainService {
 	/** {@inheritDoc} */
 	@Override
 	public List<UserSympaListWithUrl> getWhich() {
+		RobotServiceImpl.LOG.debug(String.format(
+				"performing getWhich command on robot [%1$s] ...", this.attachedRobot.getDomainName()));
 		List<UserSympaListWithUrl> results = this.sympaServer.getWhich(this.attachedRobot);
 		results = this.fillListIfNull(results);
 		this.fillListInTestEnvironment(results);
@@ -109,6 +111,8 @@ public class RobotServiceImpl implements IDomainService {
 	/** {@inheritDoc} */
 	@Override
 	public List<UserSympaListWithUrl> getLists() {
+		RobotServiceImpl.LOG.debug(String.format(
+				"performing getLists command on robot [%1$s] ...", this.attachedRobot.getDomainName()));
 		List<UserSympaListWithUrl> results = this.sympaServer.getLists(this.attachedRobot);
 		results = this.fillListIfNull(results);
 		this.fillListInTestEnvironment(results);

@@ -19,6 +19,7 @@ import net.sf.ehcache.Element;
 
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
 import org.esupportail.sympa.domain.services.impl.SympaRobot;
+import org.springframework.util.CollectionUtils;
 
 public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 
@@ -49,7 +50,7 @@ public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 	@Override
 	public List<UserSympaListWithUrl> getWhich(final SympaRobot robot) {
 		// cacheKey = serverInstance/methodName/useridentifier
-		String cacheKey = String.format("%1$s;%2$s;%3$s", this.getName(),"getWhich",this.getIndentityRetriever().getId());
+		String cacheKey = String.format("%1$s;%2$s;%3$s;%4$s", robot.getDomainName(), this.getName(),"getWhich",this.getIndentityRetriever().getId());
 		if ( this.logger.isDebugEnabled() ) {
 			this.logger.debug("cache key = "+cacheKey);
 		}
@@ -58,13 +59,20 @@ public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 			return (List<UserSympaListWithUrl>)cached;
 		}
 		List<UserSympaListWithUrl> result = super.getWhich(robot);
-		this.setCachedValue(cacheKey,result);
+		if (!CollectionUtils.isEmpty(result)) {
+			this.setCachedValue(cacheKey, result);
+		}
 		return result;
 	}
 
 	private void setCachedValue(final String cacheKey, final Object toCache) {
-		this.cache.put(new Element(cacheKey,toCache));
+		if ( this.logger.isDebugEnabled() ) {
+			this.logger.debug(String.format("Caching element: [%1$s] for key: [%2$s].", cacheKey, toCache.toString()));
+		}
+
+		this.cache.put(new Element(cacheKey, toCache));
 	}
+
 	private Object getCachedValue(final String cacheKey) {
 		Element e = this.cache.get(cacheKey);
 		if ( e == null ) {
