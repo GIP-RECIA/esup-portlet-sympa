@@ -39,25 +39,25 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	private String endPointUrl;
 
 	// must be session scope so the bean of type SympaServerAxisWsImpl is session scope
-	private SympaPort_PortType port = null;
+	private Map<SympaRobot, SympaPort_PortType> portCache = new HashMap<SympaRobot, SympaPort_PortType>(8);
 
 	@Override
 	public List<UserSympaListWithUrl> getWhich(final SympaRobot robot) {
 		// first of all; get a fresh new port if needed
-		if(this.port!=null) {
+		if(this.portCache.get(robot)!=null) {
 			try {
-				String checkCookie = this.port.checkCookie();
+				String checkCookie = this.portCache.get(robot).checkCookie();
 				if((checkCookie == null) || "nobody".equals(checkCookie)) {
-					this.port = null;
+					this.portCache.put(robot, null);
 				}
 			} catch (RemoteException e) {
 				this.logger.debug("port is no more usable, we reinitate it",e);
-				this.port = null;
+				this.portCache.put(robot, null);
 			}
 		}
-		if(this.port == null) {
+		if(this.portCache.get(robot) == null) {
 			try {
-				this.port = this.getPort(robot);
+				this.portCache.put(robot, this.getPort(robot));
 			} catch (MalformedURLException e) {
 				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
@@ -69,7 +69,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 				return null;
 			}
 		}
-		if (this.port == null ) {
+		if (this.portCache.get(robot) == null ) {
 			this.logger.error("unable to get a new SympaPort_PortType");
 			return null;
 		}
@@ -83,7 +83,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 			 * so we use port.which() ...
 			whichList = SympaPort_PortType.complexWhich();
 			 */
-			whichList = this.port.which();
+			whichList = this.portCache.get(robot).which();
 		} catch (RemoteException e) {
 			this.logger.error("complexWhich() failed !",e);
 			return null;
@@ -115,20 +115,20 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	@Override
 	public List<UserSympaListWithUrl> getLists(final SympaRobot robot) {
 		// first of all; get a fresh new port if needed
-		if(this.port!=null) {
+		if(this.portCache.get(robot)!=null) {
 			try {
-				String checkCookie = this.port.checkCookie();
+				String checkCookie = this.portCache.get(robot).checkCookie();
 				if((checkCookie == null) || "nobody".equals(checkCookie)) {
-					this.port = null;
+					this.portCache.put(robot, null);
 				}
 			} catch (RemoteException e) {
 				this.logger.debug("port is no more usable, we reinitate it",e);
-				this.port = null;
+				this.portCache.put(robot, null);
 			}
 		}
-		if(this.port == null) {
+		if(this.portCache.get(robot) == null) {
 			try {
-				this.port = this.getPort(robot);
+				this.portCache.put(robot, this.getPort(robot));
 			} catch (MalformedURLException e) {
 				this.logger.error("unable to get a new SympaPort_PortType",e);
 				return null;
@@ -140,7 +140,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 				return null;
 			}
 		}
-		if (this.port == null ) {
+		if (this.portCache.get(robot) == null ) {
 			this.logger.error("unable to get a new SympaPort_PortType");
 			return null;
 		}
@@ -154,7 +154,7 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 			 * so we use port.which() ...
 			whichList = SympaPort_PortType.complexWhich();
 			 */
-			lists = this.port.lists("", "");
+			lists = this.portCache.get(robot).lists("", "");
 		} catch (RemoteException e) {
 			this.logger.error("lists() failed !",e);
 			return null;
