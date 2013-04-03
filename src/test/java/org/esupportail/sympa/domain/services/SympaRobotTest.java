@@ -46,6 +46,9 @@ public class SympaRobotTest {
 
 		url = robot.transformRobotUrl("https://sympa.fr/foo/?bar");
 		Assert.assertEquals("Bad transformation !", "https://test.recia.fr/foo/?bar", url);
+
+		url = robot.transformRobotUrl("https://%DOMAIN/foo/?bar");
+		Assert.assertEquals("Bad transformation !", "https://test.recia.fr/foo/?bar", url);
 	}
 
 	@Test(expected=IllegalArgumentException.class)

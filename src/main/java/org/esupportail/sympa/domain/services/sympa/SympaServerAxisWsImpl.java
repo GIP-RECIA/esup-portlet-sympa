@@ -176,18 +176,18 @@ public class SympaServerAxisWsImpl extends AbstractSympaServer {
 	private SympaPort_PortType getPort(final SympaRobot robot) throws MalformedURLException, ServiceException, RemoteException {
 		SympaSOAP locator = new SympaSOAPLocator();
 		((SympaSOAPLocator)locator).setMaintainSession(true); // mandatory for cookie after login
-		final String enpointUrl = this.getEndPointUrl(robot);
+		final String endpointUrl = this.getEndPointUrl(robot);
 		if (this.logger.isDebugEnabled()) {
-			this.logger.debug(String.format("SympaSoap endpoint URL: [%1$s] for Robot: [%2$s].", this.endPointUrl, robot));
+			this.logger.debug(String.format("SympaSoap endpoint URL: [%1$s] for Robot: [%2$s].", endpointUrl, robot));
 		}
-		SympaPort_PortType port = locator.getSympaPort(new URL(enpointUrl));
+		SympaPort_PortType port = locator.getSympaPort(new URL(endpointUrl));
 		// set a timeout on port (10 seconds)
 		((org.apache.axis.client.Stub)port).setTimeout(this.getTimeout());
 		// now authenticate
 		TYPE credsType = this.getCredentialRetriever().getType();
-		SympaCredential creds = this.getCredentialRetriever().getCredentialForService(enpointUrl);
+		SympaCredential creds = this.getCredentialRetriever().getCredentialForService(endpointUrl);
 		if ( creds == null ) {
-			this.logger.error("unable to retrieve credential for service " + enpointUrl);
+			this.logger.error("unable to retrieve credential for service " + endpointUrl);
 			return null;
 		}
 		switch ( credsType ) {
