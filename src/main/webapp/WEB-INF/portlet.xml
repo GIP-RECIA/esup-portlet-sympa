@@ -12,7 +12,7 @@
     Licensed under the GPL License, (please see the LICENCE file)
 
 -->
-<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd" version="1.0"
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" version="1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd
 	http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
@@ -20,7 +20,7 @@
   <portlet>
     <portlet-name>SympaPortlet</portlet-name>
     <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-    
+         
     <portlet-preferences>
 		<preference>
      		<name>robotDomainName</name>
@@ -30,6 +30,10 @@
      		<name>sympaRemoteUrl</name>
      		<value>DEFAULT</value>
  		</preference>
+ 		<preference>
+     		<name>databaseUrl</name>
+     		<value>DEFAULT</value>
+ 		</preference> 		
     </portlet-preferences>
     
     <init-param>
@@ -40,7 +44,7 @@
     	<name>defaultHtmlEscape</name>
     	<value>false</value>
     </init-param>
-    
+   
     <expiration-cache>0</expiration-cache>
     <supports>
       <mime-type>text/html</mime-type>

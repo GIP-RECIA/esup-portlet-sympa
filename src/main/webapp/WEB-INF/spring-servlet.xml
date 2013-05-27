@@ -29,5 +29,5 @@
     <!-- Configures the @Controller programming model 
     -> enable json-> pojo with jackson-mapper-asl-->
 	<mvc:annotation-driven />
-    
+
 </beans>

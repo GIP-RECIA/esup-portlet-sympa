@@ -28,14 +28,17 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- DAO configuration to access ESCO-SympaRemote Database -->
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="${mysql.url}" />
-		<property name="username" value="${mysql.username}" />
-		<property name="password" value="${mysql.password}" />
+	<bean id="dataSource" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="targetSource">
+			<bean class="org.esco.sympa.datasource.EscoDataSourceFactory">
+				<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+				<property name="defaultUrl" value="${mysql.url}" />
+				<property name="username" value="${mysql.username}" />
+				<property name="password" value="${mysql.password}" />
+			</bean>
+		</property>
 	</bean>
-	
+
 	<!-- Hibernate configuration -->
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
