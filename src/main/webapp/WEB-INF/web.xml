@@ -19,6 +19,9 @@
 	id="WebApp_ID" 
 	version="2.5">
 	<display-name>EsupPortletSympa</display-name>
+	
+	<distributable />
+	
 	<context-param>
         <param-name>webAppRootKey</param-name>
         <param-value>esup-portlet-sympa</param-value>
