@@ -40,6 +40,7 @@ implements IDaoService {
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<ModelSubscribers> getAllModelSubscribers() {
 		return this.getHibernateTemplate().find("FROM ModelSubscribers");
 	}
@@ -47,6 +48,7 @@ implements IDaoService {
 	/**
 	 * @return a list of groups that could have access to the list
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ModelRequest> getAllModelRequests() {
 		return this.getHibernateTemplate().find("FROM ModelRequest");
 	}
@@ -54,16 +56,12 @@ implements IDaoService {
 	/**
 	 * @return a list of groups that could have access to the list
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Model> getAllModels() {
 		return this.getHibernateTemplate().find("FROM Model");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.esupportail.sympa.domain.services.DaoService#getModel(java.math.
-	 * BigInteger)
-	 */
+	@SuppressWarnings("unchecked")
 	public Model getModel(final BigInteger id) {
 		List<Model> models = this.getHibernateTemplate().find(
 				"FROM Model where id = ?", id);
@@ -74,6 +72,7 @@ implements IDaoService {
 		return models.get(0);
 	}
 
+	@SuppressWarnings("unchecked")
 	public ModelSubscribers getModelSubscriber(final Model model) {
 		List<ModelSubscribers> modelSubscribers = this.getHibernateTemplate().find(
 				"FROM ModelSubscribers where id = ?", model.getId());
@@ -87,6 +86,7 @@ implements IDaoService {
 	/**
 	 * @return a list of groups that could have access to the list
 	 */
+	@SuppressWarnings("unchecked")
 	public List<PreparedRequest> getAllPreparedRequests() {
 		return this.getHibernateTemplate().find("FROM PreparedRequest");
 	}
@@ -96,22 +96,14 @@ implements IDaoService {
 	 * @param model
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ModelRequest getModelRequest(final PreparedRequest preparedRequest,
 			final Model model) {
 
-		// List<ModelRequest> listModelRequest =
-		// this.getHibernateTemplate().find("");
-
 		List<ModelRequest> listModelRequest = this.getHibernateTemplate()
 				.executeFind(new HibernateCallback() {
-					public Object doInHibernate(final Session session) // throws
-					// HibernateException,
-					// SQLException
-					{
-						// Query query =
-						// session.createQuery("FROM ModelRequest mr where mr.idRequest = :idRequest");
-
+					public Object doInHibernate(final Session session) {
+						
 						Query query = session
 								.createQuery("FROM ModelRequest mr where mr.id.idRequest = :idRequest and mr.id.idModel = :idModel");
 						query.setParameter("idRequest", preparedRequest.getId());
@@ -119,12 +111,6 @@ implements IDaoService {
 						return query.list();
 					}
 				});
-
-		/*
-		 * action)find( "FROM ModelRequest mr where ? = 89 and ? = 39", //new
-		 * String[] {"ridRequest", "ridModel"},
-		 * preparedRequest.getId()longValue(), model.getId().longValue() );
-		 */
 
 		if ((listModelRequest == null) || (listModelRequest.size() == 0)) {
 			return null;
