@@ -71,7 +71,7 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 			dataSource = this.buildDataSource(url);
 			this.cache.put(url, dataSource);
 		} else {
-			LOG.info("Retrieve datasource from cache for URL: [{}].", url);
+			LOG.debug("Retrieve datasource from cache for URL: [{}].", url);
 		}
 		
 		return dataSource;
