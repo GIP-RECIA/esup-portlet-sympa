@@ -10,9 +10,9 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.esupportail.commons.utils.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.TargetSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -32,8 +32,8 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
 public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 
 	/** Logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(EscoDataSourceFactory.class);
-	
+	private static final Log LOG = LogFactory.getLog(EscoDataSourceFactory.class);
+
 	/** Datasource URL portlet preferences key. */
 	private static final String DATASOURCE_URL_PREF = "databaseUrl";
 
@@ -70,8 +70,8 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		if (dataSource == null) {
 			dataSource = this.buildDataSource(url);
 			this.cache.put(url, dataSource);
-		} else {
-			LOG.debug("Retrieve datasource from cache for URL: [{}].", url);
+		} else if (LOG.isDebugEnabled()){
+			LOG.debug("Retrieve datasource from cache for URL: [" + url + "].");
 		}
 		
 		return dataSource;
@@ -100,7 +100,9 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		dataSource.setUsername(this.username);
 		dataSource.setPassword(this.password);
 		
-		LOG.info("Data source built with URL: [{}].", url);
+		if (LOG.isInfoEnabled()) {
+			LOG.info("Data source built with URL: [" + url + "].");
+		}
 		
 		return dataSource;
 	}
