@@ -12,7 +12,7 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
-	
+
 <link rel="stylesheet" href="<spring:url value="/css/esupsympa.css" />" 
 	type="text/css"  media="screen, projection">
 	

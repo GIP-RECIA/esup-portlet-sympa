@@ -41,6 +41,8 @@ function openCreateFormDialog(e, targetPane, targetDialog) {
     
     var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
     
+    var portletNamespace = $("#portletNamespace").html();
+    
     $.ajax({
 
         async: true,
@@ -50,7 +52,8 @@ function openCreateFormDialog(e, targetPane, targetDialog) {
             "establishementId": uai,
             "modelId": modelId,
             "listDescription": listDescription,
-            "modelParam": modelParam
+            "modelParam": modelParam,
+            "portletNamespace" : portletNamespace
         },
         success: function (r) {
             console.log("loadCreateList success");

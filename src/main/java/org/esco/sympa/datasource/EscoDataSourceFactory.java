@@ -8,16 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esupportail.commons.utils.Assert;
+import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.aop.TargetSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
@@ -110,15 +114,54 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 	protected String retrieveDataSourceUrl() {
 		String url = this.defaultUrl;
 		
-		PortletRequest portletReq = retrievePortletRequest();
+		final PortletRequest portletReq = retrievePortletRequest();
 		
 		if (portletReq != null) {
 			final String tempUrl = portletReq.getPreferences().getValue(EscoDataSourceFactory.DATASOURCE_URL_PREF, this.defaultUrl);
 			if (!"DEFAULT".equals(tempUrl)) {
 				url = tempUrl;
 			}
+			
+			// Register the URL in session with the portlet namespace
+			this.registerDatSourceUrlForPortletNamespace(url, portletReq);
+		} else {
+			// Not a PortletRequest try to resolve the URL with the portlet namespace in session
+			final String tempUrl = this.retrieveDataSourceUrlByPortletNamespace();
+			if (StringUtils.hasText(tempUrl)) {
+				url = tempUrl;
+			}
+		}
+
+		return url;
+	}
+
+	protected String retrieveDataSourceUrlByPortletNamespace() {
+		String url = null;
+		
+		final HttpServletRequest servletReq = this.retrieveServletRequest();
+		if (servletReq != null) {
+			final String portletNamespace = servletReq.getParameter(ReentrantFormController.PORTLET_NAMESPACE_KEY);
+			if (portletNamespace != null) {
+				// portletNamespace is a String
+				final Object tempUrl = servletReq.getSession().getAttribute(portletNamespace);
+				if (tempUrl != null) {
+					url = tempUrl.toString();
+					if (LOG.isDebugEnabled()){
+						LOG.debug("Retrieve datasource url from session with portlet namespace: [" + portletNamespace + "].");
+					}
+				}
+			}
 		}
 		return url;
+	}
+
+	protected void registerDatSourceUrlForPortletNamespace(String url, PortletRequest portletReq) {
+		Object portletNamespace = portletReq.getAttribute(ReentrantFormController.PORTLET_NAMESPACE_KEY);
+		// If the portlet namespace is correctly registered in the request
+		if (portletNamespace != null) {
+			// portletNamespace is a String
+			portletReq.getPortletSession().setAttribute(portletNamespace.toString(), url);
+		}
 	}
 
 	protected PortletRequest retrievePortletRequest() {
@@ -135,6 +178,20 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		return portletReq;
 	}
 
+	protected HttpServletRequest retrieveServletRequest() {
+		HttpServletRequest servletReq = null;
+		
+		final RequestAttributes reqAttrs = RequestContextHolder.getRequestAttributes();
+		if (reqAttrs != null && 
+				ServletRequestAttributes.class.isAssignableFrom(reqAttrs.getClass())) {
+			final ServletRequestAttributes servletReqAttrs = (ServletRequestAttributes) reqAttrs;
+			
+			servletReq = servletReqAttrs.getRequest();
+		}
+		
+		return servletReq;
+	}
+	
 	public String getDefaultUrl() {
 		return defaultUrl;
 	}

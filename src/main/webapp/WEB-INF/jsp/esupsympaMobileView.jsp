@@ -15,7 +15,8 @@
 
 <c:set var="namespace"><portlet:namespace/></c:set>
 <portlet:actionURL var="actionURL" />
-	
+<div id="portletNamespace" style="display: none;">${namespace}</div>
+
 <%-- Include the part to send email --%>
 <jsp:include page="/WEB-INF/jsp/user/writeMailForm.jsp" />
 

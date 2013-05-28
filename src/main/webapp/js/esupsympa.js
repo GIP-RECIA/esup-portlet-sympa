@@ -27,7 +27,8 @@ function handleSendSimpleEmail(e) {
     var to = $("#simple_email_to").html();
     var subject = $("#simple_email_subject").val();
     var message = $("#simple_email_message").val();
-
+    var portletNamespace = $("#portletNamespace").html();
+    
     console.log("Clicked" + message);
 
     $.ajax({
@@ -38,7 +39,8 @@ function handleSendSimpleEmail(e) {
             "fromAddress": from,
             "toAddress": to,
             "subject": subject,
-            "message": message
+            "message": message,
+            "portletNamespace": portletNamespace
         },
         success: function (r) {
             console.log("newFileOrFolder success");

@@ -58,6 +58,8 @@ function handleCreateList(dialogDomElement, e) {
 	console.log("type " + type);
 	type = $.trim(type);
 	
+	var portletNamespace = $("#portletNamespace").html();
+	
 	var queryString = "operation=" + operation;
 	
 	queryString =  queryString + "&policy=newsletter";
@@ -78,9 +80,12 @@ function handleCreateList(dialogDomElement, e) {
 		queryString = queryString + '&editors_groups=' + encodeURIComponent(listAddedGroups.join('$'));
 	}
 	
-	
 	if (typeParam && typeParamName) {
 		queryString = queryString + "&type_param=" + encodeURIComponent(typeParamName + "$" + typeParam);
+	}
+	
+	if (portletNamespace) {
+		queryString = queryString + "&portletNamespace=" + portletNamespace;
 	}
 	
 	console.log("URL created is " + createListURLBase + "?" + queryString);
@@ -120,7 +125,9 @@ function handleCloseList(e) {
 	var row = getJqueryObj(source).closest("tr");
 	var listNameObj = row.find("div.listName");
 	var listName = listNameObj.text().trim();
-	var queryString = "operation=CLOSE&listname=" + listName;
+	var portletNamespace = $("#portletNamespace").html();
+	
+	var queryString = "operation=CLOSE&listname=" + listName + "&portletNamespace=" + portletNamespace;
 	console.log("URL query is: " + queryString);
 	
 	var confirmMsg = $(".closeConfirmText").text().trim();
@@ -315,6 +322,7 @@ function intializeCreateList(uai) {
 
 function initJstree(uai) {
 	var ajaxServletUrl = $('#ajaxServletUrl').val().split(";")[0];
+	var portletNamespace = $("#portletNamespace").html();
 	
     //When a node is opened, ensure all the drag/drop functionality
     //is binded.  
@@ -347,7 +355,8 @@ function initJstree(uai) {
                 "data": function() {
                 	return {
                     "establishementId": uai,
-                    "selectedGroups" :  getSelectedLists()
+                    "selectedGroups" :  getSelectedLists(),
+                    "portletNamespace" : portletNamespace
                 	};
                 }, "success": function (data, textStatus, jqXHR) {
                     console.log("JSTree json ajax data loaded");
