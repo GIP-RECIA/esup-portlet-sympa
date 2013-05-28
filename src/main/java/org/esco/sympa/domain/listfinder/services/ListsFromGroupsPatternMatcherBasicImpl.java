@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.esco.sympa.domain.listfinder.IListsFromGroupsPatternMatcher;
-import org.esco.sympa.domain.listfinder.model.MailingList;
 import org.esupportail.sympa.domain.listfinder.IMailingList;
 import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.BasicMailingList;
 
 
 /**
@@ -56,7 +56,7 @@ IListsFromGroupsPatternMatcher {
 							// group(1) = le parametre (= le premier groupe)
 							argument = matcher.group(1);
 						}
-						IMailingList list = new MailingList(listModel, argument);
+						IMailingList list = new BasicMailingList(listModel, argument);
 						theLists.add(list);
 						ListsFromGroupsPatternMatcherBasicImpl.log.debug("Group [" + group + "] matched");
 						// Si aucun parametre n'est recupere, c'est qu'il n'y aura aucun parametre a passer au modele

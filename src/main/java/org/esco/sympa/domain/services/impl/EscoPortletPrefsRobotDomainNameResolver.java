@@ -9,7 +9,7 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.esco.sympa.domain.model.UAI;
+import org.esco.sympa.util.UaiHelper;
 import org.esco.sympa.util.UserInfoService;
 import org.esupportail.sympa.domain.model.LdapPerson;
 import org.esupportail.sympa.domain.services.impl.PortletPrefsRobotDomainNameResolver;
@@ -35,7 +35,7 @@ public class EscoPortletPrefsRobotDomainNameResolver extends PortletPrefsRobotDo
 
 		final String uai = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
-		domainName = UAI.replaceUai(domainName, uai);
+		domainName = UaiHelper.replaceUai(domainName, uai);
 
 		if (EscoPortletPrefsRobotDomainNameResolver.LOG.isDebugEnabled()) {
 			EscoPortletPrefsRobotDomainNameResolver.LOG.debug(

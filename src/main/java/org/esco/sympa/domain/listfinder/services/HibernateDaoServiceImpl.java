@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.esco.sympa.domain.listfinder.model.MailingListModel;
 import org.esupportail.sympa.domain.listfinder.IDaoService;
 import org.esupportail.sympa.domain.listfinder.IMailingListModel;
+import org.esupportail.sympa.domain.listfinder.model.BasicMailingListModel;
 import org.esupportail.sympa.domain.listfinder.model.Model;
 import org.esupportail.sympa.domain.listfinder.model.ModelRequest;
 import org.esupportail.sympa.domain.listfinder.model.ModelSubscribers;
@@ -143,7 +143,7 @@ implements IDaoService {
 
 		// Convert hibernate objects into IMailingListModel objects
 		for (Model model : listModels) {
-			MailingListModel mailingListModel = new MailingListModel(model
+			BasicMailingListModel mailingListModel = new BasicMailingListModel(model
 					.getId().toString(),
 					model.getListname(),
 					//model.getPattern().replaceAll("\\{RNE\\}", StringUtils.defaultString(establishementId)),
