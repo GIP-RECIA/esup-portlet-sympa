@@ -36,9 +36,6 @@ public class ReentrantFormController extends AbstractCommandController {
 	public static final String SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY =
 			"SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY";
 
-	/** Key of portlet namespace. */
-	public static final String PORTLET_NAMESPACE_KEY = "portletNamespace";
-
 	private Log logger = LogFactory.getLog(ReentrantFormController.class);
 
 	private String viewName;
@@ -96,11 +93,6 @@ public class ReentrantFormController extends AbstractCommandController {
 
 			mv.addObject("listAdmin", isListAdmin);
 		}
-		
-		// The response namespace allow us to distinguish the portlet instance used.
-		final String namespace = response.getNamespace();
-		// Put the response namespace in the request to be able to identify the request
-		request.setAttribute(PORTLET_NAMESPACE_KEY, namespace);
 		
 		return mv;
 	}

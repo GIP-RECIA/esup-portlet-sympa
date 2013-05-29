@@ -13,8 +13,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.esco.sympa.portlet.web.interceptors.PortletNamespaceHandlerInterceptor;
 import org.esupportail.commons.utils.Assert;
-import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.aop.TargetSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -123,7 +123,7 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 			}
 			
 			// Register the URL in session with the portlet namespace
-			this.registerDatSourceUrlForPortletNamespace(url, portletReq);
+			this.registerDataSourceUrlForPortletNamespace(url, portletReq);
 		} else {
 			// Not a PortletRequest try to resolve the URL with the portlet namespace in session
 			final String tempUrl = this.retrieveDataSourceUrlByPortletNamespace();
@@ -140,7 +140,7 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		
 		final HttpServletRequest servletReq = this.retrieveServletRequest();
 		if (servletReq != null) {
-			final String portletNamespace = servletReq.getParameter(ReentrantFormController.PORTLET_NAMESPACE_KEY);
+			final String portletNamespace = servletReq.getParameter(PortletNamespaceHandlerInterceptor.PORTLET_NAMESPACE_KEY);
 			if (portletNamespace != null) {
 				// portletNamespace is a String
 				final Object tempUrl = servletReq.getSession().getAttribute(portletNamespace);
@@ -155,12 +155,12 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		return url;
 	}
 
-	protected void registerDatSourceUrlForPortletNamespace(String url, PortletRequest portletReq) {
-		Object portletNamespace = portletReq.getAttribute(ReentrantFormController.PORTLET_NAMESPACE_KEY);
+	protected void registerDataSourceUrlForPortletNamespace(String url, PortletRequest portletReq) {
+		Object portletNamespace = portletReq.getAttribute(PortletNamespaceHandlerInterceptor.PORTLET_NAMESPACE_KEY);
 		// If the portlet namespace is correctly registered in the request
 		if (portletNamespace != null) {
 			// portletNamespace is a String
-			portletReq.getPortletSession().setAttribute(portletNamespace.toString(), url);
+			portletReq.getPortletSession().setAttribute(portletNamespace.toString(), url, javax.portlet.PortletSession.APPLICATION_SCOPE);
 		}
 	}
 

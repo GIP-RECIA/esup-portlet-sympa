@@ -227,6 +227,8 @@
 		<property name="proxyTicketService" ref="casTicketService" />
 		<property name="userPreferences" ref="userPreferencesBean" />
 	</bean>
+    <!-- MBD: Portlet Namespace interceptor -->
+    <bean id="portletNamespaceInterceptor" class="org.esco.sympa.portlet.web.interceptors.PortletNamespaceHandlerInterceptor" />
 	<!-- portlet mode handler view/edit/help -->
 	<bean id="portletModeHandlerMapping"
 		class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
@@ -235,6 +237,7 @@
 			<list>
 				<ref bean="sessionInitInterceptor" />
 				<ref bean="casProxyInitInterceptor" />
+				<ref bean="portletNamespaceInterceptor" />
 			</list>
 		</property>
 		<property name="portletModeMap">
@@ -266,6 +269,7 @@
 			</map>
 		</property>
 	</bean>
+    
 	<!-- default message code resolver for validation -->
 	<bean id="defaultMessageCodeResolver"
 		class="org.springframework.validation.DefaultMessageCodesResolver">
