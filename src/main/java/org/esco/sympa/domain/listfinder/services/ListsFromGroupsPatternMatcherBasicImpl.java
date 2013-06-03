@@ -36,7 +36,7 @@ IListsFromGroupsPatternMatcher {
 			final Collection<String> groups, final IMailingListModel listModel) {
 		Collection<IMailingList> theLists = new ArrayList<IMailingList>();
 		String casePattern = listModel.getGroupPatternToMatch();
-		ListsFromGroupsPatternMatcherBasicImpl.log.debug("List model patten is set to " + casePattern);
+		ListsFromGroupsPatternMatcherBasicImpl.log.debug("List model pattern is set to " + casePattern);
 		this.patternToMatch = Pattern.compile(casePattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		ListsFromGroupsPatternMatcherBasicImpl.log.debug("Groups to filter size " + groups.size());
 		if (groups != null) {

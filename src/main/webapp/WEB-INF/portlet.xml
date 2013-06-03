@@ -31,9 +31,9 @@
      		<value>DEFAULT</value>
  		</preference>
  		<preference>
-     		<name>databaseUrl</name>
-     		<value>DEFAULT</value>
- 		</preference> 		
+     		<name>databaseId</name>
+     		<value>cfa</value>
+ 		</preference>
     </portlet-preferences>
     
     <init-param>

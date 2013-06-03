@@ -27,14 +27,21 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
+	<!-- Config which map the database Id with its URL. -->
+	<util:map id="databaseMappingConfiguration">
+		<entry key="esco" value="${mysql.esco.url}" />
+		<entry key="cfa" value="${mysql.cfa.url}" />
+	</util:map>
+
 	<!-- DAO configuration to access ESCO-SympaRemote Database -->
 	<bean id="dataSource" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="targetSource">
 			<bean class="org.esco.sympa.datasource.EscoDataSourceFactory">
 				<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-				<property name="defaultUrl" value="${mysql.url}" />
+				<property name="defaultUrl" value="${mysql.esco.url}" />
 				<property name="username" value="${mysql.username}" />
 				<property name="password" value="${mysql.password}" />
+				<property name="databaseConfiguration" ref="databaseMappingConfiguration" />
 			</bean>
 		</property>
 	</bean>

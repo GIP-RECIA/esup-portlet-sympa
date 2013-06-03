@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.esco.sympa.portlet.web.interceptors.PortletNamespaceHandlerInterceptor;
 import org.esupportail.commons.utils.Assert;
+import org.esupportail.web.portlet.mvc.ReentrantFormController;
 import org.springframework.aop.TargetSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -38,9 +39,11 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(EscoDataSourceFactory.class);
 
-	/** Datasource URL portlet preferences key. */
-	private static final String DATASOURCE_URL_PREF = "databaseUrl";
+	/** Database Id portlet preferences key. */
+	private static final String DATABASE_ID_PREF = "databaseId";
 
+	private Map<String, String> databaseConfiguration;
+	
 	/** Default data source URL. */
 	private String defaultUrl;
 	
@@ -117,13 +120,19 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		final PortletRequest portletReq = retrievePortletRequest();
 		
 		if (portletReq != null) {
-			final String tempUrl = portletReq.getPreferences().getValue(EscoDataSourceFactory.DATASOURCE_URL_PREF, this.defaultUrl);
-			if (!"DEFAULT".equals(tempUrl)) {
-				url = tempUrl;
-			}
+			// Get the Id of the database to use. 
+			final String databaseId = portletReq.getPreferences().getValue(EscoDataSourceFactory.DATABASE_ID_PREF, null);
 			
+			if (databaseId != null) {
+				// Get the URL of the database by its Id.
+				final String tempUrl = this.databaseConfiguration.get(databaseId);
+				if (StringUtils.hasText(tempUrl)) {
+					url = tempUrl;
+				}
+			}
+
 			// Register the URL in session with the portlet namespace
-			this.registerDataSourceUrlForPortletNamespace(url, portletReq);
+			this.registerDataSourceUrlForPortletNamespace(databaseId, url, portletReq);
 		} else {
 			// Not a PortletRequest try to resolve the URL with the portlet namespace in session
 			final String tempUrl = this.retrieveDataSourceUrlByPortletNamespace();
@@ -155,7 +164,11 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 		return url;
 	}
 
-	protected void registerDataSourceUrlForPortletNamespace(String url, PortletRequest portletReq) {
+	protected void registerDataSourceUrlForPortletNamespace(final String databaseId, final String url, final PortletRequest portletReq) {
+		// Store database Id in session
+		portletReq.getPortletSession().setAttribute(ReentrantFormController.SYMPA_REMOTE_DATABASE_ID_SESSION_KEY, 
+				databaseId, javax.portlet.PortletSession.APPLICATION_SCOPE);
+		
 		Object portletNamespace = portletReq.getAttribute(PortletNamespaceHandlerInterceptor.PORTLET_NAMESPACE_KEY);
 		// If the portlet namespace is correctly registered in the request
 		if (portletNamespace != null) {
@@ -222,6 +235,14 @@ public class EscoDataSourceFactory implements TargetSource, InitializingBean {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Map<String, String> getDatabaseConfiguration() {
+		return databaseConfiguration;
+	}
+
+	public void setDatabaseConfiguration(Map<String, String> databaseConfiguration) {
+		this.databaseConfiguration = databaseConfiguration;
 	}
 
 }

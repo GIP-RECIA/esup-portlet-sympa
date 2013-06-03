@@ -99,7 +99,9 @@ public class ServletAjaxController implements InitializingBean {
 	@Resource(name="config")
 	private Properties properties;
 
-	private String defaultSympaRemotEndpointUrl;
+	private String defaultSympaRemoteEndpointUrl;
+
+	private String defaultSympaRemoteDatabaseId;
 
 	protected Locale locale;
 
@@ -178,7 +180,7 @@ public class ServletAjaxController implements InitializingBean {
 		}
 
 		modelMap.put("editorsAliases", editorsAliases);
-		modelMap.put("createListURLBase", this.defaultSympaRemotEndpointUrl);
+		modelMap.put("createListURLBase", this.defaultSympaRemoteEndpointUrl);
 		modelMap.put("type", model.getModelName());
 
 		Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
@@ -216,6 +218,11 @@ public class ServletAjaxController implements InitializingBean {
 			final HttpServletResponse response) {
 
 		try {
+			// Get SympaRemote database Id
+			final String sympaRemoteDatabaseId = this.retrieveSympaRemoteDatabaseId(request);
+			final String queryStringWithDbId =  queryString + "&databaseId=" + sympaRemoteDatabaseId;
+			 
+			// Get SympaRemote endpoint URL
 			final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl(request);
 			this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 			URL uri = new URL(sympaRemoteEndpointUrl);
@@ -225,9 +232,9 @@ public class ServletAjaxController implements InitializingBean {
 			//Use POST to hit the SympaRemote web application
 			urlConnection.setDoOutput(true);
 			OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-			this.log.debug("Posting querystring [" + queryString + "]");
+			this.log.debug("Posting querystring [" + queryStringWithDbId + "]");
 			//Send the queryString
-			wr.write(queryString);
+			wr.write(queryStringWithDbId);
 			wr.flush();
 
 			BufferedReader in = new BufferedReader(
@@ -257,7 +264,7 @@ public class ServletAjaxController implements InitializingBean {
 				errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
 				String message = errorCodeText;
 
-				final String baseErrorMsg = this.findErrorMessageBase(queryString);
+				final String baseErrorMsg = this.findErrorMessageBase(queryStringWithDbId);
 				if (StringUtils.isNotBlank(baseErrorMsg)) {
 					//Build a resource key in order to display a translated message
 					String errorMessageKey = baseErrorMsg + ".failure."
@@ -498,10 +505,25 @@ public class ServletAjaxController implements InitializingBean {
 
 		if (StringUtils.isBlank(sympaRemoteEndpointUrl) ||
 				"DEFAULT".equals(sympaRemoteEndpointUrl)) {
-			sympaRemoteEndpointUrl = this.defaultSympaRemotEndpointUrl;
+			sympaRemoteEndpointUrl = this.defaultSympaRemoteEndpointUrl;
 		}
 
 		return sympaRemoteEndpointUrl;
+	}
+
+	/**
+	 * Retrieve the Sympa Remote endpoint URL from the HTTP session.
+	 */
+	protected String retrieveSympaRemoteDatabaseId(final HttpServletRequest request) {
+		String sympaRemoteDatabaseId = (String) request.getSession().getAttribute(
+				ReentrantFormController.SYMPA_REMOTE_DATABASE_ID_SESSION_KEY);
+
+		if (StringUtils.isBlank(sympaRemoteDatabaseId) ||
+				"DEFAULT".equals(sympaRemoteDatabaseId)) {
+			sympaRemoteDatabaseId = this.defaultSympaRemoteDatabaseId;
+		}
+
+		return sympaRemoteDatabaseId;
 	}
 
 	protected String findErrorMessageBase(final String queryString) {
@@ -524,16 +546,25 @@ public class ServletAjaxController implements InitializingBean {
 	/**
 	 * @return the createListURLBase
 	 */
-	public String getDefaultSympaRemotEndpointUrl() {
-		return this.defaultSympaRemotEndpointUrl;
+	public String getDefaultSympaRemoteEndpointUrl() {
+		return this.defaultSympaRemoteEndpointUrl;
 	}
 
 	/**
 	 * @param createListURLBase the createListURLBase to set
 	 */
 	@Value("#{config['sympaRemote.defaultEndpointUrl']}")
-	public void setDefaultSympaRemotEndpointUrl(final String url) {
-		this.defaultSympaRemotEndpointUrl = url;
+	public void setDefaultSympaRemoteEndpointUrl(final String url) {
+		this.defaultSympaRemoteEndpointUrl = url;
+	}
+
+	public String getDefaultSympaRemoteDatabaseId() {
+		return defaultSympaRemoteDatabaseId;
+	}
+
+	@Value("#{config['sympaRemote.defaultDatabaseId']}")
+	public void setDefaultSympaRemoteDatabaseId(String defaultSympaRemoteDatabaseId) {
+		this.defaultSympaRemoteDatabaseId = defaultSympaRemoteDatabaseId;
 	}
 
 }

@@ -36,6 +36,10 @@ public class ReentrantFormController extends AbstractCommandController {
 	public static final String SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY =
 			"SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY";
 
+	/** Session key of the database Id. */
+	public static final String SYMPA_REMOTE_DATABASE_ID_SESSION_KEY =
+			"SYMPA_REMOTE_DATABASE_ID_SESSION_KEY";
+
 	private Log logger = LogFactory.getLog(ReentrantFormController.class);
 
 	private String viewName;
