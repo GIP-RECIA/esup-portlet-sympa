@@ -32,7 +32,7 @@
  		</preference>
  		<preference>
      		<name>databaseId</name>
-     		<value>cfa</value>
+     		<value>esco</value>
  		</preference>
     </portlet-preferences>
     

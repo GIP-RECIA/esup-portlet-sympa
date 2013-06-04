@@ -69,7 +69,7 @@ public class ReentrantFormController extends AbstractCommandController {
 		}
 
 		final String sympaRemoteEndpointUrl = request.getPreferences().getValue(
-				ReentrantFormController.SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY, "DEFAULT");
+				"sympaRemoteUrl", "DEFAULT");
 		request.getPortletSession().setAttribute(ReentrantFormController.SYMPA_REMOTE_ENDPOINT_URL_SESSION_KEY,
 				sympaRemoteEndpointUrl, javax.portlet.PortletSession.APPLICATION_SCOPE);
 
