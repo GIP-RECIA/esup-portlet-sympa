@@ -89,7 +89,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 		form.setOwner(true);
 		form.setSubscriber(true);
 		form.setTabIndex("0");
-		form.setInvalidateCache(false);
+		form.setInvalidateCache(true);
 		return form;
 	}
 

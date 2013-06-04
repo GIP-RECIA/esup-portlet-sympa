@@ -13,6 +13,9 @@
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 
+<c:set var="namespace"><portlet:namespace/></c:set>
+<portlet:actionURL var="actionURL" />
+
 <div id="portletNamespace" style="display: none;">${namespace}</div>
 
 <%-- Include the part to send email --%>

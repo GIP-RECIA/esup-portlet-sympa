@@ -13,6 +13,9 @@
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 
+<c:set var="namespace"><portlet:namespace/></c:set>
+<portlet:actionURL var="actionURL" />
+
 <%-- Include the part to send email --%>
 <jsp:include page="/WEB-INF/jsp/user/writeMailForm.jsp" />
 

@@ -19,6 +19,3 @@
 <%@ taglib prefix="spring"  uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="insa" tagdir="/WEB-INF/tags/insa" %>
 <%--@ taglib prefix="form"    uri="http://www.springframework.org/tags/form" --%>
-
-<c:set var="namespace"><portlet:namespace/></c:set>
-<portlet:actionURL var="actionURL" />
