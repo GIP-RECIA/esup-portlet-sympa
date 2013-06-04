@@ -89,17 +89,12 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 		form.setOwner(true);
 		form.setSubscriber(true);
 		form.setTabIndex("0");
+		form.setInvalidateCache(false);
 		return form;
 	}
 
-	/* (non-Javadoc)
-	 * 
-	 * This method fetches data for the top level page
-	 * 
-	 * @see org.esupportail.web.portlet.mvc.ReentrantFormController#referenceData(javax.portlet.PortletRequest, java.lang.Object, org.springframework.validation.Errors)
-	 */
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public Map<?, ?> referenceData(final PortletRequest request, final Object command,
 			final Errors errors) throws Exception {
 		HomeForm form = (HomeForm)command;
