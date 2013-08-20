@@ -23,6 +23,9 @@ import org.springframework.util.CollectionUtils;
 
 public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 
+	/** Svuid. */
+	private static final long serialVersionUID = 8300731178095561612L;
+
 	private CacheManager cacheManager = null;
 
 	private Cache cache = null;

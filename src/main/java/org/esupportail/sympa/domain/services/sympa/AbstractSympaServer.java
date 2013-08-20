@@ -11,6 +11,7 @@
  */
 package org.esupportail.sympa.domain.services.sympa;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -23,7 +24,11 @@ import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
 import org.esupportail.sympa.domain.services.impl.SympaRobot;
 
 
-public abstract class AbstractSympaServer {
+public abstract class AbstractSympaServer implements Serializable {
+	
+	/** Svuid. */
+	private static final long serialVersionUID = -1348669925317824883L;
+	
 	protected Log logger = LogFactory.getLog(this.getClass());
 	/**
 	 * name of the sympa server

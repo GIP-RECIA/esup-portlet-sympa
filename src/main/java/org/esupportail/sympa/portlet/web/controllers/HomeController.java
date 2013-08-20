@@ -202,6 +202,7 @@ public class HomeController extends ReentrantFormController {
 	 */
 	private void fetchCreateListTableData(final Map<String,Object> map, final Map<String,String> userInfo) {
 		if (this.availableListFinder != null) {
+			@SuppressWarnings("unused")
 			LdapPerson ldapPerson = (LdapPerson) this.getApplicationContext().getBean("ldapPerson");
 			String establishementId = userInfo.get(UserInfoService.getPortalUaiAttribute());
 

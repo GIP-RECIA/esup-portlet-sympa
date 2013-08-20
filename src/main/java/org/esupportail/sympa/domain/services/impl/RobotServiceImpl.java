@@ -38,6 +38,9 @@ import org.springframework.util.CollectionUtils;
  */
 public class RobotServiceImpl implements IDomainService {
 
+	/** Svuid. */
+	private static final long serialVersionUID = -5366410950001896699L;
+
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(DomainServiceImpl.class);
 

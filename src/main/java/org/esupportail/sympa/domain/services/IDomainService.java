@@ -11,6 +11,7 @@
  */
 package org.esupportail.sympa.domain.services;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import org.esupportail.sympa.domain.services.impl.SympaListCriterion;
 import org.esupportail.sympa.domain.services.sympa.AbstractSympaServer;
 
 
-public abstract interface IDomainService {
+public abstract interface IDomainService extends Serializable {
 	public enum SympaListFields {
 		address,
 		owner,

@@ -34,6 +34,9 @@ import org.sympa.client.ws.axis.v544.SympaSOAPLocator;
 
 public class SympaServerAxisWsImpl extends AbstractSympaServer {
 
+	/** Svuid. */
+	private static final long serialVersionUID = -785466179510842335L;
+
 	private int timeout = 5000;
 
 	private String endPointUrl;

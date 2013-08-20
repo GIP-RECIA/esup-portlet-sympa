@@ -30,7 +30,12 @@ import org.springframework.beans.DirectFieldAccessor;
 
 
 public class DomainServiceImpl implements IDomainService {
+	
+	/** Svuid. */
+	private static final long serialVersionUID = -3512980214351879588L;
+	
 	private Map <String,AbstractSympaServer> serverList;
+	
 	private static Log logger = LogFactory.getLog(DomainServiceImpl.class);
 
 	/** {@inheritDoc} */
