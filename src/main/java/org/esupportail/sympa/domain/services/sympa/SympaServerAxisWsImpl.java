@@ -11,6 +11,7 @@
  */
 package org.esupportail.sympa.domain.services.sympa;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +33,10 @@ import org.sympa.client.ws.axis.v544.SympaPort_PortType;
 import org.sympa.client.ws.axis.v544.SympaSOAP;
 import org.sympa.client.ws.axis.v544.SympaSOAPLocator;
 
-public class SympaServerAxisWsImpl extends AbstractSympaServer {
+public class SympaServerAxisWsImpl extends AbstractSympaServer implements Serializable {
+
+	/** Svuid. */
+	private static final long serialVersionUID = 7748941243301663527L;
 
 	private int timeout = 5000;
 

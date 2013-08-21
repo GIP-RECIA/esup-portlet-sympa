@@ -16,6 +16,9 @@ import org.springframework.beans.factory.InitializingBean;
 public class SpringCachingSympaServerAxisWsImpl extends
 		CachingSympaServerAxisWsImpl implements InitializingBean {
 
+	/** Svuid. */
+	private static final long serialVersionUID = 95567139544646849L;
+
 	public SpringCachingSympaServerAxisWsImpl() {
 		super();
 	}
