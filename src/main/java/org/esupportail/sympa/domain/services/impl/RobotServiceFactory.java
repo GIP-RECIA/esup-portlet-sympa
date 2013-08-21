@@ -14,6 +14,7 @@
  */
 package org.esupportail.sympa.domain.services.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,10 @@ import org.springframework.util.StringUtils;
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
-public class RobotServiceFactory implements FactoryBean<IDomainService>, InitializingBean {
+public class RobotServiceFactory implements FactoryBean<IDomainService>, InitializingBean, Serializable {
+
+	/** Svuid. */
+	private static final long serialVersionUID = 975791216275931163L;
 
 	/** Logger. */
 	private static final Log LOG = LogFactory.getLog(RobotServiceFactory.class);

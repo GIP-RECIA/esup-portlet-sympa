@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -66,7 +67,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 @Scope("session")
-public class ServletAjaxController implements InitializingBean {
+public class ServletAjaxController implements InitializingBean, Serializable {
+
+	/** Svuid. */
+	private static final long serialVersionUID = -6975100227000700771L;
 
 	/** Base of error messages for list creation. */
 	private static final String CREATE_ERROR_MSG_BASE = "esupsympaCreateList";

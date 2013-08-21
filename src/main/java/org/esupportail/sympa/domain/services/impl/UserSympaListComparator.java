@@ -17,7 +17,6 @@ package org.esupportail.sympa.domain.services.impl;
 import java.util.Comparator;
 
 import org.esupportail.sympa.domain.model.UserSympaList;
-import org.esupportail.sympa.domain.services.IDomainService;
 import org.esupportail.sympa.domain.services.IDomainService.SympaListFields;
 
 /**

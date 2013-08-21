@@ -102,6 +102,10 @@ public class ModelRequest {
 
 @Embeddable
 class ModelRequestId implements Serializable {
+	
+	/** Svuid. */
+	private static final long serialVersionUID = 2561811354459813795L;
+	
 	@Column(name = "id_model")	
 	BigInteger idModel;	
 	@Column(name = "id_request")	
