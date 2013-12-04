@@ -53,9 +53,12 @@
   
   	<bean id="userInfoService" class="org.esco.sympa.util.UserInfoService">
   		<property name="portalMailAttribute" value="${portal.attribute.mail}" />
-		<property name="portalUidAttribute" value="${portal.attribute.uid}" />  		
+		  <property name="portalUidAttribute" value="${portal.attribute.uid}" />  		
   		<property name="portalUaiAttribute" value="${portal.attribute.uai}" />
+  		<property name="portalIsMemberOfAttribute" value="${portal.attribute.isMemberOf}" />      
   		<property name="portalCasProxyTicketAttribute" value="${portal.attribute.casProxyTicket}" />
+  		<property name="adminSwitchEtabRegExUai" value="${portal.admin.switchEtab.regExEtabs.uai}" />      
+      <property name="adminSwitchEtabRegExLabel" value="${portal.admin.switchEtab.regExEtabs.label}" />
   	</bean>
   
 	<!-- ehcache -->

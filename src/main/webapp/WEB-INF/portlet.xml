@@ -34,6 +34,10 @@
      		<name>databaseId</name>
      		<value>esco</value>
  		</preference>
+ 		<preference>
+        <name>overridingUai</name>
+        <value></value>
+    </preference>
     </portlet-preferences>
     
     <init-param>
@@ -71,6 +75,9 @@
   </user-attribute>
   <user-attribute>
   	<name>${esup.sympa.portal.attribute.uid}</name>
+  </user-attribute>
+    <user-attribute>
+    <name>${esup.sympa.portal.attribute.isMemberOf}</name>
   </user-attribute>
   <!-- le proxy ticket pour la portlet -->
   <user-attribute>

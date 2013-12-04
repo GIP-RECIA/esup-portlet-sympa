@@ -30,6 +30,9 @@ public class HomeForm implements Serializable {
 	//If true, cache should be cleared
 	private boolean invalidateCache;
 	
+	/** MBD: UAI the admin want to switch to. */
+	private String adminSwitchEtabUai;
+	
 	/**
 	 * @return the isOwner
 	 */
@@ -89,6 +92,22 @@ public class HomeForm implements Serializable {
 	 */
 	public void setInvalidateCache(boolean invalidateCache) {
 		this.invalidateCache = invalidateCache;
+	}
+	/**
+	 * Getter of adminSwitchEtabUai.
+	 *
+	 * @return the adminSwitchEtabUai
+	 */
+	public String getAdminSwitchEtabUai() {
+		return adminSwitchEtabUai;
+	}
+	/**
+	 * Setter of adminSwitchEtabUai.
+	 *
+	 * @param adminSwitchEtabUai the adminSwitchEtabUai to set
+	 */
+	public void setAdminSwitchEtabUai(String adminSwitchEtabUai) {
+		this.adminSwitchEtabUai = adminSwitchEtabUai;
 	}
 
 }

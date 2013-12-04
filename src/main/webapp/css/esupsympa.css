@@ -312,3 +312,14 @@ ul#createListSelectedGroups_list {
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
+
+.switchEtab-form {
+  display: inline;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+.switchEtab-selector {
+	width: 100%;
+}

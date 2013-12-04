@@ -13,6 +13,8 @@
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp"%>
 
+<portlet:actionURL var="adminActionURL" />
+
 <div id="createListURLBase" style="display:none">${createListURLBase}</div>
 
 <input type="hidden" id="userUAI" value="${uai}" />
@@ -38,7 +40,26 @@
 				<a href="#tabs-3">
 					<spring:message code="esupsympaAdmin.updateList.title" htmlEscape="true" />
 				</a>
-			</li>			
+			</li>
+			<c:if test="${not empty switchEtabMapEntries}">
+			<li>
+        <form method="post" class="switchEtab-form" action="<c:out value="${adminActionURL}" escapeXml="true"/>">
+	        <span>
+	          <spring:message code="esupsympaAdmin.switchEtab.selector.title" htmlEscape="true" var="switchEtab_selector_title" />
+	          <select name="adminSwitchEtabUai" class="switchEtab-selector" size="1" title="${switchEtab_selector_title}"
+	             onchange="submit();">
+	          <c:forEach items="${switchEtabMapEntries}" var="entry">
+	            <option value="${entry.key}"
+	            
+	            <c:if test="${entry.key eq uai}">selected="selected"</c:if>
+	              
+	            >${entry.value}</option>
+	          </c:forEach>
+	          </select>
+	        </span>
+        </form>
+      </li>
+      </c:if>
 		</ul>
 		<div id="tabs-1">
 			<jsp:include page="/WEB-INF/jsp/user/mailingListsListingPane.jsp" />

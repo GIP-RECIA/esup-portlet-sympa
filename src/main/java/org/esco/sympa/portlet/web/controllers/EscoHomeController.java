@@ -13,6 +13,7 @@ package org.esco.sympa.portlet.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,13 +99,19 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	public Map<?, ?> referenceData(final PortletRequest request, final Object command,
 			final Errors errors) throws Exception {
 		HomeForm form = (HomeForm)command;
-
+		Map<String,Object> map = new HashMap<String, Object>();
+		
+		// MBD: Check etab switching
+		checkAdminEtabSwitching(request, form);
+		
 		if (form.isInvalidateCache()) {
 			EscoHomeController.LOG.info("Clearing cache");
 			this.getDomainService().invalidateCache();
 			form.setInvalidateCache(false);
 		}
 
+		this.fetchSwitchEtabMap(map, request);
+		
 		Map<String, String> userInfo = UserInfoService.getUserInfo(request);
 
 		// Add user informations in portal attributes map.
@@ -115,8 +122,6 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 				.buildPlaceholderValuesMap(userInfo);
 		request.getPortletSession().setAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY,
 				placeholderValuesMap, javax.portlet.PortletSession.APPLICATION_SCOPE);
-
-		Map<String,Object> map = new HashMap<String, Object>();
 
 		//Fetch multi-valued attributes
 		Map<String, List<Object>> mvUserInfo = (Map<String, List<Object>>)
@@ -166,6 +171,20 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 		}
 
 		return map;
+	}
+
+	protected void checkAdminEtabSwitching(final PortletRequest request, HomeForm form) {
+		final String adminSwitchEtabUai = form.getAdminSwitchEtabUai();
+		if (StringUtils.hasText(adminSwitchEtabUai)) {
+			// MBD: asking for etab switching
+			final Map<String, String> etabMap = UserInfoService.findAdminSwitchEtabMap(request);
+			if (etabMap.containsKey(adminSwitchEtabUai)) {
+				// Admin is authorized to switch to this etab
+				UserInfoService.replaceCurrentUai(request, adminSwitchEtabUai);
+				// Force cache invalidation
+				form.setInvalidateCache(true);
+			}
+		}
 	}
 
 	private List<String> fetchIsMemberOf(final Map<String, List<Object>> mvUserInfo, final LdapPerson ldapPerson, final String uid) {
@@ -308,6 +327,15 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 
 	}
 
+	protected void fetchSwitchEtabMap(final Map<String,Object> map, final PortletRequest request) {
+		Map<String, String> switchEtabMap = UserInfoService.findAdminSwitchEtabMap(request);
+		if (switchEtabMap != null && switchEtabMap.size() < 2) {
+			// MBD: if less than 2 establishment no map need to be passed
+			switchEtabMap = null;
+		}
+		map.put("switchEtabMapEntries", switchEtabMap.entrySet());
+	}
+	
 	private void fetchEmailUtility(final Map<String,Object> map, final List<String> emailProfileList) {
 		//Find which email program is configured for the user
 		EmailConfiguration emailConfig = (EmailConfiguration) this
