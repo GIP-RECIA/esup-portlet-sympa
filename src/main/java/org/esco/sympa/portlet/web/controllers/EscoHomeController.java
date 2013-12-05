@@ -328,12 +328,13 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 	}
 
 	protected void fetchSwitchEtabMap(final Map<String,Object> map, final PortletRequest request) {
-		Map<String, String> switchEtabMap = UserInfoService.findAdminSwitchEtabMap(request);
+		final Map<String, String> switchEtabMap = UserInfoService.findAdminSwitchEtabMap(request);
 		if (switchEtabMap != null && switchEtabMap.size() < 2) {
 			// MBD: if less than 2 establishment no map need to be passed
-			switchEtabMap = null;
+			map.remove("switchEtabMapEntries");
+		} else {
+			map.put("switchEtabMapEntries", switchEtabMap.entrySet());
 		}
-		map.put("switchEtabMapEntries", switchEtabMap.entrySet());
 	}
 	
 	private void fetchEmailUtility(final Map<String,Object> map, final List<String> emailProfileList) {
