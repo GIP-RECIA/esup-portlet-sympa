@@ -45,15 +45,16 @@
 			<li>
         <form method="post" class="switchEtab-form" action="<c:out value="${adminActionURL}" escapeXml="true"/>">
 	        <span>
-	          <spring:message code="esupsympaAdmin.switchEtab.selector.title" htmlEscape="true" var="switchEtab_selector_title" />
-	          <select name="adminSwitchEtabUai" class="switchEtab-selector" size="1" title="${switchEtab_selector_title}"
-	             onchange="submit();">
+	          <spring:message code="esupsympaAdmin.switchEtab.selector.title" htmlEscape="true" 
+	             var="switchEtab_selector_title" />
+	          <select name="adminSwitchEtabUai" class="switchEtab-selector" size="1" 
+	             title="${switchEtab_selector_title}" onchange="submit();">
 	          <c:forEach items="${switchEtabMapEntries}" var="entry">
 	            <option value="${entry.key}"
 	            
 	            <c:if test="${entry.key eq uai}">selected="selected"</c:if>
 	              
-	            >${entry.value}</option>
+	            >${entry.value} &nbsp; [ ${entry.key} ]</option>
 	          </c:forEach>
 	          </select>
 	        </span>

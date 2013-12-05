@@ -180,7 +180,7 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			final Map<String, String> etabMap = UserInfoService.findAdminSwitchEtabMap(request);
 			if (etabMap.containsKey(adminSwitchEtabUai)) {
 				// Admin is authorized to switch to this etab
-				UserInfoService.replaceCurrentUai(request, adminSwitchEtabUai);
+				UserInfoService.switchEtablishmentUai(request, adminSwitchEtabUai);
 				// Force cache invalidation
 				form.setInvalidateCache(true);
 			}

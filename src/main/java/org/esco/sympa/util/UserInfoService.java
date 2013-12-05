@@ -145,15 +145,17 @@ public class UserInfoService implements InitializingBean {
 	 * @param request
 	 * @param newUai
 	 */
-	public static void replaceCurrentUai(final PortletRequest request, final String newUai) {
+	public static void switchEtablishmentUai(final PortletRequest request, final String newUai) {
 		if (StringUtils.hasText(newUai)) {
 			final PortletPreferences prefs = request.getPreferences();
+			
 			try {
 				prefs.setValue(OVERRIDING_UAI_PREF_KEY, newUai);
+				
 			} catch (final ReadOnlyException e) {
 				LOG.warn("Unable to write preference with key: " + OVERRIDING_UAI_PREF_KEY, e);
 			}
-			//request.getPortletSession().setAttribute(OVERRIDE_UAI_PREF_KEY, newUai);
+
 		}
 	}
 
