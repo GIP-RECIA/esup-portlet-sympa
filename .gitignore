@@ -2,6 +2,7 @@ target
 .classpath
 .project
 .settings
+.settings/*
 esco-config.properties
 /.springBeans
 /* Build Log *
