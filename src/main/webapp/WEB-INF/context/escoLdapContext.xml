@@ -79,4 +79,11 @@
 			value="(&amp;(objectclass=ENTStructure)(ENTStructureUAI=%UAI))" />
 	</bean>
 
+	<!-- Used to find the function addresses. -->
+	<bean 	id="ldapFilterSourceRequest" 
+			class="org.esco.sympa.domain.model.LdapFilterSourceRequest" 
+			scope="session">
+		<property name="ldapTemplate" ref="ldapTemplate" />
+		<property name="functionSources" value="${data_source.functionSources}" />
+	</bean>
 </beans>

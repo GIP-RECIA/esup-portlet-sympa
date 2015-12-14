@@ -134,9 +134,9 @@ public class EscoHomeController extends ReentrantFormController implements Initi
 			final String mail = userInfo.get(UserInfoService.getPortalMailAttribute());
 			final String uai = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
-			Assert.hasText(uid, "UAI shouldn't be empty !");
+			Assert.hasText(uid, "UID shouldn't be empty !");
 			Assert.hasText(uai, "UAI shouldn't be empty !");
-			Assert.hasText(mail, "UAI shouldn't be empty !");
+			Assert.hasText(mail, "MAIL shouldn't be empty !");
 
 			map.put("uai", uai);
 			map.put("mail", mail);

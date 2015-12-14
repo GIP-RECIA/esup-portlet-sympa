@@ -36,7 +36,11 @@ public class PreparedRequest {
 	@Column(name = "ldapfilter")	
 	String ldapFilter;
 
-
+	@Column(name = "data_source")	
+	String dataSource;
+	
+	@Column(name = "ldap_suffix")	
+	String ldapSuffix;
 
 	/**
 	 * @return the id
@@ -81,4 +85,19 @@ public class PreparedRequest {
 		this.ldapFilter = ldapFilter;
 	}
 
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	public String getLdapSuffix() {
+		return ldapSuffix;
+	}
+
+	public void setLdapSuffix(String ldapSuffix) {
+		this.ldapSuffix = ldapSuffix;
+	}
 }

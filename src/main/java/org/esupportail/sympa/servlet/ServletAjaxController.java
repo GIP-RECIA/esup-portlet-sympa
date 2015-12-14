@@ -42,6 +42,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.esco.sympa.domain.groupfinder.IEtabGroupsFinder;
+import org.esco.sympa.domain.model.LdapFilterSourceRequest;
 import org.esupportail.commons.services.smtp.SimpleSmtpServiceImpl;
 import org.esupportail.commons.services.smtp.SmtpService;
 import org.esupportail.commons.utils.Assert;
@@ -95,6 +96,9 @@ public class ServletAjaxController implements InitializingBean, Serializable {
 	@Autowired
 	protected SmtpService smtp;
 
+	@Autowired
+	protected LdapFilterSourceRequest ldapFilterSourceRequest;
+	
 	/** Autowire the bean with Id jsTreeGroupsFinder. */
 	@Autowired
 	@Qualifier("jsTreeGroupsFinder")
@@ -140,6 +144,10 @@ public class ServletAjaxController implements InitializingBean, Serializable {
 			final String modelParam,
 			final HttpServletRequest request) {
 
+		Map<String, String> placeholderValuesMap = (Map<String, String>)
+				request.getSession().getAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY);
+	
+		
 		ModelMap modelMap = new ModelMap();
 
 		if ((modelId == null) || (listDescription == null)) {
@@ -148,6 +156,7 @@ public class ServletAjaxController implements InitializingBean, Serializable {
 			//return new ModelAndView("error", modelMap);
 		}
 
+		
 		Model model = this.daoService.getModel(new BigInteger(modelId));
 
 		modelMap.put("listDescription", listDescription);
@@ -160,27 +169,50 @@ public class ServletAjaxController implements InitializingBean, Serializable {
 
 		List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
 
+	
+
+		String uai = null;
+		String siren = null;
+		if (placeholderValuesMap != null ) {
+			uai = placeholderValuesMap.get("uai");
+			siren =  placeholderValuesMap.get("siren");
+		}  
+			
+		if (uai == null && establishementId != null){
+			uai = establishementId;
+		}
+		if (uai != null && siren == null) {
+			siren = ldapFilterSourceRequest.findSirenByUai(uai);
+		}
+		
+		
 		for (PreparedRequest preparedRequest : listPreparedRequest) {
 			JsCreateListRow row = new JsCreateListRow();
 			ModelRequest modelRequest = this.daoService.getModelRequest(preparedRequest, model);
-			switch(modelRequest.getCategoryAsEnum()) {
-			case CHECKED:
-				row.setChecked(true);
-				row.setEditable(true);
-				break;
-			case UNCHECKED:
-				row.setChecked(false);
-				row.setEditable(true);
-				break;
-			case MANDATORY:
-				row.setChecked(true);
-				row.setEditable(false);
-				break;
+			if (modelRequest != null) {
+				switch(modelRequest.getCategoryAsEnum()) {
+				case CHECKED:
+					row.setChecked(true);
+					row.setEditable(true);
+					break;
+				case UNCHECKED:
+					row.setChecked(false);
+					row.setEditable(true);
+					break;
+				case MANDATORY:
+					row.setChecked(true);
+					row.setEditable(false);
+					break;
+				}
+				
+				//MADE pierre 
+				String name = ldapFilterSourceRequest.makeDisplayName(preparedRequest, uai, siren);
+				if (name != null) {
+					row.setName(name);
+					row.setIdRequest(modelRequest.getIdRequest().toString());
+					editorsAliases.add(row);
+				}
 			}
-			row.setName(preparedRequest.getDisplayName());
-			row.setIdRequest(modelRequest.getIdRequest().toString());
-
-			editorsAliases.add(row);
 		}
 
 		modelMap.put("editorsAliases", editorsAliases);
@@ -198,9 +230,8 @@ public class ServletAjaxController implements InitializingBean, Serializable {
 		modelMap.put("uai", establishementId);
 
 		StringBuilder userAttributes = new StringBuilder(128);
-		Map<String, String> placeholderValuesMap = (Map<String, String>)
-				request.getSession().getAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY);
 		for (Entry<String, String> userAttribute : placeholderValuesMap.entrySet()) {
+			this.log.debug("USER ATTRIBUT : " +  userAttribute.getKey() + " ; " +userAttribute.getValue() );
 			userAttributes.append("&");
 			userAttributes.append(userAttribute.getKey());
 			userAttributes.append("=");
