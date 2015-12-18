@@ -1,27 +1,31 @@
 package org.esco.sympa.domain.model;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
 
 import org.apache.log4j.Logger;
 import org.esco.sympa.util.LdapUtils;
 import org.esupportail.sympa.domain.listfinder.model.PreparedRequest;
-import org.esupportail.sympa.domain.model.UserAttributeMapping;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.SearchExecutor;
 
-public class LdapFilterSourceRequest {
+public class LdapFilterSourceRequest implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6561990436374565291L;
+
+
+
+
 	/** LOGGER. */
 	private static final Logger LOG = Logger.getLogger(LdapFilterSourceRequest.class);
 	
@@ -49,7 +53,7 @@ public class LdapFilterSourceRequest {
 	
 	
 
-	private Set<String> sourceSet = new HashSet<String>();
+	private transient Set<String> sourceSet = new HashSet<String>();
 	
 
 	private LdapTemplate ldapTemplate;
@@ -153,7 +157,7 @@ public class LdapFilterSourceRequest {
 		String name = null;
 		if (preparedRequest != null) {
 			String source = preparedRequest.getDataSource();
-			if (sourceSet.contains(source)) {
+			if (getSourceSet().contains(source)) {
 					// si c'est une source pour laquelle il faut afficher le mail:
 					// on calcul le filtre ldap
 				String filter = replaceAll(preparedRequest.getLdapFilter(), uai, siren);
@@ -205,6 +209,14 @@ public class LdapFilterSourceRequest {
 		return name;
 	}
 	
+	private Set<String> getSourceSet(){
+		if (sourceSet.isEmpty() && functionSources != null) {
+			for (String src : functionSources.split("\\s+")) {
+				sourceSet.add(src);
+			}
+		}
+		return sourceSet;
+	}
 	
 	public LdapTemplate getLdapTemplate() {
 		return ldapTemplate;
@@ -220,8 +232,6 @@ public class LdapFilterSourceRequest {
 
 	public void setFunctionSources(String sources) {
 		this.functionSources = sources;
-		for (String src : sources.split("\\s+")) {
-			sourceSet.add(src);
-		}
+		sourceSet.clear();
 	}
 }
