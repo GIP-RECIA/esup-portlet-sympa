@@ -11,11 +11,13 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.esco.sympa.util.LdapUtils;
 import org.esupportail.sympa.domain.listfinder.model.PreparedRequest;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
+
 
 public class LdapFilterSourceRequest implements Serializable {
 	/**
@@ -55,6 +57,7 @@ public class LdapFilterSourceRequest implements Serializable {
 
 	private transient Set<String> sourceSet = new HashSet<String>();
 	
+	private transient int pourtest = 0;
 
 	private LdapTemplate ldapTemplate;
 
@@ -154,14 +157,22 @@ public class LdapFilterSourceRequest implements Serializable {
 	 * @return
 	 */
 	public String makeDisplayName(PreparedRequest preparedRequest, String uai, String siren) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("MakeDisplayName POUR TEST=" + pourtest++);
+		}
+		
+		
 		String name = null;
 		if (preparedRequest != null) {
 			String source = preparedRequest.getDataSource();
-			if (getSourceSet().contains(source)) {
+			String suffix = preparedRequest.getLdapSuffix();
+			String filter = preparedRequest.getLdapFilter();
+			if (filter != null && !StringUtils.isBlank(suffix) ) {
 					// si c'est une source pour laquelle il faut afficher le mail:
+					// le suffix contient l'arborescence de recherche.
 					// on calcul le filtre ldap
-				String filter = replaceAll(preparedRequest.getLdapFilter(), uai, siren);
-				String base = replaceAll(preparedRequest.getLdapSuffix(),uai, siren);
+				filter = replaceAll(filter, uai, siren);
+				String base = replaceAll(suffix,uai, siren);
 				base = base.substring(0, base.indexOf(",dc="));
 				
 					// on test si on a déjà fait la requette 

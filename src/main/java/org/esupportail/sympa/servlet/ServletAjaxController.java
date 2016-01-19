@@ -144,6 +144,7 @@ public class ServletAjaxController implements InitializingBean, Serializable {
 			final String modelParam,
 			final HttpServletRequest request) {
 
+		//TODO pb placeholderValuesMap peut revenir null en cas de perte de session
 		Map<String, String> placeholderValuesMap = (Map<String, String>)
 				request.getSession().getAttribute(ReentrantFormController.PLACEHOLDER_VALUES_MAP_SESSION_KEY);
 	
