@@ -35,6 +35,7 @@ function handleSendSimpleEmail(e) {
         async: true,
         type: 'POST',
         url: '/esup-portlet-sympa/servlet-ajax/sendEmail',
+        contentType: "application/x-www-form-urlencoded;charset=utf-8",
         data: {
             "fromAddress": from,
             "toAddress": to,
