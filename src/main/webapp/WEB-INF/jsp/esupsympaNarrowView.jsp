@@ -18,14 +18,14 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
-<%-- <link href="<c:url value="/media/css/sympa-portlet.css"/>" type="text/css" rel="stylesheet"/>  --%>
+ <link href="<c:url value="/media/css/sympa-portlet.css"/>" type="text/css" rel="stylesheet"/>  
 <%-- Include the part to send email --%>
 	<jsp:include page="/WEB-INF/jsp/writeMailForm.jsp" />
 	 <link href="<c:url value="/media/css/mobilePortletSympa.css"/>"
 	type="text/css" rel="stylesheet" /> 
-<%-- 	
+	
 	<link href="<c:url value="/media/css/esupsympa.css"/>"
-	type="text/css" rel="stylesheet" /> --%> 
+	type="text/css" rel="stylesheet" /> 
 <style type="text/css" media="screen">
 
 
@@ -372,8 +372,3 @@
 <script type="text/javascript" src="<spring:url value="/js/jquery.jstree.js" />">
 </script>      
       
-<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateListTable.js" />">
-</script>
-
-<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateList.js" />">
-</script>
