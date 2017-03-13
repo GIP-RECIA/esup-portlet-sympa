@@ -1,0 +1,325 @@
+/*General, top level, and shared styles */
+
+body {
+	/*font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif;*/
+	/*font-size: 1.1em;*/
+}
+
+/* Remove input checkbox borders */
+div.sympaTopLevel input,
+div.sympaDialog input {
+	border: none;
+}
+
+div.sympaTopLevel div#esupsympaAdminTabs > ul > li {
+	line-height: 0.8em;
+}
+
+div.sympaTopLevel div.subTitle {
+	border-style: solid;
+	border-color: rgb(79,157,215);
+	border-width: 0px 0px 1px 0px; /*top right bottom left*/
+	font-weight:bold;
+}
+
+div.sympaTopLevel table.userListsTable,
+div.sympaTopLevel table#createListTable,
+div.sympaTopLevel table#updateListTable
+{	
+	border-collapse : collapse;
+	width: 90%;
+}
+
+div.sympaTopLevel table.userListsTable tbody td.centered, 
+div.sympaTopLevel table#createListTable tbody td.centered,
+div.sympaTopLevel table#updateListTable tbody td.centered
+{	
+	text-align: center;
+}
+
+div.sympaTopLevel table.userListsTable tbody td img, 
+div.sympaTopLevel table#createListTable tbody td img,
+div.sympaTopLevel table#updateListTable tbody td img  
+{
+	border: none;	
+	height: 20px;
+}
+
+div.sympaTopLevel table.userListsTable tbody td.icon_column_without_title, 
+div.sympaTopLevel table#createListTable tbody td.icon_column_without_title,
+div.sympaTopLevel table#updateListTable tbody td.icon_column_without_title  
+{
+	width: 20px;	
+}
+
+div.sympaTopLevel table.userListsTable tbody td.icon_column_with_title, 
+div.sympaTopLevel table#createListTable tbody td.icon_column_with_title,
+div.sympaTopLevel table#updateListTable tbody td.icon_column_with_title 
+{
+	width: 110px;	
+} 
+
+
+div.sympaTopLevel #esupsympaAdminTabs h3 {
+	padding: 0px 0px 5px 0px;
+	margin: 0 0 5px;
+}
+
+div.sympaTopLevel .tableHeader {
+	/*border: 1px solid rgb(79,157,215);*/
+	border: 0;
+}
+
+div.sympaTopLevel thead tr {
+	/*background: rgb(183, 221, 180);*/
+	background: #B3B3B3;
+}
+
+div.sympaTopLevel tr.even {
+	background: rgb(255,255,255);
+}
+
+div.sympaTopLevel tr.odd {
+	background: rgb(232, 242, 254);	
+}
+
+div.sympaTopLevel table.userListsTable thead tr td,
+div.sympaTopLevel table#createListTable thead tr td,
+div.sympaTopLevel table#updateListTable thead tr td
+ {
+	/*background: #1C94C4;*/
+	text-align: left;
+	font-weight: bold;
+}
+
+div.sympaTopLevel table.userListsTable thead tr td.centered,
+div.sympaTopLevel table#createListTable thead tr td.centered
+div.sympaTopLevel table#updateListTable thead tr td.centered
+{
+text-align: center	
+}
+
+div.sympaTopLevel table.userListsTable td,
+div.sympaTopLevel table#createListTable td,
+div.sympaTopLevel table#updateListTable td {
+	border: none;
+	padding: 1px 3px 1px 3px; /* top right bottom left */
+}
+
+
+/* esupsypmaUserLists.jsp */
+
+
+#simpleSmtpDialog {
+	padding-top: 20px;
+}
+
+ #simple_email_from_box {
+	/*width: 100%;*/
+	display: block;
+}
+
+#simple_email_message_div {
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+#simple_email_from_label,
+#simple_email_to_label,
+#simple_email_subject_label
+{
+	float: left;	
+	width: 50px;
+}
+
+#simple_email_subject {
+	width: 400px;	
+	border: 1px solid #1C94C4;
+}
+
+#simple_email_to_label,
+#simple_email_to {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#simple_email_subject_label,
+#simple_email_subject {
+	margin-bottom: 20px;
+}
+
+#simple_email_from,
+#simple_email_to,
+#simple_email_subject {
+	float: none;
+	display: block;
+	overflow: hidden; /* In order to go after the floated label */
+}
+
+#simpleSmtpDialog textarea {
+	display: block;
+	width:100%;
+	height: 150px;	
+	border: 1px solid #1C94C4;	
+}
+
+/*esupsympaCreateListTable.jsp styles*/
+
+div.sympaTopLevel div#createListTableBox, 
+div.sympaTopLevel div#updateListTableBox {
+	height: 370px;
+	width: auto;
+	margin-top: 20px;
+ 	overflow: auto;
+}
+
+div.sympaTopLevel table#createListTable td,
+div.sympaTopLevel table#updateListTable td {
+	padding-left: 5px;
+}
+
+div.sympaTopLevel img.contextHelpButton {
+	padding-top: 1px;
+}
+
+
+/* esupsympaCreateList.jsp */
+
+
+#createListSelectedGroups_list .ui-selecting {
+	background: #FECA40;
+}
+
+#createListSelectedGroups_list .ui-selected {
+	background: #F39814;
+	color: white;
+}
+
+
+#createListSelectedGroups_list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 60%;
+}
+
+#createListSelectedGroups_list li {
+	margin: 3px;
+	padding: 0.4em;
+	height: 18px;
+}
+
+.createListDialog #createListTree {
+	width: 100%;
+}
+
+.createListDialog .createListBox {
+	border-style: solid;
+	border-color: rgb(79,157,215);
+	border-width: 1px 1px 1px 1px;
+	height: 170px;
+	overflow: auto;
+	background: #FFE;
+}
+
+.createListDialog .createListBoxHeader {
+height: 30px;
+}
+
+.createListDialog .createListBoxContainer {
+width: 50%; float: left;  
+ 
+}
+
+.createListDialog ul.createListGroupChoice {
+  /*display: inline;*/
+  padding-left: 0px;
+  margin-left: 10px;
+  margin-top: 20px;
+}
+
+.createListDialog li.createListGroupChoice {
+ list-style-type: none;
+}
+
+#createListSubscriberCheckbox {
+  margin-top: 20px;
+}
+
+.createListDialog div.createListArrowButtonsBox {
+margin-top:80px;
+margin-right: 4px;
+margin-left: 4px;
+ width: 20px; 
+ float: left;
+}
+
+#createListHide {
+  display: none;
+  float: left;
+}
+
+#createListShow {
+  float: left;
+}
+
+
+.createListDialog #createListSelectedGroups {
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-o-user-select: none;
+user-select: none;
+}
+
+#createListNonSelectedGroups div.createListBoxHeader {
+  float: left;
+}
+
+#createListNonSelectedGroups div.createListBox {
+  clear: both;
+}
+
+#createListSelectedGroups_list .ui-selected {
+  background: #BEEBFF; 
+  color: #333;
+}
+
+#createListSelectedGroups_list .ui-selecting {
+  background: #BEEBFF;
+  color: #333; 
+}
+
+#createListSelectedGroups_list .ui-selectable-helper {
+  background: #BEEBFF; 
+}
+
+ul#createListSelectedGroups_list {
+  list-style-type: disc;
+  width: 100%;
+}
+
+#createListSelectedGroups_list li {
+  height: auto;  
+  margin-left: 20px;
+  padding: 0;
+  margin-right: 3px;
+}
+
+/* context help */
+
+.contextHelpDialog div.desc {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.switchEtab-form {
+  display: inline;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+.switchEtab-selector {
+	width: 100%;
+}

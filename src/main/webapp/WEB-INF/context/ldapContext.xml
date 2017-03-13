@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr
+    Copyright (C) 2010 Esup Portail http://www.esup-portail.org
+    @Author (C) 2010 Olivier Franco <Olivier.Franco@insa-lyon.fr>
+    @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr>
+    @Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr>
+    @Contributor (C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr>
+    @Contributor (C) 2013 Maxime BOSSARD (GIP-RECIA) <mxbossard@gmail.com>
+
+    Licensed under the GPL License, (please see the LICENCE file)
+
+-->
+<!-- Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr Copyright (C) 2010 
+	Esup Portail http://www.esup-portail.org @Author (C) 2010 Olivier Franco 
+	<Olivier.Franco@insa-lyon.fr> @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr> 
+	@Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr> @Contributor 
+	(C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr> Licensed under the 
+	GPL License, (please see the LICENCE file) -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<!-- LDAP related Parameters -->
+
+	<!-- Ldap connection -->
+	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+		<property name="url" value="${ldap.url}" />
+		<property name="userDn" value="${ldap.userDn}" />
+		<property name="base" value="${ldap.base}" />
+		<property name="password" value="${ldap.password}" />
+		<property name="pooled" value="true" />
+	</bean> 
+	
+	<!-- Bean used to make LDAP queries -->
+	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+		<constructor-arg ref="contextSource" />
+	</bean>
+
+	<!-- Bean used to store the configured parameter names and *optionally* 
+		to query for them. Retrieval is done usually from the USER_INFO or Multi-value 
+		map passed from the portal. -->
+	<bean id="ldapPerson" class="org.esupportail.sympa.domain.model.LdapPerson">
+		<!-- Used as a backup to query for multi-valued attributes in case the 
+			multi value map does not exists (ie, portals version < 3.x) -->
+		<property name="ldapTemplate" ref="ldapTemplate" />
+		<!-- LDAP Attribute name (multi-valued) representing the profiles to match 
+			against an Email Utility (defined in emailContext.xml) -->
+		<property name="webmailProfileAttribute" value="${ldap.attribute.profileWebmail}" />
+		<!-- Multi value attribute defining which groups the user belongs to -->
+		<property name="memberAttribute" value="${ldap.attribute.isMemberOf}" />
+		
+		<!-- The regular expression to use in order to scan the isMemberOf groups 
+			to determine if the user is an admin. %UAI is replaced with the current establishment 
+			id if the token is in the regex. -->
+		<property name="adminRegex" value="${ldap.acl.adminRegExp}" />
+		<!-- Query and filter to find the person in LDAP when using 'backup' search. 
+			See previous comments %UID is replaced with the uid -->
+		<property name="personSearchString" value="uid=%UID,ou=people" />
+		<property name="personSearchFilter" value="(objectclass=person)" />
+	</bean>
+	
+	<!-- Used to find the domain for the mailing list email addresses. -->
+	<bean id="ldapEstablishment" class="org.esupportail.sympa.domain.model.LdapEstablishment">
+		<property name="ldapTemplate" ref="ldapTemplate" /> 
+		<property name="sirenAttribute" value="${ldap.attribute.siren}" />
+		<!-- Ldap search string. %UAI is replaced with the current establishment 
+			id -->
+		<property name="estSearchString" value="ou=structures" />
+		<!-- Ldap search filter. %UAI is replaced with the current establishment 
+			id -->
+		<property name="estSearchFilter"
+			value="(&amp;(objectclass=ENTStructure)(ENTStructureUAI=%UAI))" />
+	</bean> 
+
+ 	<!-- Used to find the function addresses. -->
+ 	<!--
+	<bean 	id="ldapFilterSourceRequest" 
+			class="org.esco.sympa.domain.model.LdapFilterSourceRequest" 
+			scope="session">
+		<property name="ldapTemplate" ref="ldapTemplate" />
+		<property name="functionSources" value="${data_source.functionSources}" />
+	</bean> -->
+</beans>
