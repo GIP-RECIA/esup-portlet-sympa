@@ -30,6 +30,10 @@ public class ReentrantFormController extends AbstractCommandController {
 	
 	private Log logger = LogFactory.getLog(ReentrantFormController.class);
 	
+	
+	/** Session key of the placeholder values map. */
+	public static final String PLACEHOLDER_VALUES_MAP_SESSION_KEY =
+			"UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
 	private String viewName;
 	
 	protected UserAgentInspector userAgentInspector;

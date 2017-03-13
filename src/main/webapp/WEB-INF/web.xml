@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to ESUP-Portail under one or more contributor license
-    agreements. See the NOTICE file distributed with this work for
-    additional information regarding copyright ownership.
-
-    ESUP-Portail licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License. You may obtain a copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns="http://java.sun.com/xml/ns/javaee" 
-	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-	id="WebApp_ID" 
-	version="2.5">
+<!-- Licensed to ESUP-Portail under one or more contributor license agreements. 
+	See the NOTICE file distributed with this work for additional information 
+	regarding copyright ownership. ESUP-Portail licenses this file to you under 
+	the Apache License, Version 2.0 (the "License"); you may not use this file 
+	except in compliance with the License. You may obtain a copy of the License 
+	at: http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable 
+	law or agreed to in writing, software distributed under the License is distributed 
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
+	express or implied. See the License for the specific language governing permissions 
+	and limitations under the License. -->
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
 	<display-name>EsupPortletSympa</display-name>
 	<context-param>
-        <param-name>webAppRootKey</param-name>
-        <param-value>esup-portlet-sympa</param-value>
-    </context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>esup-portlet-sympa</param-value>
+	</context-param>
 	<context-param>
 		<param-name>defaultHtmlEscape</param-name>
 		<param-value>false</param-value>
@@ -47,18 +36,18 @@
 		<param-value>/WEB-INF/context/applicationContext.xml</param-value>
 	</context-param>
 	<!-- Validation filter delegates to spring configuration in WEB-INF/context/applicationContext.jsp -->
-    <filter>
-        <filter-name>CAS Validation Filter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <param-name>targetBeanName</param-name>
-            <param-value>ticketValidationFilter</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>CAS Validation Filter</filter-name>
-        <url-pattern>/proxy/receptor</url-pattern>
-    </filter-mapping>
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetBeanName</param-name>
+			<param-value>ticketValidationFilter</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/proxy/receptor</url-pattern>
+	</filter-mapping>
 	<!-- Listener pour le lancement de Spring au démarrage du contexte -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -66,7 +55,7 @@
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
-	
+
 	<!-- Servlet de rendu -->
 	<servlet>
 		<servlet-name>ViewRendererServlet</servlet-name>
@@ -78,10 +67,17 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<!-- Mapping du rendu -->
 	<servlet-mapping>
 		<servlet-name>ViewRendererServlet</servlet-name>
 		<url-pattern>/WEB-INF/servlet/view</url-pattern>
 	</servlet-mapping>
+
+
+
+
+
+
+
 </web-app>

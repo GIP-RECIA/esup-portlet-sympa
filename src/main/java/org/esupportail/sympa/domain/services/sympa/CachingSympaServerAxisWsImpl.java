@@ -17,6 +17,8 @@
  */
 package org.esupportail.sympa.domain.services.sympa;
 
+import java.util.ArrayList;
+
 import java.util.List;
 
 import org.esupportail.sympa.domain.model.UserSympaListWithUrl;
@@ -43,6 +45,10 @@ public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 			cacheManager.addCache(cacheName);
 		this.cache = cacheManager.getCache(cacheName);
 	}
+	public void invalidateCache() {
+		this.logger.debug("Invalidating cache");
+		this.cache.removeAll();
+	}
 
 	
 	@SuppressWarnings("unchecked")
@@ -57,6 +63,8 @@ public class CachingSympaServerAxisWsImpl extends SympaServerAxisWsImpl {
 		setCachedValue(cacheKey,result);
 		return result;
 	}
+	
+
 
 	private void setCachedValue(String cacheKey, Object toCache) {
 		cache.put(new Element(cacheKey,toCache));

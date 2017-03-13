@@ -29,6 +29,15 @@ public class HomeForm implements Serializable {
 	private boolean isOwner;
 	private boolean isEditor;
 	private boolean isSubscriber;
+	
+	//If true, cache should be cleared
+		private boolean invalidateCache;
+	public boolean isInvalidateCache() {
+			return invalidateCache;
+		}
+		public void setInvalidateCache(boolean invalidateCache) {
+			this.invalidateCache = invalidateCache;
+		}
 	/**
 	 * @return the isOwner
 	 */

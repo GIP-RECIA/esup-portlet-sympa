@@ -2,3 +2,6 @@ target
 .classpath
 .project
 .settings
+/.apt_generated/
+/.metadata/
+/esco-config.properties

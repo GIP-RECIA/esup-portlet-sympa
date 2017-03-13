@@ -26,6 +26,7 @@ import javax.portlet.PortletResponse;
 import javax.portlet.PortletSession;
 
 import org.esupportail.sympa.domain.model.UserPreferences;
+import org.esupportail.sympa.util.UserInfoService;
 import org.springframework.web.portlet.handler.HandlerInterceptorAdapter;
 
 
@@ -44,25 +45,25 @@ public class SessionInitInterceptor extends HandlerInterceptorAdapter {
 		@SuppressWarnings("unused")
 		PortletSession session = request.getPortletSession(true);
 		// retrieve userid
-		if ( userPreferences.getUserId() == null ) {
+		if ( this.userPreferences.getUserId() == null ) {
 			// new bean
-			userPreferences.setUserId(request.getRemoteUser());
-			@SuppressWarnings("unchecked")
-			Map<String,String> userinfo = (Map<String,String>)request.getAttribute(PortletRequest.USER_INFO);
-			String mail = userinfo.get(getUserInfoMailAttr());
-			if ( mail != null ) 
+			this.userPreferences.setUserId(request.getRemoteUser());
+			Set<String> userRoles = new HashSet<String>();
+			Map<String,String> userinfo = UserInfoService.getUserInfo(request);
+			String mail = userinfo.get(this.getUserInfoMailAttr());
+			if ( mail != null ) {
 				mail = mail.trim();
+			}
 			if ( mail.length() > 0 ) {
-				userPreferences.setMail(mail);
+				this.userPreferences.setMail(mail);
 			}
 			// retrieve roles
-			Set<String> userRoles = new HashSet<String>();
-			for ( String r : availableRoles ) {
+			for ( String r : this.availableRoles ) {
 				if ( request.isUserInRole(r) ) {
 					userRoles.add(r);
 				}
 			}
-			userPreferences.setUserRoles(userRoles);
+			this.userPreferences.setUserRoles(userRoles);
 		}
 		
 		return true;

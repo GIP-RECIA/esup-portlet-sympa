@@ -18,7 +18,6 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
-
 <link type="text/css" rel="stylesheet" href="<%=request.getContextPath()%>/media/css/jquery.mobile.structure-1.1.1.min.css" media="screen, projection"/>
 <%-- 
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.8.1.min.js"></script>
