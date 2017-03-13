@@ -29,6 +29,7 @@ import org.jasig.cas.client.validation.Assertion;
  */
 public interface ICASProxyTicketService {
 
+
 	/**
 	 * Retrieve a CAS receipt for the specified portlet request.
 	 * 

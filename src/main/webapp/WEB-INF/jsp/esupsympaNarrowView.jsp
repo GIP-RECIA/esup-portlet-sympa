@@ -18,9 +18,16 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
-<link href="<c:url value="/media/css/sympa-portlet.css"/>" type="text/css" rel="stylesheet"/>
-
+<%-- <link href="<c:url value="/media/css/sympa-portlet.css"/>" type="text/css" rel="stylesheet"/>  --%>
+<%-- Include the part to send email --%>
+	<jsp:include page="/WEB-INF/jsp/writeMailForm.jsp" />
+	 <link href="<c:url value="/media/css/mobilePortletSympa.css"/>"
+	type="text/css" rel="stylesheet" /> 
+<%-- 	
+	<link href="<c:url value="/media/css/esupsympa.css"/>"
+	type="text/css" rel="stylesheet" /> --%> 
 <style type="text/css" media="screen">
+
 
             /* 
             Max width before this PARTICULAR table gets nasty
@@ -240,7 +247,30 @@
 		<tbody>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
-				<td><a class="portlet-menu-item" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></td>
+				<%-- <td><a class="portlet-menu-item"  
+				
+				
+				title="<spring:message code="gotoList" arguments="${list.address}" 
+				onclick="$('#simpleSmtpDialog').toggleClass('visible');" 
+				title="<spring:message code="simpleEmail.title" 
+				htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a>
+  </td> --%>
+<td>
+					<c:choose>
+	        			<c:when test="${list.editor==true}">
+							<a class="portlet-menu-item mailLink" 
+					  			href="" 
+					  			title="<spring:message code="simpleEmail.title" 
+					  		
+					  			arguments="${list.address}" htmlEscape="true"/>" >
+								<c:out value="${list.address}" escapeXml="true" />
+							</a>
+	          			</c:when>
+	          			<c:otherwise>
+	          				<c:out value="${list.address}" escapeXml="true"/>
+	          			</c:otherwise>
+          			</c:choose>
+				</td>
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
 				<td class="c"><insa:icon value="${list.subscriber}"/></td>
 				<td class="c">
@@ -332,3 +362,18 @@
 <!-- end recia custom -->
 
 </div>
+
+
+<%@ include file="/WEB-INF/jsp/resources.jsp" %>
+
+<script type="text/javascript" src="<spring:url value="/js/jquery.cookie.js" />">
+</script>
+
+<script type="text/javascript" src="<spring:url value="/js/jquery.jstree.js" />">
+</script>      
+      
+<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateListTable.js" />">
+</script>
+
+<script type="text/javascript" src="<spring:url value="/js/esupsympaCreateList.js" />">
+</script>

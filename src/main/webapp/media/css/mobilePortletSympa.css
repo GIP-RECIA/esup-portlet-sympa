@@ -25,3 +25,9 @@ border: 1px solid rgb(35, 115, 165);
 background: #4481BE!important;
 color: white!important;
 }
+ #simpleSmtpDialog.visible{
+	display: block;
+}
+#simpleSmtpDialog{
+	display: none;
+	} 

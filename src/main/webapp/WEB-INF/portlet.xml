@@ -26,6 +26,9 @@
   <portlet>
     <portlet-name>SympaPortlet</portlet-name>
     <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+    
+    
+    
     <init-param>
       <name>contextConfigLocation</name>
       <value>/WEB-INF/context/portlet/sympa-portlet.xml</value>
@@ -52,9 +55,12 @@
     </security-role-ref>
   </portlet>
   <!-- attribut utilisateur à faire remonter dans la portlet-->
-  <user-attribute>
+ <user-attribute>
   	<name>${esup.sympa.portal.attribute.mail}</name>
   </user-attribute>
+  <user-attribute>
+  	<name>${esup.sympa.portal.attribute.uai}</name>
+  </user-attribute> 
   <!-- le proxy ticket pour la portlet -->
   <user-attribute>
   	<description>get proxy ticket from portal</description>
