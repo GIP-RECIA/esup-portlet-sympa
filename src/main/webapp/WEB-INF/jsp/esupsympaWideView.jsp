@@ -19,6 +19,7 @@
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 <link href="<c:url value="/media/css/sympa-portlet.css"/>" type="text/css" rel="stylesheet"/>
+<jsp:include page="/WEB-INF/jsp/writeMailForm.jsp" />
 
 <style type="text/css" media="screen">
 
@@ -240,7 +241,28 @@
 		<tbody>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
-				<td><a class="portlet-menu-item" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></td>
+				<%-- <td><a class="portlet-menu-item" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></td> --%>
+				
+				
+				<!-- Sympa List -->
+				<td>
+	                    <c:choose>
+	                        <c:when test="${list.editor==true}">
+	                            <a class="portlet-menu-item mailLink" 
+	                                  href="#" target="_blank" 
+	                                  title="<spring:message code="simpleEmail.title" 
+	                                  arguments="${list.address}" htmlEscape="true"/>" >
+	                                <c:out value="${list.address}" escapeXml="true" />
+	                            </a>
+	                          </c:when>
+	                          <c:otherwise>
+	                              <c:out value="${list.address}" escapeXml="true"/>
+	                          </c:otherwise>
+	                      </c:choose>
+	                </td> 
+				
+				<!-- Sympa List -->
+				
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
 				<td class="c"><insa:icon value="${list.subscriber}"/></td>
 				<td class="c">
