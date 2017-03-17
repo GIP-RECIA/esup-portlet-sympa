@@ -171,7 +171,8 @@
 			</list>
 		</property>
 	</bean>
-
+ <!-- MBD: Portlet Namespace interceptor -->
+    <bean id="portletNamespaceInterceptor" class="org.esupportail.sympa.portlet.web.interceptors.PortletNamespaceHandlerInterceptor" />
 	<!-- various interceptors -->
 	<bean id="sessionInitInterceptor"
 		class="org.esupportail.sympa.portlet.web.interceptors.SessionInitInterceptor">
@@ -192,6 +193,7 @@
 			<list>
 				<ref bean="sessionInitInterceptor" />
 				<ref bean="casProxyInitInterceptor" />
+				<ref bean="portletNamespaceInterceptor" />
 			</list>
 		</property>
 		<property name="portletModeMap">
