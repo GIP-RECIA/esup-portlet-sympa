@@ -23,11 +23,10 @@
 	<jsp:include page="/WEB-INF/jsp/writeMailForm.jsp" />
 	 <link href="<c:url value="/media/css/mobilePortletSympa.css"/>"
 	type="text/css" rel="stylesheet" /> 
-	
+
 	<link href="<c:url value="/media/css/esupsympa.css"/>"
 	type="text/css" rel="stylesheet" /> 
 <style type="text/css" media="screen">
-
 
             /* 
             Max width before this PARTICULAR table gets nasty
@@ -124,8 +123,7 @@
 <div class="row">
 
 <!-- begin recia custom -->
-<!--
-<div class="col-xs-12 col-sm-12 col-md-12">
+<%-- <div class="col-xs-12 col-sm-12 col-md-12">
 <nav class="navbar navbar-default">
    <div class="container-fluid">
 
@@ -162,7 +160,7 @@
    </div>
 </nav>
 </div>
--->
+ --%>
 <!-- end recia custom -->
 
 <h3 class="portlet-section-header"><span class="glyphicon glyphicon-envelope bg-primary" aria-hidden="true"></span> <spring:message code="title" htmlEscape="true"/></h3>
@@ -259,7 +257,7 @@
 					<c:choose>
 	        			<c:when test="${list.editor==true}">
 							<a class="portlet-menu-item mailLink" 
-					  			href="" 
+					  			href="#" target="_blank" 
 					  			title="<spring:message code="simpleEmail.title" 
 					  		
 					  			arguments="${list.address}" htmlEscape="true"/>" >
@@ -362,8 +360,6 @@
 <!-- end recia custom -->
 
 </div>
-
-
 <%@ include file="/WEB-INF/jsp/resources.jsp" %>
 
 <script type="text/javascript" src="<spring:url value="/js/jquery.cookie.js" />">
@@ -371,4 +367,3 @@
 
 <script type="text/javascript" src="<spring:url value="/js/jquery.jstree.js" />">
 </script>      
-      

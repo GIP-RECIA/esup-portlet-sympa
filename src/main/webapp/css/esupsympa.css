@@ -110,9 +110,9 @@ div.sympaTopLevel table#updateListTable td {
 /* esupsypmaUserLists.jsp */
 
 
-#simpleSmtpDialog {
+ #simpleSmtpDialog {
 	padding-top: 20px;
-}
+} 
 
  #simple_email_from_box {
 	/*width: 100%;*/
@@ -156,12 +156,12 @@ div.sympaTopLevel table#updateListTable td {
 	overflow: hidden; /* In order to go after the floated label */
 }
 
-#simpleSmtpDialog textarea {
+/* #simpleSmtpDialog textarea {
 	display: block;
 	width:100%;
 	height: 150px;	
 	border: 1px solid #1C94C4;	
-}
+} */
 
 /*esupsympaCreateListTable.jsp styles*/
 

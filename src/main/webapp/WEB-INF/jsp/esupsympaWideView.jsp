@@ -250,6 +250,8 @@
 	                        <c:when test="${list.editor==true}">
 	                            <a class="portlet-menu-item mailLink" 
 	                                  href="#" target="_blank" 
+	                                  id="mailTo"
+	                                  
 	                                  title="<spring:message code="simpleEmail.title" 
 	                                  arguments="${list.address}" htmlEscape="true"/>" >
 	                                <c:out value="${list.address}" escapeXml="true" />
@@ -289,7 +291,7 @@
 </div>
 
 <!-- begin recia custom -->
-<!--
+
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reciaModal">
    Lancer la modale (demo)
 </button>
@@ -313,12 +315,42 @@
                      <br>Panel content
                      <br>Panel content
                      <br>Panel content
+                     <br>Panel con	tent
                      <br>Panel content
                      <br>Panel content
                      <br>Panel content
                      <br>Panel content
                      <br>Panel content
-                     <br>Panel content
+                     
+                  	<!-- test -->   
+                     <div class="panel panel-default">
+				<label id="simple_email_from_label"> <spring:message
+						code="simpleEmail.from" />
+				</label> <label id="simple_email_from">${mail}</label> <label
+					id="simple_email_to_label"> <spring:message
+						code="simpleEmail.to" />
+				</label> <label id="simple_email_to">test</label> <label
+					id="simple_email_subject_label"> <spring:message
+						code="simpleEmail.subject" />
+				</label> <span id="simple_email_subject_span"> <input type="text"
+					id="simple_email_subject" value="" />
+				</span> <label id="simple_email_message_label"> <spring:message
+						code="simpleEmail.message" />
+				</label>
+
+				<div id="simple_email_message_div">
+					<textarea id="simple_email_message"></textarea>
+				</div>
+
+				<div style="display: none" id="simpleSmtpSubmitText">
+					<spring:message code="simpleEmail.send" />
+				</div>
+				<div style="display: none" id="simpleSmtpCancelText">
+					<spring:message code="simpleEmail.cancel" />
+				</div>
+			</div>
+			<!-- test -->
+                     
                      <br>
                   </div>
                </div>
@@ -350,7 +382,9 @@
       </div>
    </div>
 </div>
--->
+<s
+
 <!-- end recia custom -->
 
 </div>
+

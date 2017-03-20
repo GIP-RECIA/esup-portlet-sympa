@@ -5,7 +5,9 @@
 }
 
 .simpleSmptDialog {
-	background-color: inherit !important;
+	/* background-color: inherit !important; */
+	
+	
 }
 
 .esupsympaportlet-messages-mobile a {
@@ -13,7 +15,7 @@
 }
 
 #simple_email_from_box {
-	/*width: 100%;*/
+	width: 100%;
 	display: block;
 }
 

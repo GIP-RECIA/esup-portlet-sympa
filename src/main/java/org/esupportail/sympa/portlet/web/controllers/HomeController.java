@@ -136,8 +136,8 @@ public class HomeController extends ReentrantFormController {
 	}
 	
 	
-//	@Override
-//	@SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("unchecked")
 	public Map<?, ?> referenceData(final PortletRequest request, final Object command,
 			final Errors errors) throws Exception {
 		LOG.debug("Entre dans la fonction referenceData");
