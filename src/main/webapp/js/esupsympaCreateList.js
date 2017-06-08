@@ -345,6 +345,10 @@ function initJstree(uai) {
 /*"html_data": {
             "data": $("#tree").html()
         },*/
+        "themes": {
+        	"theme" : "default",
+        	"url": $.jstree._themes + 'default/style.css?1',
+        },
         "json_data": {
 
             "ajax": {
