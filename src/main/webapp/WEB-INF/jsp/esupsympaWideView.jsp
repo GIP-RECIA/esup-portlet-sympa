@@ -2,19 +2,19 @@
 
     Licensed to ESUP-Portail under one or more contributor license
     agreements. See the NOTICE file distributed with this work for
-    additional information regarding copyright ownership.
+ additional information regarding copyright ownership.
 
     ESUP-Portail licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file except in
     compliance with the License. You may obtain a copy of the License at:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
+ Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+   See the License for the specific language governing permissions and
+ limitations under the License.
 
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
@@ -22,11 +22,11 @@
 
 <style type="text/css" media="screen">
 
-            /* 
+           /* 
             Max width before this PARTICULAR table gets nasty
             This query will take effect for any screen smaller than 768px
             and also iPads specifically.
-            */
+           */
 
             /*
              * Table reflow headers for sympa-result in mobile view
@@ -237,10 +237,39 @@
 				<th scope="col"><spring:message code="list.editor"  /></th>
 			</tr>
 		</thead>
-		<tbody>
+
+
+
+
+
+
+<tbody>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
-				<td><a class="portlet-menu-item" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></td>
+				<%-- <td><a class="portlet-menu-item" href="<c:out value="${list.listUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoList" arguments="${list.address}" htmlEscape="true"/>"><c:out value="${list.address}" escapeXml="true"/></a></td> --%>
+				
+				
+				<!-- Sympa List -->
+				<td>
+	                    <c:choose>
+	                        <c:when test="${list.editor==true}">
+	                            <a data-target="#reciaModal" data-toggle="modal" class="portlet-menu-item mailLink" 
+	                                  href="#reciaModal" 
+	                               
+					
+					   title="<spring:message code="simpleEmail.title" 
+	                                  arguments="${list.address}" htmlEscape="true"/>" >
+	                                <c:out value="${list.address}" escapeXml="true" />
+	                            </a>
+	                          </c:when>
+	                          <c:otherwise>
+	                              <c:out value="${list.address}" escapeXml="true"/>
+	                          </c:otherwise>
+	                      </c:choose>
+	                </td> 
+				
+				<!-- Sympa List -->
+				
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
 				<td class="c"><insa:icon value="${list.subscriber}"/></td>
 				<td class="c">
@@ -256,7 +285,14 @@
 				<td class="c"><insa:icon value="${list.editor}"/></td>
 			</tr>
 			</c:forEach>
-		</tbody>
+		</tbody> 
+
+
+
+
+
+
+
 	</table>
     </div>
 </c:when>
@@ -268,67 +304,112 @@
 
 <!-- begin recia custom -->
 <!--
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reciaModal">
+<button type="button" class="btn btn-primary btn-lg"  data-toggle="modal" data-target="#reciaModal">
    Lancer la modale (demo)
 </button>
+-->
 
-
-<div class="modal fade" id="reciaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-   <div class="modal-dialog" role="document">
+<div class="modal fade"  id="reciaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<form class="form-horizontal">
+   <div class="modal-dialog modal-lg">
       <div class="modal-content">
-         <div class="modal-header">
+        <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myreciaModalLabel">Modal title</h4>
+            <h4 class="modal-title" id="myreciaModalLabel">Poster un courriel</h4>
          </div>
          <div class="modal-body">
             <div class="col-xs-12 col-sm-6 col-md-6 recia-treeview">
-               <div class="panel panel-default">
-                  <div class="panel-heading">
-                     <h3 class="panel-title">Treeview</h3>
+             <!--  <div class="panel panel-default">-->
+                <!--  <div class="panel-heading">-->
+                 <!--    <h3 class="panel-title">Treeview</h3>-->
+                <!--  </div>-->
+            <!--      <div class="panel-body"> -->
+           <!--          Panel content
+                     <br>Panel content
+                     <br>Panel content
+                     <br>Panel content
+                     <br>Panel content
+                     <br>Panel content
+                    <br>Panel content
+                     <br>Panel content
+                     <br>Panel content
+                     <br>Panel content
+                     <br> -->
+
+
+
+
+<!-- test -->   
+          <!--           <div class="panel panel-default">-->
+			<label id="simple_email_from_label" > <spring:message
+						code="simpleEmail.from" />
+				</label> <label id="simple_email_from">${mail}</label><br/> 
+					<label
+					id="simple_email_to_label" > <spring:message
+						code="simpleEmail.to" />
+				</label> <label id="simple_email_to"></label><br/>
+					 <label
+					id="simple_email_subject_label"> <spring:message
+						code="simpleEmail.subject" />
+				</label> <span id="simple_email_subject_span"> <input type="text"
+					id="simple_email_subject" value="" />
+				</span> <br/>
+			<!--	<label id="simple_email_message_label"> <spring:message
+						code="simpleEmail.message" />-->
+				</label><br/>
+
+			<!--	<div id="simple_email_message_div">
+					<textarea id="simple_email_message"></textarea>
+				</div>-->
+				<br/>
+				<br/>
+				<div class="form-group">
+					<label for="Message">Message</label>
+				<textarea class="form-control" rows="5" id="simple_email_message_div"></textarea>
+
+				<div style="display: none" id="simpleSmtpSubmitText">
+					<spring:message code="simpleEmail.send" />
+				</div>
+				<div style="display: none" id="simpleSmtpCancelText">
+					<spring:message code="simpleEmail.cancel" />
+				</div>
+		<!--	</div>-->
+			<!-- test -->		
+		
+
+
                   </div>
-                  <div class="panel-body">
-                     Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>Panel content
-                     <br>
-                  </div>
-               </div>
+        <!--       </div>-->
             </div>
             <div class="col-xs-2 col-sm-2 col-md-1 modal-action-buttons">
-               <button type="button" class="btn btn-primary btn-xs hidden-sm hidden-md hidden-lg" style="margin-top:-50.5px">
+               <button type="button" class=" hidden-sm hidden-md hidden-lg" style="margin-top:-50.5px">
                   <span class="glyphicon glyphicon-arrow-down" title="Ajouter" aria-label="Ajouter"></span>
                </button>
-               <button type="button" class="btn btn-primary btn-xs hidden-xs" style="margin-top:50%;">
+               <!-- <button type="button" class="btn btn-primary btn-xs hidden-sm hidden-md hidden-lg" style="margin-top:50%;">
                   <span class="glyphicon glyphicon-arrow-right" title="Ajouter" aria-label="Ajouter"></span>
-               </button>
+               </button> -->
 
             </div>
-            <div class="col-xs-12 col-sm-6 col-md-6 recia-target">
-               <div class="panel panel-default">
+         <!--  <div class="col-xs-12 col-sm-6 col-md-6 recia-target">
+              <div class="panel panel-default">
                    <div class="panel-heading">
                       <h3 class="panel-title">Target</h3>
                    </div>
-                   <div class="panel-body">
+                  <div class="panel-body">
                        Panel content
                    </div>
                </div>
-            </div>
+            </div>  -->
             <div class="col-xs-12 col-sm-12 col-md-12 modal-footer">
                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-               <button type="button" class="btn btn-primary">Valider</button>
+               <button type="submit" class="btn btn-primary">Envoyer le message</button>
             </div>
         </div>
       </div>
    </div>
+</form>
 </div>
--->
+
 <!-- end recia custom -->
 
 </div>

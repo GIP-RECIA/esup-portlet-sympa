@@ -44,6 +44,9 @@
 		<property name="ldapPerson" ref="ldapPerson" />
 		<property name="ldapEstablishment" ref="ldapEstablishment" />
 	</bean>
-
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:main.properties" />
+	</bean>
 
 </beans>

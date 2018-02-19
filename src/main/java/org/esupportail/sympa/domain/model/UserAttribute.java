@@ -50,7 +50,7 @@ public class UserAttribute extends UserAttributeMapping implements InitializingB
 		LOG.debug("Add informations in user info map");
 		Map<String, String> result = new HashMap<String, String>(userInfo);
 
-		this.addSirenToUserInfo(result);
+	//	this.addSirenToUserInfo(result);
 		LOG.debug("End to add informations in user info map");
 		return Collections.unmodifiableMap(result);
 	}

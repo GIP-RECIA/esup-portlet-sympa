@@ -30,13 +30,13 @@
 	<!-- LDAP related Parameters -->
 
 	<!-- Ldap connection -->
-	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+		<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
 		<property name="url" value="${ldap.url}" />
 		<property name="userDn" value="${ldap.userDn}" />
 		<property name="base" value="${ldap.base}" />
 		<property name="password" value="${ldap.password}" />
 		<property name="pooled" value="true" />
-	</bean> 
+	</bean>	 
 	
 	<!-- Bean used to make LDAP queries -->
 	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
@@ -72,7 +72,7 @@
 		<property name="sirenAttribute" value="${ldap.attribute.siren}" />
 		<!-- Ldap search string. %UAI is replaced with the current establishment 
 			id -->
-		<property name="estSearchString" value="ou=structures" />
+		<property name="estSearchString" value="ou=structures" /> 
 		<!-- Ldap search filter. %UAI is replaced with the current establishment 
 			id -->
 		<property name="estSearchFilter"
@@ -88,3 +88,4 @@
 		<property name="functionSources" value="${data_source.functionSources}" />
 	</bean> -->
 </beans>
+

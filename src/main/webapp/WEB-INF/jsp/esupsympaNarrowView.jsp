@@ -259,9 +259,8 @@
 					<c:choose>
 	        			<c:when test="${list.editor==true}">
 							<a class="portlet-menu-item mailLink" 
-					  			href="" 
+					  			href="#" target="_blank" 
 					  			title="<spring:message code="simpleEmail.title" 
-					  		
 					  			arguments="${list.address}" htmlEscape="true"/>" >
 								<c:out value="${list.address}" escapeXml="true" />
 							</a>
@@ -270,6 +269,9 @@
 	          				<c:out value="${list.address}" escapeXml="true"/>
 	          			</c:otherwise>
           			</c:choose>
+				</td> 
+
+
 				</td>
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
 				<td class="c"><insa:icon value="${list.subscriber}"/></td>

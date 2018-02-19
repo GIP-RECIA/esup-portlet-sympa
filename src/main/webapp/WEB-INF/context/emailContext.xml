@@ -97,5 +97,5 @@
 		<property name="url"
 			value="https://lycees.netocentre.fr/netocentre/ExternalURLStats?fname=CourrielEtudiant&amp;service=https://lycees.netocentre.fr/cas/login?service=https%3A%2F%2Flycees.netocentre.fr%2Fhorde%2Fimp%2Fcompose.php" />
 	</bean>
-	
+
 </beans>
