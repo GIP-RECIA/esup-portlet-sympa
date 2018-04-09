@@ -86,12 +86,12 @@
 					<bean
 						class="org.esupportail.sympa.domain.services.sympa.SpringCachingSympaServerAxisWsImpl"
 						scope="session">
-						<property name="adminUrl" value="${liste.url}/net/admin/%l" />
+						<property name="adminUrl" value="${liste.url}/admin/%l" />
 						<property name="connectUrl"
 							value="${cas.base.server.url}/login?service=%s%3Fchecked_cas=0" />
 						<property name="name" value="${liste.name}" />
-						<property name="newListUrl" value="${liste.url}/net/create_list_request" />
-						<property name="homeUrl" value="${liste.url}/net" />
+						<property name="newListUrl" value="${liste.url}/create_list_request" />
+						<property name="homeUrl" value="${liste.url}" />
 						<property name="endPointUrl" value="${liste.soap.url}" />
 						<property name="timeout" value="5000" />
 						<property name="credentialRetriever" ref="${credentialRetriever}" />
