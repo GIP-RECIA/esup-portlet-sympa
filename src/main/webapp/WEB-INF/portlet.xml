@@ -55,6 +55,12 @@
   <user-attribute>
   	<name>${esup.sympa.portal.attribute.mail}</name>
   </user-attribute>
+   <user-attribute>
+  	<name>${esup.sympa.portal.attribute.uais}</name>
+  </user-attribute>
+   <user-attribute>
+  	<name>${esup.sympa.portal.attribute.memberof}</name>
+  </user-attribute>
   <!-- le proxy ticket pour la portlet -->
   <user-attribute>
   	<description>get proxy ticket from portal</description>

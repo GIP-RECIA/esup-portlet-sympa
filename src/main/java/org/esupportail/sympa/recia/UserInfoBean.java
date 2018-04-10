@@ -1,0 +1,74 @@
+package org.esupportail.sympa.recia;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class UserInfoBean {
+
+	String uai;
+	List<String> allUai ;
+	List<String> memberOf;
+	Map<String, List<Object>> initMap;
+	
+	public void init(Map<String, List<Object>> initMap) {
+		this.initMap = initMap;
+		uai = first("ESCOUAICourant");
+		allUai = all("ESCOUAI");
+		memberOf = all("isMemberOf");
+	}
+	
+	private String first(String param){
+		if (initMap != null) {
+			List<Object> l = initMap.get(param);
+			if (l != null) {
+				Object o = l.get(0);
+				return o != null ? o.toString() : "";
+			}
+		}
+		return "";
+	}
+	
+	private List<String> all(String param) {
+		List<String> res = new ArrayList<String>();
+		if (initMap != null) {
+			List<Object> l = initMap.get(param);
+			if (l != null) {
+				for (Object o : l) {
+					if (o != null) {
+					res.add(o.toString());
+					}
+				}
+			}
+		}
+		return res;
+	}
+	
+	
+	
+	public String getUai() {
+		return uai;
+	}
+	
+	public void setUai(String uai) {
+		this.uai = uai;
+	}
+	
+	public List<String> getAllUai() {
+		return allUai;
+	}
+	public void setAllUai(List<String> allUai) {
+		this.allUai = allUai;
+	}
+	public List<String> getMemberOf() {
+		return memberOf;
+	}
+	public void setMemberOf(List<String> memberOf) {
+		this.memberOf = memberOf;
+	}
+	public boolean isNotInit() {
+		return initMap == null;
+	}
+	
+	
+}

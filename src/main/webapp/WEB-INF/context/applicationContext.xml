@@ -71,6 +71,11 @@
           <aop:scoped-proxy/>
    	</bean>
    	
+   	<bean id="userInfoBean" class="org.esupportail.sympa.recia.UserInfoBean" scope="session">
+   		 <!-- this next element effects the proxying of the surrounding bean -->
+          <aop:scoped-proxy/>
+   	</bean>
+   	
    	<!-- list of available roles -->
    	<util:set id="availableRoles">
    		<value>ALL_EMPLOYEE</value>
@@ -164,6 +169,11 @@
 		<property name="proxyTicketService" ref="casTicketService"/>
 		<property name="userPreferences" ref="userPreferencesBean"/>
 	</bean>	
+	
+	<bean id="userInfoInitInterceptor" class=" org.esupportail.sympa.recia.UserInfoInitInterceptor" > 
+		<property name="userInfo" ref="userInfoBean" />
+	</bean>
+	
 	<!-- portlet mode handler view/edit/help -->
 	 <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
 	 	<property name="order" value="10"/>
@@ -171,6 +181,7 @@
 	 		<list>
 	 			<ref bean="sessionInitInterceptor"/>
 	 			<ref bean="casProxyInitInterceptor"/>
+	 			<ref bean="userInfoInitInterceptor" />
 	 		</list>
 	 	</property>
 	 	<property name="portletModeMap">
