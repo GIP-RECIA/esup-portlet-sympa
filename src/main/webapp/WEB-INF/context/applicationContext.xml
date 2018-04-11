@@ -76,13 +76,39 @@
           <aop:scoped-proxy/>
    	</bean>
    	
+   	<!-- pour creer la map de robot dynamiquement -->
+	<bean id="robotSympaConf" class="org.esupportail.sympa.recia.RobotSympaConf" >
+		
+	</bean>   	
    	<!-- list of available roles -->
    	<util:set id="availableRoles">
    		<value>ALL_EMPLOYEE</value>
    		<value>MEMBERS</value>
    	</util:set>
+   	<!-- service --> 
    	
-   	<!-- service -->
+	<bean id="domainService" class="org.esupportail.sympa.domain.services.DomainServiceImpl" scope="session">
+		<aop:scoped-proxy/>
+		<property name="serverList" >
+			<bean class="org.esupportail.sympa.recia.ServerListMap" scope="session" >
+				<property name="robotSympaConf" ref="robotSympaConf" />
+				<property name="userInfoBean" ref="userInfoBean" />
+				<property name="credentialRetriever" ref="${credentialRetriever}" />
+				<property name="indentityRetriever" ref="userIdentityRetrieverImpl" />
+				<property name="connectUrl"
+							value="${cas.base.server.url}/login?service=%s%3Fchecked_cas=0" />
+				<property name="timeout" value="5000" />
+				<property name="cacheManager" ref="cacheManager" />
+				<property name="newListForRoles" >
+					<set>
+						<value>${group.newListForRoles}</value>
+					</set>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+   	<!-- service org 
 	<bean id="domainService" class="org.esupportail.sympa.domain.services.DomainServiceImpl" scope="session">
 		<aop:scoped-proxy/>
 		<property name="serverList">
@@ -112,7 +138,7 @@
 			</map>
 		</property>
 	</bean>
-	
+	-->
 	<!-- helpers -->
 	<bean id="casCredentialRetrieverImpl" class="org.esupportail.sympa.domain.services.sympa.CASCredentialRetrieverImpl">
 		<property name="casPtGeneratorService">

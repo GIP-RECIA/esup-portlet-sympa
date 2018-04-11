@@ -28,6 +28,18 @@ public class SpringCachingSympaServerAxisWsImpl extends
 
 	public void afterPropertiesSet() throws Exception {
 		initCache();
+		if (logger.isDebugEnabled()){
+			logger.debug(this.toString());
+		}
+		
 	}
 
+	@Override
+	public String toString() {
+		return "SpringCachingSympaServerAxisWsImpl [getTimeout()=" + getTimeout() + ", getName()=" + getName()
+				+ ", getHomeUrl()=" + getHomeUrl() + ", getConnectUrl()=" + getConnectUrl() + ", getAdminUrl()="
+				+ getAdminUrl() + ", getNewListUrl()=" + getNewListUrl() + ", getNewListForRoles()="
+				+ getNewListForRoles() + "]";
+	}
+	
 }
