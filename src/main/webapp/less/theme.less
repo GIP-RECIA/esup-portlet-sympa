@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+ 
 // ==========================================================================
 // Namespace: .sympa-portlet
 // ==========================================================================
@@ -97,10 +97,13 @@
 
     /* Specific styles for sympa table */
    .reflow.sympa-result {
-       max-width :1000px;
+    /*   max-width :1000px;*/
        tbody {
          tr {
             margin-bottom:8px;
+           	span.fa.fa-archive {
+            	color: #25b2f3;
+         	}
          }
       }
    }
@@ -125,24 +128,47 @@
    }
 
 /* BEGIN Recia Custom Modal to display a complex treeview UI */
-/*
+
    .modal-dialog {
       width: auto;
       margin: 10px;
       .modal-body {
          display:inline-block;
          width:100%;
-         // the treeview block
-         & > .recia-treeview {
-            margin-bottom:30px;
+        	div.message-info {
+        		display: none; // modifier avec media-query
+        		float:right;	
+		/*		position: absolute;
+				top: 1em;
+				right: 0;
+		*/
+				width: 40%;
+        	}
             @media screen {
                @media (min-width: @max-width) {
-                 width:49% !important;
-                 float: left;
-                 clear: none !important;
+			    div.message-info {
+			    	display: block;
                }
             }
          }
+          ul.message {
+          	padding-left:0;
+          	li {
+          		padding-top: 1em;
+         		list-style-type: none;
+         		label {
+         			min-width: 10ex;
+         		}
+         		span input {
+         			min-width: 27ex;
+         			width : 40%;
+         		}
+         		div.form-group  {
+         			padding:1em;
+         		}
+         	}
+         }
+         
          // the arrow buttons between treeview block and target block
          & > .modal-action-buttons {
             left: 50%;
@@ -170,9 +196,23 @@
                }
             }
          }
+        
       }
+      textarea {  
+		//	resize: none;
+      		display: block;
+			width:100%;
+			height: 150px;	
+			border: 1px solid #1C94C4;	
    }
-*/
+		
+	span.alert.alert-danger {
+		padding-left : 10%;
+		padding-right: 10%;
+   }
+ }
+
+
 /* END Recia Custom Modal */
 
 }
