@@ -246,24 +246,23 @@
 		<tbody>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
 			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
-				<td>
-					<%-- le nom de la liste --%>
-	            <c:choose>  <%-- c'est une ancre si on peut envoyer un message --%>
-	                <c:when test="${list.editor==true}">
-	                    <a 		class="portlet-menu-item mailLink"
-		                    	data-target="#${namespace}_reciaModal" 
-		                    	data-toggle="modal" 
-		                        href="#${namespace}_reciaModal" 
-								title="<spring:message code="simpleEmail.title" arguments="${list.address}" htmlEscape="true"/>" 
-								onclick="esupSympa.${namespace}.initMail('${list.address}')"
-						>
-	                        <c:out value="${list.address}" escapeXml="true" />
-	                    </a>
-	                  </c:when>
-	                <c:otherwise>
-	                      <c:out value="${list.address}" escapeXml="true"/>
-	                </c:otherwise>
-	              </c:choose>
+				<td><%-- le nom de la liste --%>
+		            <c:choose>  <%-- c'est une ancre si on peut envoyer un message --%>
+		                <c:when test="${list.editor==true}">
+		                    <a 		class="portlet-menu-item mailLink"
+			                    	data-target="#${namespace}_reciaModal" 
+			                    	data-toggle="modal" 
+			                        href="#${namespace}_reciaModal" 
+									title="<spring:message code="simpleEmail.title" arguments="${list.address}" htmlEscape="true"/>" 
+									onclick="esupSympa.${namespace}.initMail('${list.address}')"
+							>
+		                        <c:out value="${list.address}" escapeXml="true" />
+		                    </a>
+		                  </c:when>
+		                <c:otherwise>
+		                      <c:out value="${list.address}" escapeXml="true"/>
+		                </c:otherwise>
+		              </c:choose>
 				</td>
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
 				<td class="c"><insa:icon value="${list.subscriber}"/></td>
