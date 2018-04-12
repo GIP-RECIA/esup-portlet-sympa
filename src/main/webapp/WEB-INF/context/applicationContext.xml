@@ -180,7 +180,9 @@
 		<property name="useCodeAsDefaultMessage" value="true"/>
 		<property name="basenames">
 			<list>
-				<value>messages</value>
+			<value>gipRecia</value>
+			<value>messages</value>
+				
 			</list>
 		</property>
 	</bean>
@@ -260,7 +262,8 @@
 	    </property>
 	  </bean>
 
-	 <bean id="homeController" class="org.esupportail.sympa.portlet.web.controllers.HomeController">
+<!--  	 <bean id="homeController" class="org.esupportail.sympa.portlet.web.controllers.HomeController"> -->
+		<bean id="homeController" class="org.esupportail.sympa.recia.HomeController">
 	 	<property name="viewName" value="home"/>
 	 	<property name="domainService" ref="domainService"/>
 	 	<property name="requireSession" value="true"/>
