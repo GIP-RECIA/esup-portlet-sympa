@@ -200,6 +200,12 @@
 	
 	<bean id="userInfoInitInterceptor" class=" org.esupportail.sympa.recia.UserInfoInitInterceptor" > 
 		<property name="userInfo" ref="userInfoBean" />
+		<property name="AttrMail" value="${user.attr.mail}" />
+		<property name="AttrUai" value="${user.attr.uai}" />
+		<property name="AttrAllUai" value="${user.attr.allUai}" />
+		<property name="AttrName" value="${user.attr.name}" />
+		<property name="AttrMember" value="${user.attr.mamber}" />
+
 	</bean>
 	
 	<!-- portlet mode handler view/edit/help -->
@@ -271,6 +277,8 @@
 	 	<property name="renderWhenMinimized" value="false"/>
 	 	<property name="commandName" value="searchForm"/>
 		<property name="userAgentInspector" ref="userAgentInspector"/>
+		<property name="sendMailUrl" value="${portal.service.url}/servlet-ajax/sendEmail" />
+		<property name="userInfo"  ref="userInfoBean" />
 	 </bean>
 
 </beans>

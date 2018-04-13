@@ -84,4 +84,16 @@
 		<servlet-name>ViewRendererServlet</servlet-name>
 		<url-pattern>/WEB-INF/servlet/view</url-pattern>
 	</servlet-mapping>
+	
+	<!-- Spring web MVC -->
+	<servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+	<!-- Ajax servlet -->
+	<servlet-mapping>
+        <servlet-name>spring</servlet-name>
+         <url-pattern>/servlet-ajax/*</url-pattern>
+    </servlet-mapping>
 </web-app>

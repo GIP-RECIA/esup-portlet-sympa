@@ -5,17 +5,23 @@ import java.util.List;
 import java.util.Map;
 
 public class UserInfoBean {
+	
 
 	String uai;
 	List<String> allUai ;
 	List<String> memberOf;
+	String displayName;
+	String mail;
 	Map<String, List<Object>> initMap;
 	
-	public void init(Map<String, List<Object>> initMap) {
+	public void init(Map<String, List<Object>> initMap, IUserInfoAttr attr) {
 		this.initMap = initMap;
-		uai = first("ESCOUAICourant");
-		allUai = all("ESCOUAI");
-		memberOf = all("isMemberOf");
+		uai = first(attr.getAttrUai());
+		allUai = all(attr.getAttrAllUai());
+		memberOf = all(attr.getAttrMemberOf());
+		mail = first(attr.getAttrMail());
+		displayName = first(attr.getAttrName());
+		
 	}
 	
 	private String first(String param){
@@ -68,6 +74,22 @@ public class UserInfoBean {
 	}
 	public boolean isNotInit() {
 		return initMap == null;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 	
 	

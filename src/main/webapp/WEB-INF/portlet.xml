@@ -61,6 +61,9 @@
    <user-attribute>
   	<name>${esup.sympa.portal.attribute.memberof}</name>
   </user-attribute>
+  <user-attribute>
+  	<name>${esup.sympa.portal.attribute.displayName}</name>
+  </user-attribute>
   <!-- le proxy ticket pour la portlet -->
   <user-attribute>
   	<description>get proxy ticket from portal</description>
