@@ -55,8 +55,8 @@
 		in their mail ldap attribute. Therefor, not so important to define these 
 		values -->
 	<bean id="smtpFromAddress" class="javax.mail.internet.InternetAddress">
-		<property name="address" value="ent@recia.fr" />
-		<property name="personal" value="adminENT" />
+		<property name="address" value="${smtp.from.addr}" />
+		<property name="personal" value="${smtp.from.name}" />
 	</bean>
 	
 

@@ -23,6 +23,7 @@ public class UserInfoInitInterceptor extends HandlerInterceptorAdapter implement
 	private String attrAllUai;
 	private String attrName;
 	private String attrMemberOf;
+	private String mailForDebug;
 	
 	@Override
 	protected boolean preHandle(
@@ -38,6 +39,7 @@ public class UserInfoInitInterceptor extends HandlerInterceptorAdapter implement
 			
 			if (mvUserInfo != null) {
 				userInfo.init(mvUserInfo, this);
+				userInfo.setMailForDebug(mailForDebug);
 			}
 			if (logger.isDebugEnabled()) {
 				for (Entry<String, List<Object>> entry : mvUserInfo.entrySet()) {
@@ -96,6 +98,14 @@ public class UserInfoInitInterceptor extends HandlerInterceptorAdapter implement
 
 	public void setAttrMemberOf(String attrMemberOf) {
 		this.attrMemberOf = attrMemberOf;
+	}
+
+	public String getMailForDebug() {
+		return mailForDebug;
+	}
+
+	public void setMailForDebug(String mailForDebug) {
+		this.mailForDebug = mailForDebug;
 	}
 
 /*

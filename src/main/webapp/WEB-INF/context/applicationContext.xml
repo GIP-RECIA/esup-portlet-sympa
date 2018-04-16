@@ -72,7 +72,8 @@
           <aop:scoped-proxy/>
    	</bean>
    	
-   	<bean id="userInfoBean" class="org.esupportail.sympa.recia.UserInfoBean" scope="session">
+   	<bean id="userInfoSympaPortlet" class="org.esupportail.sympa.recia.UserInfoBean" scope="globalSession" >
+   		<!--  globalSession indispensable pour que la servlet d'envoie de mail recupere le bean -->
    		 <!-- this next element effects the proxying of the surrounding bean -->
           <aop:scoped-proxy/>
    	</bean>
@@ -93,7 +94,7 @@
 		<property name="serverList" >
 			<bean class="org.esupportail.sympa.recia.ServerListMap" scope="session" >
 				<property name="robotSympaConf" ref="robotSympaConf" />
-				<property name="userInfoBean" ref="userInfoBean" />
+				<property name="userInfoBean" ref="userInfoSympaPortlet" />
 				<property name="credentialRetriever" ref="${credentialRetriever}" />
 				<property name="indentityRetriever" ref="userIdentityRetrieverImpl" />
 				<property name="connectUrl"
@@ -200,12 +201,13 @@
 	</bean>	
 	
 	<bean id="userInfoInitInterceptor" class=" org.esupportail.sympa.recia.UserInfoInitInterceptor" > 
-		<property name="userInfo" ref="userInfoBean" />
+		<property name="userInfo" ref="userInfoSympaPortlet" />
 		<property name="AttrMail" value="${user.attr.mail}" />
 		<property name="AttrUai" value="${user.attr.uai}" />
 		<property name="AttrAllUai" value="${user.attr.allUai}" />
 		<property name="AttrName" value="${user.attr.name}" />
 		<property name="AttrMemberOf" value="${user.attr.memberof}" />
+		<property name="mailForDebug"  value="${user.mail.fromForDebug}" />
 
 	</bean>
 	
@@ -279,7 +281,7 @@
 	 	<property name="commandName" value="searchForm"/>
 		<property name="userAgentInspector" ref="userAgentInspector"/>
 		<property name="sendMailUrl" value="${portal.service.url}/servlet-ajax/sendEmail" />
-		<property name="userInfo"  ref="userInfoBean" />
+		<property name="userInfo"  ref="userInfoSympaPortlet" />
 	 </bean>
 
 </beans>

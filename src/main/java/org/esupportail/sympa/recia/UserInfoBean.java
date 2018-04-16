@@ -7,12 +7,13 @@ import java.util.Map;
 public class UserInfoBean {
 	
 
-	String uai;
-	List<String> allUai ;
-	List<String> memberOf;
-	String displayName;
-	String mail;
-	Map<String, List<Object>> initMap;
+	private String uai;
+	private List<String> allUai ;
+	private List<String> memberOf;
+	private String displayName;
+	private String mail;
+	private String mailForDebug;
+	private Map<String, List<Object>> initMap;
 	
 	public void init(Map<String, List<Object>> initMap, IUserInfoAttr attr) {
 		this.initMap = initMap;
@@ -90,6 +91,14 @@ public class UserInfoBean {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public String getMailForDebug() {
+		return mailForDebug;
+	}
+
+	public void setMailForDebug(String mailForDebug) {
+		this.mailForDebug = mailForDebug;
 	}
 	
 	

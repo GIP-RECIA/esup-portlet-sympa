@@ -79,7 +79,8 @@ esupSympa.init = function ($, namespace, urlSendMail, userName, userAddr) {
 	        },
 	        error: function (r) {
 	            console.log("senMail error");
-	            showErr("erreur: " + r, erreurDiv);
+	            console.log(r);
+	            showErr("erreur: " + r.responseText, erreurDiv);
 	        },
 	        complete: function (r) {
 	        }
