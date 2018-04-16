@@ -59,6 +59,9 @@
   	<name>${esup.sympa.portal.attribute.uais}</name>
   </user-attribute>
    <user-attribute>
+  	<name>${esup.sympa.portal.attribute.uai}</name>
+  </user-attribute>
+   <user-attribute>
   	<name>${esup.sympa.portal.attribute.memberof}</name>
   </user-attribute>
   <user-attribute>

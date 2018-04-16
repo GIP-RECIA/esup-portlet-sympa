@@ -32,6 +32,7 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:main.properties"/>
 	</bean>
+	<import resource="emailContext.xml" />
 	
 	<!-- ehcache -->
 	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"> 
@@ -204,7 +205,7 @@
 		<property name="AttrUai" value="${user.attr.uai}" />
 		<property name="AttrAllUai" value="${user.attr.allUai}" />
 		<property name="AttrName" value="${user.attr.name}" />
-		<property name="AttrMember" value="${user.attr.mamber}" />
+		<property name="AttrMemberOf" value="${user.attr.memberof}" />
 
 	</bean>
 	

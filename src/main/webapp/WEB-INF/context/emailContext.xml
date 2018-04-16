@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr
+    Copyright (C) 2010 Esup Portail http://www.esup-portail.org
+    @Author (C) 2010 Olivier Franco <Olivier.Franco@insa-lyon.fr>
+    @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr>
+    @Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr>
+    @Contributor (C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr>
+    @Contributor (C) 2013 Maxime BOSSARD (GIP-RECIA) <mxbossard@gmail.com>
+
+    Licensed under the GPL License, (please see the LICENCE file)
+
+-->
+<!-- Copyright (C) 2010 INSA LYON http://www.insa-lyon.fr Copyright (C) 2010 
+	Esup Portail http://www.esup-portail.org @Author (C) 2010 Olivier Franco 
+	<Olivier.Franco@insa-lyon.fr> @Contributor (C) 2010 Doriane Dusart <Doriane.Dusart@univ-valenciennes.fr> 
+	@Contributor (C) 2010 Jean-Pierre Tran <Jean-Pierre.Tran@univ-rouen.fr> @Contributor 
+	(C) 2010 Vincent Bonamy <Vincent.Bonamy@univ-rouen.fr> Licensed under the 
+	GPL License, (please see the LICENCE file) -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+	<!-- Email configuration -->
+
+	<!-- SMTP server for simple email (simple form + smtp) -->
+	<bean id="smtpService"
+		class="org.esupportail.commons.services.smtp.SimpleSmtpServiceImpl"
+		lazy-init="true" scope="session">
+		<aop:scoped-proxy />
+		<property name="servers">
+			<list>
+				<ref bean="smtpServer1" />
+			</list>
+		</property>
+		<property name="fromAddress" ref="smtpFromAddress" />
+		<property name="interceptAll" value="false" />
+		<property name="charset" value="UTF-8" />
+	</bean>
+	<!-- Defines the SMTP server to use in order to send mail with the simple 
+		email form -->
+	<bean id="smtpServer1" class="org.esupportail.commons.services.smtp.SmtpServer">
+		<property name="host" value="${smtp.host}" />
+		<property name="port" value="${smtp.port}" />
+		<property name="user" value="${smtp.user}" />
+		<property name="password" value="${smtp.password}" />
+	</bean>
+	<!-- A default from address. Is replaced by the users email address defined 
+		in their mail ldap attribute. Therefor, not so important to define these 
+		values -->
+	<bean id="smtpFromAddress" class="javax.mail.internet.InternetAddress">
+		<property name="address" value="ent@recia.fr" />
+		<property name="personal" value="adminENT" />
+	</bean>
+	
+
+
+
+
+</beans>
