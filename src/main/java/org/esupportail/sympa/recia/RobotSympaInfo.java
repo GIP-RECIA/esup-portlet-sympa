@@ -8,6 +8,7 @@ public class RobotSympaInfo {
 	String soapUrl;
 	String adminUrl;
 	String newListUrl;
+	String adminPortletUrl;
 	
 	@Override
 	public String toString() {

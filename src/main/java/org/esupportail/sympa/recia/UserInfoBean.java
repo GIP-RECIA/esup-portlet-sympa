@@ -14,6 +14,7 @@ public class UserInfoBean {
 	private String mail;
 	private String mailForDebug;
 	private Map<String, List<Object>> initMap;
+	private String adminSympa;
 	
 	public void init(Map<String, List<Object>> initMap, IUserInfoAttr attr) {
 		this.initMap = initMap;
@@ -22,7 +23,6 @@ public class UserInfoBean {
 		memberOf = all(attr.getAttrMemberOf());
 		mail = first(attr.getAttrMail());
 		displayName = first(attr.getAttrName());
-		
 	}
 	
 	private String first(String param){
@@ -100,6 +100,15 @@ public class UserInfoBean {
 	public void setMailForDebug(String mailForDebug) {
 		this.mailForDebug = mailForDebug;
 	}
+
+	public String getAdminSympa() {
+		return adminSympa;
+	}
+
+	public void setAdminSympa(String adminSympa) {
+		this.adminSympa = adminSympa;
+	}
+
 	
 	
 }

@@ -33,6 +33,7 @@ public class ServerListMap extends HashMap<String,AbstractSympaServer> implement
 	private Set<String> newListForRoles;
 	
 	public void afterPropertiesSet() throws Exception {
+		
 		if (userInfoBean == null) {
 			logger.error("userInfoBean null => serverListMap empty");
 			return ;
@@ -43,11 +44,14 @@ public class ServerListMap extends HashMap<String,AbstractSympaServer> implement
 				creeSympaServer(uai);
 			}
 		} else {
-			creeSympaServer(userInfoBean.getUai());
+			RobotSympaInfo rsi = creeSympaServer(userInfoBean.getUai());
+			 if (rsi != null && robotSympaConf.isAdminRobotSympaByUai(userInfoBean.getUai(), userInfoBean.getMemberOf())) {
+					userInfoBean.setAdminSympa(rsi.adminPortletUrl);
+			}
 		}
 	}
 	
-	private void creeSympaServer(String uai) throws Exception{
+	private RobotSympaInfo creeSympaServer(String uai) throws Exception{
 		if (uai != null) {	
 			RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, userInfoBean.getMemberOf());
 			if (rsi != null) {
@@ -71,8 +75,10 @@ public class ServerListMap extends HashMap<String,AbstractSympaServer> implement
 				server.afterPropertiesSet();
 				
 				this.put(rsi.nom, server);
+				return rsi;
 			}
 		}
+		return null;
 	}
 	
 	public UserInfoBean getUserInfoBean() {

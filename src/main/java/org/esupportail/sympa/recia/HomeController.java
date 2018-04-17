@@ -1,7 +1,5 @@
 package org.esupportail.sympa.recia;
 
-import java.util.Map;
-
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -12,6 +10,7 @@ import org.springframework.web.portlet.ModelAndView;
 public class HomeController extends org.esupportail.sympa.portlet.web.controllers.HomeController {
 
 	private String sendMailUrl;
+
 	private UserInfoBean userInfo;
 	
 	@Override
@@ -20,13 +19,18 @@ public class HomeController extends org.esupportail.sympa.portlet.web.controller
 		
 		ModelAndView res = super.handleRender(request, response, command, errors);
 		String name = res.getViewName();
+		
 		if ("esupsympaWideView".equals(name)) {
+			
 			ModelMap map = res.getModelMap();
 			map.put("sendMailUrl", sendMailUrl);
 			map.put("userName", userInfo.getDisplayName());
 			map.put("mail", userInfo.getMail());
-			res.setViewName("esupsympaReciaView");
 			
+			if (userInfo.getAdminSympa() != null && !"".equals(userInfo.getAdminSympa())) {
+				map.put("adminPortletUrl", userInfo.getAdminSympa());
+			}
+			res.setViewName("esupsympaReciaView");
 		}
 		return res;
 	}
@@ -47,6 +51,5 @@ public class HomeController extends org.esupportail.sympa.portlet.web.controller
 		this.userInfo = userInfo;
 	}
 
-	
 	
 }

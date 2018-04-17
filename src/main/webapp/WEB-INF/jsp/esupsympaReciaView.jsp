@@ -180,6 +180,16 @@
 <%--  <form method="post" class="c" action="<c:out value="${actionURL}" escapeXml="true"/>"> --%>
 	
      <div class="form-group col-md-12">
+     <c:if test="${adminPortletUrl != null}" >
+		<div class="liensAdmin">	
+		<a class="form-group " 
+					href="<c:out value='${adminPortletUrl}' escapeXml='true' />"
+					title="<spring:message code='gotoAdminPortlet' htmlEscape="true" />" >
+					<span class="glyphicon glyphicon-cog" > </span>
+					</a>
+		
+		</div>
+	</c:if>
 	<span><spring:message code="search.title" htmlEscape="true"/> :</span>
         <div class="visible-xs-block"> </div>
 	<spring:bind path="searchForm.subscriber">
@@ -205,7 +215,6 @@
 				class="styled" 
 				${status.value ? 'checked="checked"' : ''}
 				onchange="esupSympa.${namespace}.checkList(); " />
-				
 		<label for="${namespace}_${status.expression}" class="portlet-form-field-label"><spring:message code="search.owner" htmlEscape="true"/></label>
                 <input type="hidden" name="_${status.expression}" value="false"/>
             </div>
@@ -224,6 +233,8 @@
                 <input type="hidden" name="_${status.expression}" value="false"/>
             </div>
 	</spring:bind>
+	
+	
  <%--        <div class="visible-xs-block"> </div>
 	<input type="submit"  class="portlet-form-button btn btn-default" value="<spring:message code="search.validate" htmlEscape="true"/>"/>
  --%>   </div>
