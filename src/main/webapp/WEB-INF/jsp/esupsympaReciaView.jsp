@@ -163,10 +163,12 @@
 -->
 <!-- end recia custom -->
 
+<%-- 
 <h3 class="portlet-section-header"><span class="glyphicon glyphicon-envelope bg-primary" aria-hidden="true"></span> <spring:message code="title" htmlEscape="true"/></h3>
 <div id="sympalink"><p><a href="${homeUrl}" class="btn btn-default btn-sm" target="blank"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span> <spring:message code="gotoSympa" htmlEscape="true"/></a></p></div>
 
 <%-- create list --%>
+<%-- 
 <c:if test="${not empty createList and fn:length(createList) gt 0}">
 	<div class="portlet-msg-info">
 		<c:forEach items="${createList}" var="create">
@@ -174,36 +176,36 @@
 		</c:forEach>
 	</div>
 </c:if>
-<form method="post" class="c" action="<c:out value="${actionURL}" escapeXml="true"/>">
-	<H1>RECIA TEST</H1>
+--%>
+<%--  <form method="post" class="c" action="<c:out value="${actionURL}" escapeXml="true"/>"> --%>
+	
      <div class="form-group col-md-12">
 	<span><spring:message code="search.title" htmlEscape="true"/> :</span>
         <div class="visible-xs-block"> </div>
 	<spring:bind path="searchForm.subscriber">
             <div class="checkbox checkbox-success checkbox-inline">
-		<c:choose>
-		<c:when test="${status.value == true}">
-			<input type="checkbox" name="${status.expression}" value="true" id="${namespace}_${status.expression}" class="styled" checked="checked" />
-		</c:when>
-		<c:otherwise>
-			<input type="checkbox" name="${status.expression}" value="true" id="${namespace}_${status.expression}" class="styled" />
-		</c:otherwise>
-		</c:choose>
+		<input 	type="checkbox" 
+				name="${status.expression}" 
+				value="true" 
+				id="${namespace}_${status.expression}" 
+				class="styled" 
+				${status.value ? 'checked="checked"' : ''}
+				onchange="esupSympa.${namespace}.checkList(); " />
 		<label for="${namespace}_${status.expression}" class="portlet-form-field-label"><spring:message code="search.subscriber" htmlEscape="true"/></label>
-                <input type="hidden" name="_${status.expression}"/>
+                <input type="hidden" name="_${status.expression}" value="false" />
             </div>
 	</spring:bind>
-        <div class="visible-xs-block"> </div>
+        <div class="visible-xs-block"></div>
 	<spring:bind path="searchForm.owner">
             <div class="checkbox checkbox-danger checkbox-inline">
-		<c:choose>
-		<c:when test="${status.value == true}">
-			<input type="checkbox" name="${status.expression}" value="true" id="${namespace}_${status.expression}" class="styled" checked="checked" />
-		</c:when>
-		<c:otherwise>
-			<input type="checkbox" name="${status.expression}" value="true" id="${namespace}_${status.expression}" class="styled" />
-		</c:otherwise>
-		</c:choose>
+			<input 	type="checkbox" 
+				name="${status.expression}" 
+				value="true" 
+				id="${namespace}_${status.expression}" 
+				class="styled" 
+				${status.value ? 'checked="checked"' : ''}
+				onchange="esupSympa.${namespace}.checkList(); " />
+				
 		<label for="${namespace}_${status.expression}" class="portlet-form-field-label"><spring:message code="search.owner" htmlEscape="true"/></label>
                 <input type="hidden" name="_${status.expression}" value="false"/>
             </div>
@@ -211,28 +213,28 @@
         <div class="visible-xs-block"> </div>
 	<spring:bind path="searchForm.editor">
             <div class="checkbox checkbox-warning checkbox-inline">
-		<c:choose>
-		<c:when test="${status.value == true}">
-			<input type="checkbox" name="${status.expression}" value="true" id="${namespace}_${status.expression}" class="styled" checked="checked" />
-		</c:when>
-		<c:otherwise>
-			<input type="checkbox" name="${status.expression}" value="true" id="${namespace}_${status.expression}" class="styled" />
-		</c:otherwise>
-		</c:choose>
+		<input 	type="checkbox" 
+				name="${status.expression}" 
+				value="true" 
+				id="${namespace}_${status.expression}" 
+				class="styled" 
+				${status.value ? 'checked="checked"' : ''}
+				onchange="esupSympa.${namespace}.checkList(); " />
 		<label for="${namespace}_${status.expression}" class="portlet-form-field-label"><spring:message code="search.editor" htmlEscape="true"/></label>
                 <input type="hidden" name="_${status.expression}" value="false"/>
             </div>
 	</spring:bind>
-        <div class="visible-xs-block"> </div>
+ <%--        <div class="visible-xs-block"> </div>
 	<input type="submit"  class="portlet-form-button btn btn-default" value="<spring:message code="search.validate" htmlEscape="true"/>"/>
-    </div>
-</form>
+ --%>   </div>
+<%-- </form> --%>
 </div>
 <div class="row">
 <c:choose>
 <c:when test="${not empty sympaList and fn:length(sympaList) gt 0}">
      <div class="col-md-12">
-	<table class="data centered reflow sympa-result table-striped" summary="<spring:message code="results.summary" htmlEscape="true"/>">
+	<table 	id="${namespace}_sympa-result" class="data centered reflow sympa-result table-striped" 
+			summary="<spring:message code="results.summary" htmlEscape="true"/>">
 		<caption class="portlet-table-subheader" style="min-width:140px;"><spring:message code="results.caption" arguments="${fn:length(sympaList)}" htmlEscape="true"/></caption>
 		<thead class="portlet-table-header">
 			<tr>
@@ -245,8 +247,9 @@
 		</thead>
 		<tbody>
 			<c:forEach items="${sympaList}" var="list" varStatus="varStatus">
-			<tr<c:if test="${varStatus.index%2!=0}"> class="portlet-table-alternate"</c:if>>
-				<td><%-- le nom de la liste --%>
+			<tr class="${varStatus.index%2!=0 ? 'portlet-table-alternate ' : ''}${list.subscriber ? 'subscriber ' : ''}${list.owner ? 'owner ' : ''}${list.editor ? 'editor' : ''}">
+				<td>
+					<%-- le nom de la liste --%>
 		            <c:choose>  <%-- c'est une ancre si on peut envoyer un message --%>
 		                <c:when test="${list.editor==true}">
 		                    <a 		class="portlet-menu-item mailLink"
@@ -267,7 +270,7 @@
 				<td><c:out value="${list.subject}" escapeXml="true"/></td>
 				<td class="c"><insa:icon value="${list.subscriber}"/></td>
 				<td class="c">
-					<c:choose>
+				<%-- 	<c:choose>
 					<c:when test="${list.owner==true}">
 						<a class="portlet-menu-item btn btn-default btn-xs" href="<c:out value="${list.listAdminUrl}" escapeXml="true"/>" target="_blank" title="<spring:message code="gotoListAdmin" arguments="${list.address}" htmlEscape="true"/>"><insa:icon value="${list.owner}"/></a>
 					</c:when>
@@ -275,6 +278,8 @@
 					<insa:icon value="${list.owner}"/>
 					</c:otherwise>
 					</c:choose>
+				--%>
+					<insa:icon value="${list.owner}"/>
 				</td>
 				<td class="c"><insa:icon value="${list.editor}"/></td>
 			</tr>

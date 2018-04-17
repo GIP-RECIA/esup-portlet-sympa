@@ -86,12 +86,50 @@ esupSympa.init = function ($, namespace, urlSendMail, userName, userAddr) {
 	        }
 	    });
 	};
+	
 	priv.initMail = function initFormMail(mailTo) {
 		listAddr = mailTo;
 		$(pId+"simple_email_to").html(listAddr);
 		$(pId+"simple_email_subject").val(null);
 		$(pId+"simple_email_message").val("");
 		$(pId+"simple_email_erreur").hide();
+	}
+	
+	priv.checkList = function checkList(){
+		var seeSubscriber = $(pId+"subscriber")[0].checked;
+		var seeOwner = $(pId+"owner")[0].checked;
+		var seeEditor = $(pId+"editor")[0].checked;
+		var cptVisible = 0;
+		var caption = $(pId+"sympa-result > caption" );
+		var text = caption.html();
+		
+		var lignes = $(pId+"sympa-result > tbody > tr").each(
+				function(index) {
+			//		console.log(index);
+					var show = false;
+					show = seeSubscriber && $(this).hasClass('subscriber');
+					show = show || (seeOwner && $(this).hasClass('owner')) ;
+					show = show || (seeEditor && $(this).hasClass('editor')) ;
+					if (show) {
+						if ((++cptVisible % 2) == 0) {
+							$(this).addClass('portlet-table-alternate');
+						} else {
+							$(this).removeClass('portlet-table-alternate');
+						}
+				//		console.log('show');
+						$(this).show();
+					} else {
+					//	console.log('hide');
+						$(this).hide();
+					}
+				}
+		);
+		text = " " + cptVisible + " Résultat";
+		if (cptVisible > 1) {
+			text = text + "s";
+		} 
+		caption.html(text);
+		console.log(lignes);
 	}
 	
 	return priv;
