@@ -12,4 +12,6 @@ public interface IUserInfoAttr {
 
 	public String getAttrMemberOf() ;
 	
+	public String getMailForDebug();
+	
 }

@@ -23,6 +23,7 @@ public class UserInfoBean {
 		memberOf = all(attr.getAttrMemberOf());
 		mail = first(attr.getAttrMail());
 		displayName = first(attr.getAttrName());
+		mailForDebug = attr.getMailForDebug();
 	}
 	
 	private String first(String param){

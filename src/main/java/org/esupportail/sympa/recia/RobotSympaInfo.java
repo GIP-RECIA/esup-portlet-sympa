@@ -13,8 +13,11 @@ public class RobotSympaInfo {
 	@Override
 	public String toString() {
 		return "RobotSympaInfo [dom=" + dom + ", nom=" + nom + ", uai=" + uai + ", url=" + url + ", soapUrl=" + soapUrl
-				+ ", adminUrl=" + adminUrl + ", newListUrl=" + newListUrl + "]";
+				+ ", adminUrl=" + adminUrl + ", newListUrl=" + newListUrl + ", adminPortletUrl=" + adminPortletUrl
+				+ "]";
 	}
+	
+	
 	
 	
 }

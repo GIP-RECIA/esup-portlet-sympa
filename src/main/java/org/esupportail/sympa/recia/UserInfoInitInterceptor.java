@@ -39,7 +39,6 @@ public class UserInfoInitInterceptor extends HandlerInterceptorAdapter implement
 			
 			if (mvUserInfo != null) {
 				userInfo.init(mvUserInfo, this);
-				userInfo.setMailForDebug(mailForDebug);
 			}
 			if (logger.isDebugEnabled()) {
 				for (Entry<String, List<Object>> entry : mvUserInfo.entrySet()) {
@@ -108,45 +107,5 @@ public class UserInfoInitInterceptor extends HandlerInterceptorAdapter implement
 		this.mailForDebug = mailForDebug;
 	}
 
-/*
-	public String getAttrMail() {
-		return UserInfoBean.Attr.MAIL.val;
-	}
 
-	public void setAttrMail(String AttrMail) {
-		UserInfoBean.Attr.MAIL.val= AttrMail;
-	}
-
-	public String getAttrUai() {
-		return UserInfoBean.Attr.UAI.val;
-	}
-
-	public void setAttrUai(String AttrUai) {
-		UserInfoBean.Attr.UAI.val = AttrUai;
-	}
-
-	public String getAttrAllUai() {
-		return UserInfoBean.Attr.ALLUAI.val;
-	}
-
-	public void setAttrAllUai(String AttrAllUai) {
-		UserInfoBean.Attr.ALLUAI.val = AttrAllUai;
-	}
-
-	public String getAttrMemberOf() {
-		return UserInfoBean.Attr.MEMBER.val;
-	}
-
-	public void setAttrMemberOf(String AttrMemberOf) {
-		UserInfoBean.Attr.MEMBER.val= AttrMemberOf;
-	}
-
-	public String getAttrName() {
-		return UserInfoBean.Attr.NAME.val;
-	}
-
-	public void setAttrName(String AttrName) {
-		UserInfoBean.Attr.NAME.val= AttrName;
-	}
-*/
 }

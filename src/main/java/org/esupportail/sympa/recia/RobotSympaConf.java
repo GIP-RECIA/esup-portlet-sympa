@@ -24,6 +24,7 @@ public class RobotSympaConf implements InitializingBean {
 	private String formatNewListUrl = "http://%s/create_list_request";
 	
 	
+	
 	/** 
 	 * Donne le domaine d'une liste en fonction du prefix d'un groupe de la branche groupe
 	 * par exmple esco -> list.netocentre.fr
@@ -39,7 +40,7 @@ public class RobotSympaConf implements InitializingBean {
 	private List<String> regexFormatByUai = new ArrayList<String>();
 	private List<String> regexFormatAdminByUai = new ArrayList<String>();
 	
-	{	// initialisaion qui sert d'exemple peut être externalisé par le setter:
+/*	{	// exemple  externalisé par le setter:
 		// pour l'exemple le grp1 sera la clef de stem2domaine et %s remplace par l'uai de l'utilisateur
 		regexFormatByUai.add("([^:]+):Applications:Listes_Diffusion:[^:_]+_%s");
 		
@@ -51,7 +52,7 @@ public class RobotSympaConf implements InitializingBean {
 		stem2PortletAdmin.put("esco", "/portail/p/listesdiffusion");
 		stem2PortletAdmin.put("clg37", "/portail/p/listesdiffusionclg37");
 	}
-	
+*/	
 	
 	public void afterPropertiesSet() throws Exception {
 		if (logger.isInfoEnabled()) {
@@ -180,13 +181,7 @@ public class RobotSympaConf implements InitializingBean {
 		this.formatNewListUrl = formatNewListUrl;
 	}
 
-	@Override
-	public String toString() {
-		return "RoboSympaConf [formatUrl=" + formatUrl + ", formatSoapUrl=" + formatSoapUrl + ", formatAdminUrl="
-				+ formatAdminUrl + ", formatNewListUrl=" + formatNewListUrl + ", stem2domaine=" + stem2domaine
-				+ ", regexFormatByUai=" + regexFormatByUai + "]";
-	}
-
+	
 	public boolean isForAllUai() {
 		return forAllUai;
 	}
@@ -194,6 +189,32 @@ public class RobotSympaConf implements InitializingBean {
 	public void setForAllUai(boolean forAllUai) {
 		this.forAllUai = forAllUai;
 	}
+
+	public Map<String, String> getStem2PortletAdmin() {
+		return stem2PortletAdmin;
+	}
+
+	public void setStem2PortletAdmin(Map<String, String> stem2PortletAdmin) {
+		this.stem2PortletAdmin = stem2PortletAdmin;
+	}
+
+	public List<String> getRegexFormatAdminByUai() {
+		return regexFormatAdminByUai;
+	}
+
+	public void setRegexFormatAdminByUai(List<String> regexFormatAdminByUai) {
+		this.regexFormatAdminByUai = regexFormatAdminByUai;
+	}
+
+	@Override
+	public String toString() {
+		return "RobotSympaConf [forAllUai=" + forAllUai + ", formatUrl=" + formatUrl + ", formatSoapUrl="
+				+ formatSoapUrl + ", formatAdminUrl=" + formatAdminUrl + ", formatNewListUrl=" + formatNewListUrl
+				+ ", stem2domaine=" + stem2domaine + ", stem2PortletAdmin=" + stem2PortletAdmin + ", regexFormatByUai="
+				+ regexFormatByUai + ", regexFormatAdminByUai=" + regexFormatAdminByUai + "]";
+	}
 	
+	
+
 
 }

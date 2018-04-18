@@ -80,8 +80,32 @@
    	
    	<!-- pour creer la map de robot dynamiquement -->
 	<bean id="robotSympaConf" class="org.esupportail.sympa.recia.RobotSympaConf" >
-		
-	</bean>   	
+		<property name="formatUrl" value="${liste.url}"/>
+		<property name="formatSoapUrl"  value="${liste.soap.url}" />
+		<property name="regexFormatByUai">
+			<list>
+				<value>([^:]+):Applications:Listes_Diffusion:[^:_]+_%s</value>
+			</list>
+		</property>
+		<property name="regexFormatAdminByUai" >
+			<list>
+				<value>([^:]+):admin:Listes_Diffusion:local:[^:_]+_%s</value>
+			</list>
+		</property>
+		<property name="stem2domaine">
+			<map>
+				<entry key="esco" value="list.netocentre.fr" />
+				<entry key="clg37" value="list.touraine-eschool.fr" />
+			</map>
+		</property>
+		<property name="stem2PortletAdmin" >
+			<map>
+				<entry key="esco" value="/portail/p/listesdiffusion" />
+				<entry key="clg37" value="/portail/p/listesdiffusionclg37" />
+			</map>
+		</property>
+	</bean>
+	
    	<!-- list of available roles -->
    	<util:set id="availableRoles">
    		<value>ALL_EMPLOYEE</value>
@@ -208,7 +232,6 @@
 		<property name="AttrName" value="${user.attr.name}" />
 		<property name="AttrMemberOf" value="${user.attr.memberof}" />
 		<property name="mailForDebug"  value="${user.mail.fromForDebug}" />
-
 	</bean>
 	
 	<!-- portlet mode handler view/edit/help -->
