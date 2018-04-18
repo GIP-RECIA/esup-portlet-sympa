@@ -57,10 +57,12 @@
    		<constructor-arg index="0" value="${cas.base.server.url}"/>
    	</bean>
 	<!-- CAS Proxy service bean -->
-	<bean id="casTicketService" class="org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl">
-	    <property name="serviceUrl" value="${portal.service.url}"/> 
+	<bean id="casTicketService" class="org.esupportail.sympa.recia.CASProxyTicketService">	
+		<property name="serverNames" value="${cas.servername.list}" />
+		<property name="serviceUrlFormat" value="${portal.service.url.format}" /> 
 	    <property name="ticketValidator" ref="ticketValidator"/>
 	</bean>
+	
 	<bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl"/>
 	  <!-- or ehcache impl with class  org.jasig.cas.client.proxy. EhcacheBackedProxyGrantingTicketStorageImpl
 	  cache name is : org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache
@@ -303,7 +305,7 @@
 	 	<property name="renderWhenMinimized" value="false"/>
 	 	<property name="commandName" value="searchForm"/>
 		<property name="userAgentInspector" ref="userAgentInspector"/>
-		<property name="sendMailUrl" value="${portal.service.url}/servlet-ajax/sendEmail" />
+		<property name="sendMailUrl" value="/${portlet.context}/servlet-ajax/sendEmail" />
 		<property name="userInfo"  ref="userInfoSympaPortlet" />
 	 </bean>
 
