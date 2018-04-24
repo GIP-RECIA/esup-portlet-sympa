@@ -19,7 +19,9 @@
 --%>
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 <link href="<c:url value="/media/css/sympa-portlet.css"/>" type="text/css" rel="stylesheet"/>
-
+<%-- 
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+--%>
 <style type="text/css" media="screen">
 
             /* 
@@ -121,62 +123,9 @@
 <div class="container-fluid sympa-portlet awesome-bootstrap-checkbox bootstrap-styles-by-6">
 <div class="row">
 
-<!-- begin recia custom -->
-<!--  
-<div class="col-xs-12 col-sm-12 col-md-12">
-<nav class="navbar navbar-default">
-   <div class="container-fluid">
 
-      <div class="navbar-header">
-         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-         </button>
-         <a class="navbar-brand sympa-logo hidden-sm" href="javascript:void(0);"><img src="<%=request.getContextPath()%>/media/icons/sympa32.png" width="32px" height="32px" alt="Logo Sympa" /> </a>
-      </div>
 
-      
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Mes listes<span class="sr-only"> (current)</span></a></li>
-            <li><a href="#">Cr&eacute;ation de listes</a></li>
-            <li><a href="#">Modification de listes</a></li>
-            <li class="dropdown">
-               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administrer autre &eacute;tablissement <span class="caret"></span></a>
-               <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">Separated link</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">One more separated link</a></li>
-               </ul>
-            </li>
-         </ul>
-      </div>
-   </div>
-</nav>
-</div>
--->
-<!-- end recia custom -->
 
-<%-- 
-<h3 class="portlet-section-header"><span class="glyphicon glyphicon-envelope bg-primary" aria-hidden="true"></span> <spring:message code="title" htmlEscape="true"/></h3>
-<div id="sympalink"><p><a href="${homeUrl}" class="btn btn-default btn-sm" target="blank"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span> <spring:message code="gotoSympa" htmlEscape="true"/></a></p></div>
-
-<%-- create list --%>
-<%-- 
-<c:if test="${not empty createList and fn:length(createList) gt 0}">
-	<div class="portlet-msg-info">
-		<c:forEach items="${createList}" var="create">
-			<a class="portlet-menu-item btn btn-default btn-sm" href="<c:out value="${create.accessUrl}" escapeXml="true"/>"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> <spring:message code="createNewList" htmlEscape="true"/> @<c:out value="${create.serverName}" escapeXml="true"/></a><br/>
-		</c:forEach>
-	</div>
-</c:if>
---%>
 <%--  <form method="post" class="c" action="<c:out value="${actionURL}" escapeXml="true"/>"> --%>
 	
      <div class="form-group col-md-12">
@@ -320,6 +269,16 @@
          	<div class="message-info alert alert-info">
          		<spring:message code="simpleEmail.info" />
          	</div>
+ <%--         	<div class="form-group">
+         		<label id="${namespace}_simple_email_subject_label1"
+         				for="${namespace}_simple_email_subject1"
+         				class="bmd-label-floating" > 
+						<spring:message code="simpleEmail.subject" />
+					</label>
+					<input type="text" id="${namespace}_simple_email_subject1" value=""  class="form-control"/>		
+				
+         	</div>
+--%>
 			<ul class="message">
 				<li>
 					<label id="${namespace}_simple_email_from_label"> 
@@ -387,6 +346,8 @@
    </div>
 </form>
 </div>
-
-
+<%--
+<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+--%>
 </div>

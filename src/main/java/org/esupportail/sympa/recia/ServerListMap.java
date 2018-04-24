@@ -53,7 +53,7 @@ public class ServerListMap extends HashMap<String,AbstractSympaServer> implement
 	
 	private RobotSympaInfo creeSympaServer(String uai) throws Exception{
 		if (uai != null) {	
-			RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, userInfoBean.getMemberOf());
+			RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, userInfoBean.getMemberOf(), false);
 			if (rsi != null) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("robotSympaInfo=" + rsi.toString());

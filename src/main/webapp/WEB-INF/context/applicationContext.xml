@@ -228,11 +228,11 @@
 	
 	<bean id="userInfoInitInterceptor" class=" org.esupportail.sympa.recia.UserInfoInitInterceptor" > 
 		<property name="userInfo" ref="userInfoSympaPortlet" />
-		<property name="AttrMail" value="${user.attr.mail}" />
-		<property name="AttrUai" value="${user.attr.uai}" />
-		<property name="AttrAllUai" value="${user.attr.allUai}" />
-		<property name="AttrName" value="${user.attr.name}" />
-		<property name="AttrMemberOf" value="${user.attr.memberof}" />
+		<property name="attrMail" value="${user.attr.mail}" />
+		<property name="attrUai" value="${user.attr.uai}" />
+		<property name="attrAllUai" value="${user.attr.allUai}" />
+		<property name="attrName" value="${user.attr.name}" />
+		<property name="attrMemberOf" value="${user.attr.memberof}" />
 		<property name="mailForDebug"  value="${user.mail.fromForDebug}" />
 	</bean>
 	

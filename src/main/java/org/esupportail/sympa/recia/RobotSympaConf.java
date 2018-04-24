@@ -23,7 +23,7 @@ public class RobotSympaConf implements InitializingBean {
 	private String formatAdminUrl = "http://%s/admin/%%l";
 	private String formatNewListUrl = "http://%s/create_list_request";
 	
-	
+	private String defaultStem = "esco";
 	
 	/** 
 	 * Donne le domaine d'une liste en fonction du prefix d'un groupe de la branche groupe
@@ -61,7 +61,7 @@ public class RobotSympaConf implements InitializingBean {
 		
 	}
 
-	private Matcher findGrpMatcher(String uai, List<String> userGrps, List<String> regexFormatList) {
+	private String findGrpStem(String uai, List<String> userGrps, List<String> regexFormatList) {
 		if (uai == null || userGrps == null ||  regexFormatList == null) {
 			return null;
 		}
@@ -74,7 +74,7 @@ public class RobotSympaConf implements InitializingBean {
 						try {
 							Matcher matcher = pattern.matcher(grp);
 							if (matcher.matches()) {
-								return matcher;
+								return matcher.group(1);
 							}
 						} catch (Exception e) {
 							logger.error(String.format("group user = %s erreur=%s", grp,  e.toString()));
@@ -92,13 +92,17 @@ public class RobotSympaConf implements InitializingBean {
 	 * sinon renvoie null; 
 	 * @param uai
 	 * @param userGrps
+	 * @param admin TODO
 	 * @return RobotSympaInfo :les info du robot ou null
 	 */
-	public RobotSympaInfo getRobotSympaInfoByUai(String uai, List<String> userGrps) {
-		Matcher matcher = findGrpMatcher(uai, userGrps, regexFormatByUai);
-		if (matcher != null) {
-			String stem = matcher.group(1);
+	public RobotSympaInfo getRobotSympaInfoByUai(String uai, List<String> userGrps, boolean forAdmin) {
+		List<String> regexFormatList  = forAdmin ?  regexFormatAdminByUai : regexFormatByUai ;
+		String stem  = findGrpStem(uai, userGrps, regexFormatList);
+		if (stem != null) {
 			String domaine = stem2domaine.get(stem);
+			if (domaine == null) {
+				domaine = stem2domaine.get(defaultStem);
+			}
 			if (domaine != null) {
 				RobotSympaInfo rsi = new RobotSympaInfo();
 				try {
@@ -109,6 +113,9 @@ public class RobotSympaConf implements InitializingBean {
 					rsi.soapUrl = String.format(formatSoapUrl, rsi.nom);
 					rsi.adminUrl = String.format(formatAdminUrl, rsi.nom);
 					rsi.adminPortletUrl = stem2PortletAdmin.get(stem);
+					if (rsi.adminPortletUrl == null) {
+						 stem2PortletAdmin.get(defaultStem);
+					}
 					rsi.newListUrl =String.format(formatNewListUrl, rsi.nom);
 					return rsi;
 				} catch (Exception e) {
@@ -119,14 +126,14 @@ public class RobotSympaConf implements InitializingBean {
 		return null;
 	}
 	/**
-	 * indique si les groupes permetent l'adminitration des listes du robot donné par l'uai
+	 * indique si les groupes permetent l'administration des listes du robot donné par l'uai
 	 * @param uai
 	 * @param userGrps
 	 * @return
 	 */
 	public boolean isAdminRobotSympaByUai(String uai, List<String> userGrps) {
-		Matcher matcher = findGrpMatcher(uai, userGrps, regexFormatAdminByUai);
-		return  (matcher != null) ;
+		String stem = findGrpStem(uai, userGrps, regexFormatAdminByUai);
+		return  (stem != null) ;
 		
 	}
 	

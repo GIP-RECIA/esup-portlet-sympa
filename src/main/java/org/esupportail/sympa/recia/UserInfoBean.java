@@ -1,12 +1,18 @@
 package org.esupportail.sympa.recia;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class UserInfoBean {
+public class UserInfoBean implements Serializable {
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4017729792242389534L;
+	
 	private String uai;
 	private List<String> allUai ;
 	private List<String> memberOf;

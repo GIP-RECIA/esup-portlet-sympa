@@ -14,6 +14,11 @@ import org.jasig.portlet.cas.CASProxyTicketServiceUserInfoImpl;
 import org.jasig.portlet.cas.ICASProxyTicketService;
 import org.springframework.beans.factory.InitializingBean;
 
+/**
+ * Un wrapper sur CASProxyTicketServiceUserInfoImpl, pour gérer différent serviceUrl en fonction du serverName
+ * @author legay
+ *
+ */
 public class CASProxyTicketService  implements ICASProxyTicketService, InitializingBean {
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
