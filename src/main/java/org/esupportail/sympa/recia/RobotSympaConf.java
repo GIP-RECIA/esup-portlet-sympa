@@ -113,9 +113,9 @@ public class RobotSympaConf implements InitializingBean {
 					rsi.soapUrl = String.format(formatSoapUrl, rsi.nom);
 					rsi.adminUrl = String.format(formatAdminUrl, rsi.nom);
 					rsi.adminPortletUrl = stem2PortletAdmin.get(stem);
-					if (rsi.adminPortletUrl == null) {
-						 stem2PortletAdmin.get(defaultStem);
-					}
+					if (rsi.adminPortletUrl == null || "".equals(rsi.adminPortletUrl) ) {
+						 rsi.adminPortletUrl = stem2PortletAdmin.get(defaultStem);
+					} 
 					rsi.newListUrl =String.format(formatNewListUrl, rsi.nom);
 					return rsi;
 				} catch (Exception e) {
