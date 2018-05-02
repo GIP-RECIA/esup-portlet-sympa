@@ -77,12 +77,18 @@ public class ServletAjaxController implements  InitializingBean, Serializable {
 	public String sendEmail(String fromAddress, final String fromName,  final String toAddress, final String subject, final String message,
 				final HttpServletRequest request, final HttpServletResponse response) {
 		
-		if (userInfoBean == null || fromAddress == null || ! fromAddress.equals(userInfoBean.getMail())) {
+		UserInfoBean uib = getUserInfoBean();
+		
+		if (uib == null || fromAddress == null || ! fromAddress.equals(uib.getMail())) {
 			response.setStatus(403);
 			this.log.warn("sendmail expéditeur invalide ");
-			this.log.warn("               mail user =" + (userInfoBean != null ? userInfoBean.getMail() : null));
-			this.log.warn("                   From  =" + fromAddress );
-			
+			if (uib != null) {
+				this.log.warn("               mail user =" + uib.getMail() );
+				this.log.warn("                   From  =" + fromAddress );
+			} else {
+				this.log.warn("               userInfoBean = null " );
+				this.log.warn("               mail From  =" + fromAddress );
+			}
 			return "session invalide : expéditeur invalide";
 		}
 		
@@ -94,7 +100,7 @@ public class ServletAjaxController implements  InitializingBean, Serializable {
 			log.debug("subject " + subject);
 			log.debug("message " + message); 
 			
-			String fromForDebug = userInfoBean.getMailForDebug() ;
+			String fromForDebug = uib.getMailForDebug() ;
 			
 			if (fromForDebug != null && !"".equals(fromForDebug.trim())) {
 				fromAddress = fromForDebug;
@@ -144,5 +150,13 @@ public class ServletAjaxController implements  InitializingBean, Serializable {
 	
 		this.smtp.sendtocc(tos, null, bccs, sujet, null, message, null);
 		
+	}
+
+	public UserInfoBean getUserInfoBean() {
+		return userInfoBean;
+	}
+
+	public void setUserInfoBean(UserInfoBean userInfoBean) {
+		this.userInfoBean = userInfoBean;
 	}
 }
