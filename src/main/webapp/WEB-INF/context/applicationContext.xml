@@ -81,6 +81,7 @@
    	</bean>
    	
    	<!-- pour creer la map de robot dynamiquement -->
+   	<!-- esco est le stem de la valeur par  defaut pour toutes les map stem2... -->
 	<bean id="robotSympaConf" class="org.esupportail.sympa.recia.RobotSympaConf" >
 		<property name="formatUrl" value="${liste.url}"/>
 		<property name="formatSoapUrl"  value="${liste.soap.url}" />
@@ -102,8 +103,7 @@
 		</property>
 		<property name="stem2PortletAdmin" >
 			<map>
-				<entry key="esco" value="/portail/p/listesdiffusion" />
-				<entry key="clg37" value="/portail/p/listesdiffusionclg37" />
+				<entry key="esco" value="${portlet.AdminListUrl}" />
 			</map>
 		</property>
 	</bean>
