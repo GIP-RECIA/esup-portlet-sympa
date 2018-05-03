@@ -30,7 +30,12 @@
 
 	<!-- property configurer -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:main.properties"/>
+		<property name="locations" > 
+			<list>
+				<value>classpath:main.properties</value>
+				<value>file:${esupPortletSympa.local.properties}</value>
+			</list>
+		</property>
 	</bean>
 	<import resource="emailContext.xml" />
 	
