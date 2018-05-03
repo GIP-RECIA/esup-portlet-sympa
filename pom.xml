@@ -203,7 +203,6 @@
     <finalName>${project.artifactId}</finalName>
     <filters>
       <filter>config.properties</filter>
-      <filter>local-config.properties</filter>
     </filters>
     <resources>
       <resource>

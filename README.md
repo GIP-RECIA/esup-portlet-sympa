@@ -1,3 +1,20 @@
+# fork  ESUP-portail Esup-Sympa by GIP RECIA
+ To manage the sending of mail + multi-robot and multi-domain specific to the RECIA environment.
+ The default configuration is in config.properties
+ 
+ The local configuration must be done in an external property file defined by the Tomcat environment variable:
+ esupPortletSympa.local.properties
+ 
+ the names of the local properties to be defined are:
+ 
+portal.server.base.url
+cas.base.server.url
+cas.servername.list
+smtp.host
+
+For syntax take example on config.properties
+
+
 # Esup-portail Esup-Sympa
 
 This Java Portlet is a [Portlet][] of the [Esup-portail Community][] and a [Community Portlet][] of [Apereo uPortal][] ecosystem.
