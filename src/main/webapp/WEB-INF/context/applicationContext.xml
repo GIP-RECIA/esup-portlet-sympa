@@ -29,6 +29,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- property configurer -->
+	<!--  now we use PortalPropertySourcesPlaceholder...
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations" > 
 			<list>
@@ -37,6 +38,17 @@
 			</list>
 		</property>
 	</bean>
+	 -->
+	<bean id="propertyConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:main.properties</value>
+				<value>file:${portal.home}/global.properties</value>
+				<value>file:${portal.home}/esup-portlet-sympa.properties</value>
+			</list>
+		</property>
+	</bean>
+
 	<import resource="emailContext.xml" />
 	
 	<!-- ehcache -->
@@ -49,14 +61,14 @@
 	<!-- ticket validation filter -->
 	<bean id="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
 		<property name="redirectAfterValidation" value="false"/>
-		<property name="serverName" value="${portal.server.base.url}"/>
+		<property name="serverName" value="${portal.real.server}"/>
 		<property name="proxyReceptorUrl" value="/proxy/receptor"/>
 		<property name="ticketValidator" ref="ticketValidator"/>
 		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage"/>
 	</bean>
 	<!-- CAS proxy ticket validator -->
    	<bean id="ticketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
-   		<property name="proxyCallbackUrl" value="${portal.server.base.url}/${portlet.context}/proxy/receptor"/>
+   		<property name="proxyCallbackUrl" value="${portal.real.server}/${portlet.context}/proxy/receptor"/>
    		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage"/>
    		<property name="acceptAnyProxy" value="true"/>
    		<constructor-arg index="0" value="${cas.base.server.url}"/>
