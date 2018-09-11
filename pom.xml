@@ -116,6 +116,7 @@
    <scm>
    		<connection>scm:git:ssh://git@github.com/GIP-RECIA/esup-portlet-sympa.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/esup-portlet-sympa.git</developerConnection>
+        <url>scm:git:ssh://git@github.com/GIP-RECIA/esup-portlet-sympa.git</url>
         <tag>HEAD</tag>
   </scm> 
   <dependencies>
@@ -290,10 +291,23 @@
 	  </execution>
 	</executions>
       </plugin>
+      
+        <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <localCheckout>true</localCheckout>
+          <tagNameFormat>${project.artifactId}-@{project.version}</tagNameFormat>
+          <pushChanges>true</pushChanges>
+        </configuration>
+      </plugin>
+      
       <plugin>
 	<groupId>org.apache.maven.plugins</groupId>
 	<artifactId>maven-war-plugin</artifactId>
-	<version>2.0.2</version>
+	<version>2.1</version>
 	<configuration>
 	  <webResources>
 	    <resource>
