@@ -7,7 +7,7 @@
   <artifactId>esup-portlet-sympa</artifactId>
   <packaging>war</packaging>
   <name>esup-portlet-sympa</name>
-  <version>5.1-SNAPSHOT</version>
+  <version>5.1-esco-1.0-SNAPSHOT</version>
 
   <description>EsupSympa is a JSR 168 portlet that allows to display Sympa (http://www.sympa.org) mailing-lists.</description>
   <url>https://www.esup-portail.org/wiki/display/PROJCANSYMPA/ESUP-Sympa</url>
@@ -68,9 +68,7 @@
       </mailingList>
   </mailingLists>
 
-  <scm>
-      <url>https://github.com/EsupPortail/esup-portlet-sympa</url>
-  </scm>
+
 
   <repositories>
     <repository>
@@ -94,7 +92,7 @@
       </releases>
     </repository>
   </repositories>
-
+<!--  
   <distributionManagement>
       <snapshotRepository>
           <id>ossrh</id>
@@ -105,7 +103,22 @@
           <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
       </repository>
   </distributionManagement>
-  
+ -->
+ 	<distributionManagement>
+        <repository>
+            <id>esco-releases</id>
+            <url>https://nexus.recia.fr/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>esco-snapshots</id>
+            <url>https://nexus.recia.fr/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+   <scm>
+   		<connection>scm:git:ssh://git@github.com/GIP-RECIA/esup-portlet-sympa.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/esup-portlet-sympa.git</developerConnection>
+        <tag>HEAD</tag>
+  </scm> 
   <dependencies>
     
     <dependency>
@@ -349,7 +362,7 @@
           </execution>
         </executions>
       </plugin>
-
+<!--  
          <plugin>
              <groupId>org.sonatype.plugins</groupId>
              <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -361,7 +374,7 @@
                  <autoReleaseAfterClose>false</autoReleaseAfterClose>
              </configuration>
          </plugin>
-
+-->
          <plugin>
              <groupId>org.apache.maven.plugins</groupId>
              <artifactId>maven-gpg-plugin</artifactId>
