@@ -68,7 +68,7 @@
 	</bean>
 	<!-- CAS proxy ticket validator -->
    	<bean id="ticketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
-   		<property name="proxyCallbackUrl" value="${casService.proxyCallbackUrL}/>
+   		<property name="proxyCallbackUrl" value="${casService.proxyCallbackUrl}" />
    		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage"/>
    		<property name="acceptAnyProxy" value="true"/>
    		<constructor-arg index="0" value="${cas.base.server.url}"/>
