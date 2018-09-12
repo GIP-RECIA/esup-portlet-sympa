@@ -126,6 +126,16 @@
       <artifactId>esup-commons2-springmvc-portlet</artifactId>
       <version>0.2.8</version>
       <type>pom</type>
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.springframework</groupId>
+      		<artifactId>spring-aop</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.springframework</groupId>
+      		<artifactId>spring-web</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     
     
@@ -204,8 +214,8 @@
         <groupId>org.jasig.portal</groupId>
         <artifactId>uPortal-spring</artifactId>
         <version>5.1.0</version>
-        <exclusions>
-          <exclusion>
+          <exclusions>
+<!--            <exclusion>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uPortal-api-internal</artifactId>
           </exclusion>
@@ -229,7 +239,20 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
           </exclusion>
-        </exclusions>
+          <exclusion>
+          	<groupId>org.springframework</groupId>
+          	<artifactId>spring-aop</artifactId>
+          </exclusion>
+          <exclusion>
+          	<groupId>org.springframework</groupId>
+          	<artifactId>spring-web</artifactId>
+          </exclusion>
+          <exclusion>
+          	<groupId>org.springframework</groupId>
+          	<artifactId>spring-webmvc-portlet</artifactId>
+          </exclusion>
+    -->    </exclusions>
+      
       </dependency>
 
     <!-- the other slf4j jars -->
@@ -244,7 +267,12 @@
     <!-- Needed for taglib reference -->
     
     <!-- ===== Test Dependencies ====================================== -->
-    
+
+    <dependency>
+    	<groupId>org.springframework</groupId>
+    	<artifactId>spring-webmvc</artifactId>
+    	<version>3.0.6.RELEASE</version>
+    </dependency>
   </dependencies>
   
   <build>
