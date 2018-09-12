@@ -61,14 +61,14 @@
 	<!-- ticket validation filter -->
 	<bean id="ticketValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
 		<property name="redirectAfterValidation" value="false"/>
-		<property name="serverName" value="${portal.real.server}"/>
+		<property name="serverName" value="${serverName}"/>
 		<property name="proxyReceptorUrl" value="/proxy/receptor"/>
 		<property name="ticketValidator" ref="ticketValidator"/>
 		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage"/>
 	</bean>
 	<!-- CAS proxy ticket validator -->
    	<bean id="ticketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
-   		<property name="proxyCallbackUrl" value="${portal.real.server}/${portlet.context}/proxy/receptor"/>
+   		<property name="proxyCallbackUrl" value="${casService.proxyCallbackUrL}/>
    		<property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage"/>
    		<property name="acceptAnyProxy" value="true"/>
    		<constructor-arg index="0" value="${cas.base.server.url}"/>
