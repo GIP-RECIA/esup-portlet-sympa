@@ -8,3 +8,12 @@
 ant deployPortletApp -DportletApp=/opt/canaux/esup-portlet-sympa/target/esup-portlet-sympa.war
 
 * start uPortal and register the new portlet "EsupPortletSympa > Sympa Portlet" from the GUI of uPortal
+
+
+# pour publier dans le nexus et gerer les version:
+mvn -Darguments="-DskipTests -Dmaven.javadoc.skip=true" release:prepare
+
+mvn -Darguments="-DskipTests -Dmaven.javadoc.skip=true" release:perform
+
+// en cas d'echec
+ mvn  release:rollback
