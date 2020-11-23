@@ -118,6 +118,8 @@
 				<entry key="clg37" value="list.touraine-eschool.fr" />
 				<entry key="clg18" value="list.chercan.fr" />
 				<entry key="clg41" value="list.colleges41.fr" />
+				<entry key="clg36" value="list.e-college.indre.fr" />
+				<entry key="clg45" value="list.mon-e-college.loiret.fr" />
 			</map>
 		</property>
 		<property name="stem2PortletAdmin" >
